@@ -16,7 +16,7 @@ current_dir=$(pwd)
 # Default install location for psql on linux/Debian. This location
 # may need to be modified if a different version of postgresql
 # is being used and/or it is installed in a custom location.
-psql="/usr/lib/postgresql/9.3/bin/psql"
+psql="/usr/lib/postgresql/9.2/bin/psql"
 # Default install location for p7zip on linux/Debian. This location
 # may need to be modified if a custom install location is used
 # and/or a different archiver (e.g. Keka on MacOS) is used to unzip 
@@ -46,6 +46,11 @@ read -p "Create or replace the database? (y/n) [$createDb] : " input
 createDb=${input:-$createDb}
 
 # Get the password from the command line and set the PGPASSWORD environ variable
+# Note that the PGPASSWORD variable may be ignored by Postgresql. In that case
+# configure a .pgpass file in the home directory of the user executing this script
+# with the following line 
+# localhost:*:*:postgres:<your postgres password>
+# The .pgpass file also requires 0600 permissions. 
 PGPASSWORD=$pword
 
 # If the 7z data archive is password protected, prompt the user for the password.
