@@ -116,6 +116,9 @@ INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversi
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('AccessCS', 'super-group-id', '65dfc8ea-cc69-11e3-999c-53ccd0502f3a', 1, 'i', 'db:postgres', '2014-04-25 17:04:40.353');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('ModerateClaim', 'claim-moderators', '0c36e100-eb60-11e3-9533-178ebeef4b74', 1, 'i', 'db:postgres', '2014-06-04 02:45:50.554');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('AccessCS', 'claim-moderators', '0c45d552-eb60-11e3-809a-d76734fbffdd', 1, 'i', 'db:postgres', '2014-06-04 02:45:50.554');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('BaUnitNotes', 'super-group-id', '56ae10ca-00da-11e4-abee-a7c2922e39f7', 1, 'i', 'db:postgres', '2014-07-01 16:44:08.477');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('recordStateLand', 'super-group-id', '56bd7a4c-00da-11e4-b19f-f3a046be73c4', 1, 'i', 'db:postgres', '2014-07-01 16:44:08.477');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('MeasureMap', 'super-group-id', '56bdef86-00da-11e4-8fc8-f33f40fe4e44', 1, 'i', 'db:postgres', '2014-07-01 16:44:08.477');
 
 
 ALTER TABLE approle_appgroup ENABLE TRIGGER ALL;

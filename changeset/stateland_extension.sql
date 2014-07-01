@@ -1,6 +1,10 @@
 ﻿
 --# Schema and configuration for Notations on State Land Property
 
+INSERT INTO administrative.ba_unit_type (code, display_value, status, description)
+SELECT 'stateLand', 'State Land','c', 'State land property type'
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'stateLand');
+
 -- Add new role for adding/editing notations
 INSERT INTO system.approle (code, display_value, status, description)
 SELECT 'BaUnitNotes', 'Property - Add & Edit Notes','c', 'Allows property notes to be added or edited.'
@@ -10,8 +14,7 @@ INSERT INTO system.approle_appgroup (approle_code, appgroup_id)
     (SELECT 'BaUnitNotes', ag.id FROM system.appgroup ag WHERE ag."name" = 'Super group'
 	 AND NOT EXISTS (SELECT approle_code FROM system.approle_appgroup 
 	                 WHERE  approle_code = 'BaUnitNotes'
-					 AND    appgroup_id = ag.id));
-					 
+					 AND    appgroup_id = ag.id));				 
 
 DROP TABLE IF EXISTS administrative.source_describes_notation; 
 CREATE TABLE administrative.source_describes_notation
@@ -103,7 +106,11 @@ WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE cod
 
 INSERT INTO administrative.notation_status_type(code, display_value, status, description)
 SELECT 'general', 'General', 'c', 'The notation is a general note and no activity or action is necessary.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'general');			
+WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'general');	
+
+INSERT INTO administrative.notation_status_type(code, display_value, status, description)
+SELECT 'pending', 'Pending', 'c', 'TEMPORARY TO BE REMOVED!'
+WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'pending');			
 
 ALTER TABLE administrative.notation 
    DROP CONSTRAINT IF EXISTS notation_status_code_fk74; 
@@ -118,7 +125,39 @@ ALTER TABLE administrative.notation
       ON UPDATE CASCADE ON DELETE RESTRICT; 	  
 					 
 
+-- *** State Land application services ***
+INSERT INTO system.panel_launcher_group(code, display_value, description, status)
+SELECT 'slPropertyServices', 'State Land Property Services', 'Panels used for State Land property services', 'c'
+WHERE NOT EXISTS (SELECT code FROM system.panel_launcher_group WHERE code = 'slPropertyServices');
 
+INSERT INTO system.config_panel_launcher(code, display_value, description, status, launch_group, panel_class, message_code, card_name)
+SELECT 'slProperty', 'State Land Property Panel', null, 'c', 'propertyServices', 'org.sola.clients.swing.desktop.administrative.SLPropertyPanel', 'cliprgs009', 'slPropertyPanel'
+WHERE NOT EXISTS (SELECT code FROM system.config_panel_launcher WHERE code = 'slProperty');
+
+INSERT INTO application.request_category_type (code, display_value, description, status)
+SELECT 'stateLandServices', 'State Land Services', 'Services used to support state land', 'c' WHERE 'stateLandServices' NOT IN 
+(SELECT code FROM application.request_category_type);
+
+-- Default existing request types (a.k.a. service types) to disabled
+UPDATE application.request_type SET status = 'x';
+
+INSERT INTO application.request_type(code, request_category_code, display_value, 
+            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
+            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
+            description, display_group_name, service_panel_code)
+    SELECT 'recordStateLand','stateLandServices','Record State Land','c',5,0.00,0.00,0.00,0,
+	null,null,null,'Service to manually create a new State Land Property','General', 'slProperty'
+	WHERE NOT EXISTS (SELECT code FROM application.request_type WHERE code = 'recordStateLand');
+	
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'recordStateLand', 'Service - Record State Land','c', 'State Land Service. Allows the Record State Land service to be started.'
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'recordStateLand');
+
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) 
+    (SELECT 'recordStateLand', ag.id FROM system.appgroup ag WHERE ag."name" = 'Super group'
+	 AND NOT EXISTS (SELECT approle_code FROM system.approle_appgroup 
+	                 WHERE  approle_code = 'recordStateLand'
+					 AND    appgroup_id = ag.id));
 
 					 
 -- Add new role for the Measure tool

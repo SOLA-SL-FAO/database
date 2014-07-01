@@ -106,6 +106,7 @@ INSERT INTO panel_launcher_group (code, display_value, description, status) VALU
 INSERT INTO panel_launcher_group (code, display_value, description, status) VALUES ('newPropServices', 'New Property Services', 'Panels used for new property services', 'c');
 INSERT INTO panel_launcher_group (code, display_value, description, status) VALUES ('generalRRR', 'General RRR', 'Panels used for general RRRs', 'c');
 INSERT INTO panel_launcher_group (code, display_value, description, status) VALUES ('leaseRRR', 'Lease RRR', 'Panels used for Lease RRR', 'c');
+INSERT INTO panel_launcher_group (code, display_value, description, status) VALUES ('slPropertyServices', 'State Land Property Services', 'Panels used for State Land property services', 'c');
 
 
 ALTER TABLE panel_launcher_group ENABLE TRIGGER ALL;
@@ -129,6 +130,7 @@ INSERT INTO config_panel_launcher (code, display_value, description, status, lau
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('mortgage', 'Mortgage Panel', NULL, 'c', 'generalRRR', 'org.sola.clients.swing.desktop.administrative.MortgagePanel', NULL, 'mortgagePanel');
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('lease', 'Lease Panel', NULL, 'c', 'leaseRRR', 'org.sola.clients.swing.desktop.administrative.LeasePanel', NULL, 'leasePanel');
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('ownership', 'Ownership Share Panel', NULL, 'c', 'generalRRR', 'org.sola.clients.swing.desktop.administrative.OwnershipPanel', NULL, 'ownershipPanel');
+INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('slProperty', 'State Land Property Panel', NULL, 'c', 'propertyServices', 'org.sola.clients.swing.desktop.administrative.SLPropertyPanel', 'cliprgs009', 'slPropertyPanel');
 
 
 ALTER TABLE config_panel_launcher ENABLE TRIGGER ALL;

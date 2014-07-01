@@ -5080,7 +5080,7 @@ CREATE TABLE notation (
     id character varying(40) NOT NULL,
     ba_unit_id character varying(40),
     rrr_id character varying(40),
-    transaction_id character varying(40) NOT NULL,
+    transaction_id character varying(40),
     reference_nr character varying(15) NOT NULL,
     notation_text character varying(1000),
     notation_date timestamp without time zone,
@@ -5238,6 +5238,56 @@ ALTER TABLE administrative.notation_reference_nr_seq OWNER TO postgres;
 --
 
 COMMENT ON SEQUENCE notation_reference_nr_seq IS 'Sequence number used as the basis for the Notation Nr field. This sequence is used by the generate-notation-reference-nr business rule.';
+
+
+--
+-- Name: notation_status_type; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notation_status_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(500) NOT NULL,
+    description character varying(1000),
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE administrative.notation_status_type OWNER TO postgres;
+
+--
+-- Name: TABLE notation_status_type; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON TABLE notation_status_type IS 'Code list of notation status types. e.g. Action Required, Completed, On Hold, etc.
+Tags: FLOSS SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN notation_status_type.code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN notation_status_type.code IS 'The code for the notation status type.';
+
+
+--
+-- Name: COLUMN notation_status_type.display_value; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN notation_status_type.display_value IS 'Displayed value of the notation status type.';
+
+
+--
+-- Name: COLUMN notation_status_type.description; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN notation_status_type.description IS 'Description of the notation status type.';
+
+
+--
+-- Name: COLUMN notation_status_type.status; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN notation_status_type.status IS 'Status of the notation status type.';
 
 
 --
@@ -6014,6 +6064,98 @@ CREATE TABLE source_describes_ba_unit_historic (
 
 
 ALTER TABLE administrative.source_describes_ba_unit_historic OWNER TO postgres;
+
+--
+-- Name: source_describes_notation; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE source_describes_notation (
+    source_id character varying(40) NOT NULL,
+    notation_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE administrative.source_describes_notation OWNER TO postgres;
+
+--
+-- Name: TABLE source_describes_notation; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON TABLE source_describes_notation IS 'Associates a Notation with one or more source (a.k.a. document) records.
+Tags: FLOSS SOLA State Land Extension, Change History';
+
+
+--
+-- Name: COLUMN source_describes_notation.source_id; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_notation.source_id IS 'Identifier for the source associated with the Notation.';
+
+
+--
+-- Name: COLUMN source_describes_notation.notation_id; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_notation.notation_id IS 'Identifier for the Notation.';
+
+
+--
+-- Name: COLUMN source_describes_notation.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_notation.rowidentifier IS 'Identifies the all change records for the row in the source_describes_ba_unit_historic table';
+
+
+--
+-- Name: COLUMN source_describes_notation.rowversion; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_notation.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN source_describes_notation.change_action; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_notation.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN source_describes_notation.change_user; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_notation.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN source_describes_notation.change_time; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_notation.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: source_describes_notation_historic; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE source_describes_notation_historic (
+    source_id character varying(40) NOT NULL,
+    notation_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE administrative.source_describes_notation_historic OWNER TO postgres;
 
 --
 -- Name: source_describes_rrr; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
@@ -14834,6 +14976,22 @@ ALTER TABLE ONLY notation
 
 
 --
+-- Name: notation_status_type_display_value_unique; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notation_status_type
+    ADD CONSTRAINT notation_status_type_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: notation_status_type_pkey; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notation_status_type
+    ADD CONSTRAINT notation_status_type_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: party_for_rrr_pkey; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
@@ -14903,6 +15061,14 @@ ALTER TABLE ONLY rrr_type
 
 ALTER TABLE ONLY source_describes_ba_unit
     ADD CONSTRAINT source_describes_ba_unit_pkey PRIMARY KEY (source_id, ba_unit_id);
+
+
+--
+-- Name: source_describes_notation_pkey; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY source_describes_notation
+    ADD CONSTRAINT source_describes_notation_pkey PRIMARY KEY (source_id, notation_id);
 
 
 --
@@ -16591,6 +16757,13 @@ CREATE INDEX source_describes_ba_unit_index_on_rowidentifier ON source_describes
 --
 
 CREATE INDEX source_describes_ba_unit_source_id_fk51_ind ON source_describes_ba_unit USING btree (source_id);
+
+
+--
+-- Name: source_describes_notation_historic_rowidentifier_idx; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX source_describes_notation_historic_rowidentifier_idx ON source_describes_notation_historic USING btree (rowidentifier);
 
 
 --
@@ -18878,11 +19051,11 @@ ALTER TABLE ONLY notation
 
 
 --
--- Name: notation_status_code_fk74; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+-- Name: notation_status_code_fkey; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
 --
 
 ALTER TABLE ONLY notation
-    ADD CONSTRAINT notation_status_code_fk74 FOREIGN KEY (status_code) REFERENCES transaction.reg_status_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT notation_status_code_fkey FOREIGN KEY (status_code) REFERENCES notation_status_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
@@ -19019,6 +19192,22 @@ ALTER TABLE ONLY source_describes_ba_unit
 
 ALTER TABLE ONLY source_describes_ba_unit
     ADD CONSTRAINT source_describes_ba_unit_source_id_fk51 FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: source_describes_notation_notation_id_fkey; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE ONLY source_describes_notation
+    ADD CONSTRAINT source_describes_notation_notation_id_fkey FOREIGN KEY (notation_id) REFERENCES notation(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: source_describes_notation_source_id_fkey; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE ONLY source_describes_notation
+    ADD CONSTRAINT source_describes_notation_source_id_fkey FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
