@@ -131,7 +131,7 @@ SELECT 'slPropertyServices', 'State Land Property Services', 'Panels used for St
 WHERE NOT EXISTS (SELECT code FROM system.panel_launcher_group WHERE code = 'slPropertyServices');
 
 INSERT INTO system.config_panel_launcher(code, display_value, description, status, launch_group, panel_class, message_code, card_name)
-SELECT 'slProperty', 'State Land Property Panel', null, 'c', 'propertyServices', 'org.sola.clients.swing.desktop.administrative.SLPropertyPanel', 'cliprgs009', 'slPropertyPanel'
+SELECT 'slProperty', 'State Land Property Panel', null, 'c', 'newPropServices', 'org.sola.clients.swing.desktop.administrative.SLPropertyPanel', 'cliprgs009', 'slPropertyPanel'
 WHERE NOT EXISTS (SELECT code FROM system.config_panel_launcher WHERE code = 'slProperty');
 
 INSERT INTO application.request_category_type (code, display_value, description, status)
