@@ -79,7 +79,7 @@ INSERT INTO notation_status_type (code, display_value, description, status) VALU
 INSERT INTO notation_status_type (code, display_value, description, status) VALUES ('onHold', 'On Hold', 'No action or activity is required in relation to the notation for the timebeing.', 'c');
 INSERT INTO notation_status_type (code, display_value, description, status) VALUES ('actionReqdUrgent', 'Urgent Action Required', 'Urgent activities or actions are required in relation to the property.', 'c');
 INSERT INTO notation_status_type (code, display_value, description, status) VALUES ('general', 'General', 'The notation is a general note and no activity or action is necessary.', 'c');
-INSERT INTO notation_status_type (code, display_value, description, status) VALUES ('pending', 'Pending', 'TEMPORARY TO BE REMOVED!', 'c');
+INSERT INTO notation_status_type (code, display_value, description, status) VALUES ('pending', 'Pending', 'Included to support generic SOLA functionality. Status set to x so this value is not displayed to the user for selection.', 'x');
 
 
 ALTER TABLE notation_status_type ENABLE TRIGGER ALL;
@@ -218,6 +218,7 @@ INSERT INTO request_type (code, request_category_code, display_value, descriptio
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('cnclPowerOfAttorney', 'registrationServices', 'Cancel Power of Attorney::::Нотариальная доверенность::::الغاء التوكيل::::Annuller Procuration', '...::::...::::...::::...', 'x', 1, 5.00, 0.00, 0.00, 0, NULL, NULL, 'cancel', 'Documents', 'documentTrans');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('surveyPlanCopy', 'informationServices', 'Survey Plan Copy::::Копия кадастрового плана::::نسخة خطة مساحة::::Copie Plan de Levé', '...::::...::::...::::...', 'x', 1, 1.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'Survey', 'documentSearch');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('documentCopy', 'informationServices', 'Document Copy::::Копия документа::::نسخ وثيقة::::Copie Document', '...::::...::::...::::...', 'x', 1, 0.50, 0.00, 0.00, 0, NULL, NULL, NULL, 'Documents', 'documentSearch');
+INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('recordStateLand', 'stateLandServices', 'Record State Land', 'Service to manually create a new State Land Property', 'x', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'slProperty');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('cadastrePrint', 'informationServices', 'Cadastre Print::::Печать кадастровых данных::::اطبع المساحة::::Imprimer Cadastre', '...::::...::::...::::...', 'x', 1, 0.50, 0.00, 0.00, 0, NULL, NULL, NULL, 'Supporting', 'map');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('serviceEnquiry', 'informationServices', 'Service Enquiry::::Запрос информации о заявлении::::طلب معلومات::::Service Enquête', '...::::...::::...::::...', 'x', 1, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'Supporting', 'applicationSearch');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('cadastreChange', 'registrationServices', 'Change to Cadastre::::Изменение кадастра::::تغيير المساحة::::Modification du Cadastre', '...::::...::::...::::...', 'x', 30, 25.00, 0.10, 0.00, 1, NULL, NULL, NULL, 'Survey', 'cadastreTransMap');
@@ -254,7 +255,6 @@ INSERT INTO request_type (code, request_category_code, display_value, descriptio
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('varyLease', 'registrationServices', 'Vary Lease::::Изменить право пользования::::تعديل الايجار::::Varier Bail', '...::::...::::...::::...', 'x', 5, 5.00, 0.00, 0.00, 1, 'Variation of Lease <reference>', 'lease', 'vary', 'Lease', 'property');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('removeRestriction', 'registrationServices', 'Remove Restriction (General)::::Снять ограничение::::ازالة قيد::::Supprimer Restriction (Général)', '...::::...::::...::::...', 'x', 5, 5.00, 0.00, 0.00, 1, '<restriction> <reference> cancelled', NULL, 'cancel', 'General Registration', 'property');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('newDigitalProperty', 'registrationServices', 'New Digital Property::::Регистрация существующего права собственности::::أنشاء سند الكتروني جديد::::Nouvelle Propriété Numérique', '...::::...::::...::::...', 'x', 5, 0.00, 0.00, 0.00, 1, NULL, NULL, NULL, 'General Registration', 'property');
-INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('recordStateLand', 'stateLandServices', 'Record State Land', 'Service to manually create a new State Land Property', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'slProperty');
 
 
 ALTER TABLE request_type ENABLE TRIGGER ALL;
@@ -323,8 +323,9 @@ ALTER TABLE building_unit_type ENABLE TRIGGER ALL;
 ALTER TABLE cadastre_object_type DISABLE TRIGGER ALL;
 
 INSERT INTO cadastre_object_type (code, display_value, description, status, in_topology) VALUES ('parcel', 'Parcel::::Участок::::قطعة::::Parcelle', '', 'c', true);
-INSERT INTO cadastre_object_type (code, display_value, description, status, in_topology) VALUES ('buildingUnit', 'Building Unit::::Единица Здания::::وحدة بناية::::Bâtiment', '', 'c', false);
-INSERT INTO cadastre_object_type (code, display_value, description, status, in_topology) VALUES ('utilityNetwork', 'Utility Network::::Инфраструктурная Сеть::::شبكة خدمات::::Réseaux de services publics', '', 'c', false);
+INSERT INTO cadastre_object_type (code, display_value, description, status, in_topology) VALUES ('buildingUnit', 'Building Unit::::Единица Здания::::وحدة بناية::::Bâtiment', '', 'x', false);
+INSERT INTO cadastre_object_type (code, display_value, description, status, in_topology) VALUES ('utilityNetwork', 'Utility Network::::Инфраструктурная Сеть::::شبكة خدمات::::Réseaux de services publics', '', 'x', false);
+INSERT INTO cadastre_object_type (code, display_value, description, status, in_topology) VALUES ('stateLand', 'State Land Parcel', NULL, 'c', false);
 
 
 ALTER TABLE cadastre_object_type ENABLE TRIGGER ALL;
@@ -369,6 +370,21 @@ INSERT INTO land_use_type (code, display_value, description, status) VALUES ('co
 INSERT INTO land_use_type (code, display_value, description, status) VALUES ('residential', 'Residential::::Жилая::::سكني::::Résidentiel', '', 'c');
 INSERT INTO land_use_type (code, display_value, description, status) VALUES ('industrial', 'Industrial::::Производственная::::صناعي::::Industriel', '', 'c');
 INSERT INTO land_use_type (code, display_value, description, status) VALUES ('agricultural', 'Agricultural::::Сельскохозяйственная::::زراعي::::Agricole', '', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('road', 'Road', 'The land is used for roading.', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('school', 'School', 'The land is part of a school site.', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('riverBed', 'River bed', 'The land is part of a river bed.', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('park', 'Park or Playground', 'The land is used for a local park, playground or local reserve.', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('regionalPark', 'Regional Park', 'The land is used for a regional park.', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('nationalPark', 'National Park', 'The land is used for a national park.', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('seabed', 'Seabed', 'The land is seabed.', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('greenZone', 'Green Zone', 'The land is designated as a green zone between developed and less developed or undeveloped areas.', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('accessway', 'Accessway', 'The land is used for public access', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('building', 'Building', 'The land is used for a public or commerical building', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('mining', 'Mining', 'The land is used for a mine', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('marineReserve', 'Marine Reserve', 'The land is used for a marine reserve', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('hospital', 'Hospital', 'The land is part of a hospital', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('forestry', 'Forestry', 'The land is part of a forest', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('pastoral', 'Pastoral', 'The land is pastoral land', 'c');
 
 
 ALTER TABLE land_use_type ENABLE TRIGGER ALL;
@@ -407,6 +423,21 @@ INSERT INTO register_type (code, display_value, description, status) VALUES ('ur
 
 
 ALTER TABLE register_type ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: state_land_status_type; Type: TABLE DATA; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE state_land_status_type DISABLE TRIGGER ALL;
+
+INSERT INTO state_land_status_type (code, display_value, description, status) VALUES ('proposed', 'Proposed', 'The land has been nominated for aquisition by the state.', 'c');
+INSERT INTO state_land_status_type (code, display_value, description, status) VALUES ('current', 'Current', 'The state is currently responsible for managing or maintaining the land', 'c');
+INSERT INTO state_land_status_type (code, display_value, description, status) VALUES ('dormant', 'Dormant', 'The land is not being used for any purpose (e.g. it has been land banked)', 'c');
+INSERT INTO state_land_status_type (code, display_value, description, status) VALUES ('surplus', 'Surplus', 'The land is no longer required by the state and can be disposed of.', 'c');
+INSERT INTO state_land_status_type (code, display_value, description, status) VALUES ('disposed', 'Disposed', 'The land has been disposed of and is no longer the responsiblity of the state.', 'c');
+
+
+ALTER TABLE state_land_status_type ENABLE TRIGGER ALL;
 
 --
 -- Data for Name: structure_type; Type: TABLE DATA; Schema: cadastre; Owner: postgres

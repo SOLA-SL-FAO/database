@@ -4139,11 +4139,13 @@ CREATE TABLE ba_unit (
     expiration_date timestamp without time zone,
     status_code character varying(20) DEFAULT 'pending'::character varying NOT NULL,
     transaction_id character varying(40),
+	description text,
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
     change_user character varying(50),
     change_time timestamp without time zone DEFAULT now() NOT NULL
+    
 );
 
 
@@ -4253,6 +4255,13 @@ COMMENT ON COLUMN ba_unit.change_user IS 'SOLA Extension: The user id of the las
 --
 
 COMMENT ON COLUMN ba_unit.change_time IS 'SOLA Extension: The date and time the row was last modified.';
+
+
+--
+-- Name: COLUMN ba_unit.description; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN ba_unit.description IS 'SOLA State Land Extension: A summary description for the SL property';
 
 
 --
@@ -4527,6 +4536,7 @@ CREATE TABLE ba_unit_historic (
     expiration_date timestamp without time zone,
     status_code character varying(20),
     transaction_id character varying(40),
+	description text,
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
@@ -5082,7 +5092,7 @@ CREATE TABLE notation (
     rrr_id character varying(40),
     transaction_id character varying(40),
     reference_nr character varying(15) NOT NULL,
-    notation_text character varying(1000),
+    notation_text text,
     notation_date timestamp without time zone,
     status_code character varying(20) DEFAULT 'pending'::character varying NOT NULL,
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
@@ -5204,7 +5214,7 @@ CREATE TABLE notation_historic (
     rrr_id character varying(40),
     transaction_id character varying(40),
     reference_nr character varying(15),
-    notation_text character varying(1000),
+    notation_text text,
     notation_date timestamp without time zone,
     status_code character varying(20),
     rowidentifier character varying(40),
@@ -6249,6 +6259,28 @@ CREATE TABLE source_describes_rrr_historic (
 
 ALTER TABLE administrative.source_describes_rrr_historic OWNER TO postgres;
 
+--
+-- Name: state_land_num_seq; Type: SEQUENCE; Schema: administrative; Owner: postgres
+--
+
+CREATE SEQUENCE state_land_num_seq
+    START WITH 1000
+    INCREMENT BY 1
+    NO MINVALUE
+    MAXVALUE 999999
+    CACHE 1
+    CYCLE;
+
+
+ALTER TABLE administrative.state_land_num_seq OWNER TO postgres;
+
+--
+-- Name: SEQUENCE state_land_num_seq; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON SEQUENCE state_land_num_seq IS 'Sequence number used as the basis for the State Land BA Units. This sequence is used by the generate-baunit-nr business rule.';
+
+
 SET search_path = application, pg_catalog;
 
 --
@@ -6596,6 +6628,8 @@ CREATE TABLE cadastre_object (
     geom_polygon public.geometry,
     transaction_id character varying(40) NOT NULL,
     land_use_code character varying(255) DEFAULT 'residential'::character varying,
+	state_land_status_code character varying(20),
+	description text,
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
@@ -6735,6 +6769,20 @@ COMMENT ON COLUMN cadastre_object.change_user IS 'The user id of the last person
 --
 
 COMMENT ON COLUMN cadastre_object.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: COLUMN cadastre_object.description; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.description IS 'SOLA State Land Extension: A description of any buildings or structures erected on the parcel that may be relevant for maintence of the property.';
+
+
+--
+-- Name: COLUMN cadastre_object.state_land_status_code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.state_land_status_code IS 'SOLA State Land Extension: Identifies the status of the land in relation to the state.';
 
 
 --
@@ -8391,12 +8439,15 @@ CREATE TABLE cadastre_object_historic (
     geom_polygon public.geometry,
     transaction_id character varying(40),
     land_use_code character varying(255),
+    state_land_status_code character varying(20),
+	description text,
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
     change_user character varying(50),
     change_time timestamp without time zone,
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
+
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 2193)),
@@ -9753,6 +9804,56 @@ CREATE TABLE spatial_value_area_historic (
 
 
 ALTER TABLE cadastre.spatial_value_area_historic OWNER TO postgres;
+
+--
+-- Name: state_land_status_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE state_land_status_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(500) NOT NULL,
+    description character varying(1000),
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE cadastre.state_land_status_type OWNER TO postgres;
+
+--
+-- Name: TABLE state_land_status_type; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON TABLE state_land_status_type IS 'Code list of status types applicable to state land parcels. e.g. Proposed, Current, Dormant, Surplus, Disposed, etc.
+Tags: FLOSS SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN state_land_status_type.code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN state_land_status_type.code IS 'The code for the state land status type.';
+
+
+--
+-- Name: COLUMN state_land_status_type.display_value; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN state_land_status_type.display_value IS 'Displayed value of the state land status type.';
+
+
+--
+-- Name: COLUMN state_land_status_type.description; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN state_land_status_type.description IS 'Description of the state land status type.';
+
+
+--
+-- Name: COLUMN state_land_status_type.status; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN state_land_status_type.status IS 'Status of the state land status type.';
+
 
 --
 -- Name: structure_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
@@ -15486,6 +15587,22 @@ ALTER TABLE ONLY spatial_value_area
 
 
 --
+-- Name: state_land_status_type_display_value_unique; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY state_land_status_type
+    ADD CONSTRAINT state_land_status_type_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: state_land_status_type_pkey; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY state_land_status_type
+    ADD CONSTRAINT state_land_status_type_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: structure_type_display_value_unique; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
 --
 
@@ -19462,6 +19579,14 @@ ALTER TABLE ONLY cadastre_object
 
 ALTER TABLE ONLY cadastre_object_node_target
     ADD CONSTRAINT cadastre_object_node_target_transaction_id_fk102 FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: cadastre_object_state_land_status_code_fkey; Type: FK CONSTRAINT; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE ONLY cadastre_object
+    ADD CONSTRAINT cadastre_object_state_land_status_code_fkey FOREIGN KEY (state_land_status_code) REFERENCES state_land_status_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --

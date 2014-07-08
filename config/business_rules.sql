@@ -127,8 +127,6 @@ ALTER TABLE br_definition DISABLE TRIGGER ALL;
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-notation-reference-nr', '2014-02-20', 'infinity', 'SELECT coalesce(system.get_setting(''system-id''), '''') || to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''administrative.rrr_nr_seq''), ''0000'')) AS vl');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-rrr-nr', '2014-02-20', 'infinity', 'SELECT coalesce(system.get_setting(''system-id''), '''') || to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''administrative.rrr_nr_seq''), ''0000'')) AS vl');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-source-nr', '2014-02-20', 'infinity', 'SELECT coalesce(system.get_setting(''system-id''), '''') || to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''source.source_la_nr_seq''), ''000000000'')) AS vl');
-INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-baunit-nr', '2014-02-20', 'infinity', 'SELECT coalesce(system.get_setting(''system-id''), '''') || to_char(now(), ''yymm'') || trim(to_char(nextval(''administrative.ba_unit_first_name_part_seq''), ''0000''))
-|| ''/'' || trim(to_char(nextval(''administrative.ba_unit_last_name_part_seq''), ''0000'')) AS vl');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-cadastre-object-lastpart', '2014-02-20', 'infinity', 'SELECT cadastre.get_new_cadastre_object_identifier_last_part(#{geom}, #{cadastre_object_type}) AS vl');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-cadastre-object-firstpart', '2014-02-20', 'infinity', 'SELECT cadastre.get_new_cadastre_object_identifier_first_part(#{last_part}, #{cadastre_object_type}) AS vl');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-spatial-unit-group-name', '2014-02-20', 'infinity', 'SELECT cadastre.generate_spatial_unit_group_name(get_geometry_with_srid(#{geom_v}), #{hierarchy_level_v}, #{label_v}) AS vl');
@@ -978,6 +976,10 @@ from consolidation.config config)
 select count(*)=0 as vl from def_of_tables where source_def != target_def
 ');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-claim-nr', '2014-02-20', 'infinity', 'SELECT coalesce(system.get_setting(''system-id''), '''') || to_char(now(), ''yymm'') || trim(to_char(nextval(''opentenure.claim_nr_seq''), ''0000'')) AS vl');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-baunit-nr', '2014-02-20', 'infinity', 'SELECT CASE WHEN #{typeCode} = ''stateLand'' THEN ''SL/'' || trim(to_char(nextval(''administrative.state_land_num_seq''), ''000000''))
+        ELSE coalesce(system.get_setting(''system-id''), '''') || to_char(now(), ''yymm'') 
+        || trim(to_char(nextval(''administrative.ba_unit_first_name_part_seq''), ''0000''))
+        || ''/'' || trim(to_char(nextval(''administrative.ba_unit_last_name_part_seq''), ''0000'')) END AS vl');
 
 
 ALTER TABLE br_definition ENABLE TRIGGER ALL;
