@@ -4139,13 +4139,12 @@ CREATE TABLE ba_unit (
     expiration_date timestamp without time zone,
     status_code character varying(20) DEFAULT 'pending'::character varying NOT NULL,
     transaction_id character varying(40),
-	description text,
+    description text,
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
     change_user character varying(50),
     change_time timestamp without time zone DEFAULT now() NOT NULL
-    
 );
 
 
@@ -4223,6 +4222,13 @@ COMMENT ON COLUMN ba_unit.transaction_id IS 'SOLA Extension: Reference to the SO
 
 
 --
+-- Name: COLUMN ba_unit.description; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN ba_unit.description IS 'SOLA State Land Extension: A summary description for the SL property';
+
+
+--
 -- Name: COLUMN ba_unit.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
@@ -4255,13 +4261,6 @@ COMMENT ON COLUMN ba_unit.change_user IS 'SOLA Extension: The user id of the las
 --
 
 COMMENT ON COLUMN ba_unit.change_time IS 'SOLA Extension: The date and time the row was last modified.';
-
-
---
--- Name: COLUMN ba_unit.description; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN ba_unit.description IS 'SOLA State Land Extension: A summary description for the SL property';
 
 
 --
@@ -4505,7 +4504,7 @@ ALTER TABLE administrative.ba_unit_contains_spatial_unit_historic OWNER TO postg
 --
 
 CREATE SEQUENCE ba_unit_first_name_part_seq
-    START WITH 1
+    START WITH 10
     INCREMENT BY 1
     NO MINVALUE
     MAXVALUE 9999
@@ -4536,7 +4535,7 @@ CREATE TABLE ba_unit_historic (
     expiration_date timestamp without time zone,
     status_code character varying(20),
     transaction_id character varying(40),
-	description text,
+    description text,
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
@@ -4553,7 +4552,7 @@ ALTER TABLE administrative.ba_unit_historic OWNER TO postgres;
 --
 
 CREATE SEQUENCE ba_unit_last_name_part_seq
-    START WITH 1
+    START WITH 10
     INCREMENT BY 1
     NO MINVALUE
     MAXVALUE 9999
@@ -4770,14 +4769,16 @@ CREATE TABLE condition_for_rrr (
     id character varying(40) NOT NULL,
     rrr_id character varying(40) NOT NULL,
     condition_code character varying(20),
-    custom_condition_text character varying(500),
+    custom_condition_text text,
     condition_quantity integer,
     condition_unit character varying(15),
+	custom_condition_name character varying(500), 
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
     change_user character varying(50),
     change_time timestamp without time zone DEFAULT now() NOT NULL
+
 );
 
 
@@ -4869,6 +4870,13 @@ COMMENT ON COLUMN condition_for_rrr.change_time IS 'The date and time the row wa
 
 
 --
+-- Name: COLUMN condition_for_rrr.custom_condition_name; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN condition_for_rrr.custom_condition_name IS 'SOLA State Land Extension: The name for the custom lease or license condition';
+
+
+--
 -- Name: condition_for_rrr_historic; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
@@ -4876,15 +4884,17 @@ CREATE TABLE condition_for_rrr_historic (
     id character varying(40),
     rrr_id character varying(40),
     condition_code character varying(20),
-    custom_condition_text character varying(500),
+    custom_condition_text text,
     condition_quantity integer,
     condition_unit character varying(15),
+	custom_condition_name character varying(500), 
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
     change_user character varying(50),
     change_time timestamp without time zone,
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+
 );
 
 
@@ -4897,7 +4907,7 @@ ALTER TABLE administrative.condition_for_rrr_historic OWNER TO postgres;
 CREATE TABLE condition_type (
     code character varying(20) NOT NULL,
     display_value character varying(500) NOT NULL,
-    description character varying(10000) NOT NULL,
+    description text NOT NULL,
     status character(1) NOT NULL
 );
 
@@ -5233,7 +5243,7 @@ ALTER TABLE administrative.notation_historic OWNER TO postgres;
 --
 
 CREATE SEQUENCE notation_reference_nr_seq
-    START WITH 1
+    START WITH 10
     INCREMENT BY 1
     NO MINVALUE
     MAXVALUE 9999
@@ -5522,11 +5532,12 @@ CREATE TABLE rrr (
     mortgage_interest_rate numeric(5,2),
     mortgage_ranking integer,
     mortgage_type_code character varying(20),
+	sub_type_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
     change_user character varying(50),
-    change_time timestamp without time zone DEFAULT now() NOT NULL
+    change_time timestamp without time zone DEFAULT now() NOT NULL  
 );
 
 
@@ -5681,6 +5692,13 @@ COMMENT ON COLUMN rrr.change_time IS 'SOLA Extension: The date and time the row 
 
 
 --
+-- Name: COLUMN rrr.sub_type_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr.sub_type_code IS 'SOLA State Land Extension: The sub type of the RRR.';
+
+
+--
 -- Name: rrr_group_type; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
@@ -5750,6 +5768,7 @@ CREATE TABLE rrr_historic (
     mortgage_interest_rate numeric(5,2),
     mortgage_ranking integer,
     mortgage_type_code character varying(20),
+    sub_type_code character varying(20), 
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
@@ -5766,7 +5785,7 @@ ALTER TABLE administrative.rrr_historic OWNER TO postgres;
 --
 
 CREATE SEQUENCE rrr_nr_seq
-    START WITH 1
+    START WITH 10
     INCREMENT BY 1
     NO MINVALUE
     MAXVALUE 9999
@@ -5892,6 +5911,64 @@ CREATE TABLE rrr_share_historic (
 
 
 ALTER TABLE administrative.rrr_share_historic OWNER TO postgres;
+
+--
+-- Name: rrr_sub_type; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE rrr_sub_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(500) NOT NULL,
+    description character varying(1000),
+    status character(1) NOT NULL,
+    rrr_type_code character varying(20) NOT NULL
+);
+
+
+ALTER TABLE administrative.rrr_sub_type OWNER TO postgres;
+
+--
+-- Name: TABLE rrr_sub_type; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON TABLE rrr_sub_type IS 'Code list of the RRR sub types. Each subtype is associated to a specific RRR identified by rrr_type.
+Tags: FLOSS SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN rrr_sub_type.code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr_sub_type.code IS 'The code for the sub type.';
+
+
+--
+-- Name: COLUMN rrr_sub_type.display_value; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr_sub_type.display_value IS 'Displayed value of the sub type.';
+
+
+--
+-- Name: COLUMN rrr_sub_type.description; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr_sub_type.description IS 'Description of the sub type.';
+
+
+--
+-- Name: COLUMN rrr_sub_type.status; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr_sub_type.status IS 'Status of the sub type.';
+
+
+--
+-- Name: COLUMN rrr_sub_type.rrr_type_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr_sub_type.rrr_type_code IS 'The RRRR type the sub type is associated to.';
+
 
 --
 -- Name: rrr_type; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
@@ -6264,7 +6341,7 @@ ALTER TABLE administrative.source_describes_rrr_historic OWNER TO postgres;
 --
 
 CREATE SEQUENCE state_land_num_seq
-    START WITH 1000
+    START WITH 1010
     INCREMENT BY 1
     NO MINVALUE
     MAXVALUE 999999
@@ -6628,8 +6705,8 @@ CREATE TABLE cadastre_object (
     geom_polygon public.geometry,
     transaction_id character varying(40) NOT NULL,
     land_use_code character varying(255) DEFAULT 'residential'::character varying,
-	state_land_status_code character varying(20),
-	description text,
+    state_land_status_code character varying(20),
+    description text,
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
@@ -6737,6 +6814,20 @@ COMMENT ON COLUMN cadastre_object.land_use_code IS 'Code to indicate the general
 
 
 --
+-- Name: COLUMN cadastre_object.state_land_status_code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.state_land_status_code IS 'SOLA State Land Extension: Identifies the status of the land in relation to the state.';
+
+
+--
+-- Name: COLUMN cadastre_object.description; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.description IS 'SOLA State Land Extension: A description of any buildings or structures erected on the parcel that may be relevant for maintence of the property.';
+
+
+--
 -- Name: COLUMN cadastre_object.rowidentifier; Type: COMMENT; Schema: cadastre; Owner: postgres
 --
 
@@ -6769,20 +6860,6 @@ COMMENT ON COLUMN cadastre_object.change_user IS 'The user id of the last person
 --
 
 COMMENT ON COLUMN cadastre_object.change_time IS 'The date and time the row was last modified.';
-
-
---
--- Name: COLUMN cadastre_object.description; Type: COMMENT; Schema: cadastre; Owner: postgres
---
-
-COMMENT ON COLUMN cadastre_object.description IS 'SOLA State Land Extension: A description of any buildings or structures erected on the parcel that may be relevant for maintence of the property.';
-
-
---
--- Name: COLUMN cadastre_object.state_land_status_code; Type: COMMENT; Schema: cadastre; Owner: postgres
---
-
-COMMENT ON COLUMN cadastre_object.state_land_status_code IS 'SOLA State Land Extension: Identifies the status of the land in relation to the state.';
 
 
 --
@@ -7380,7 +7457,7 @@ ALTER TABLE application.application_historic OWNER TO postgres;
 --
 
 CREATE SEQUENCE application_nr_seq
-    START WITH 1
+    START WITH 10
     INCREMENT BY 1
     NO MINVALUE
     MAXVALUE 9999
@@ -8440,14 +8517,13 @@ CREATE TABLE cadastre_object_historic (
     transaction_id character varying(40),
     land_use_code character varying(255),
     state_land_status_code character varying(20),
-	description text,
+    description text,
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
     change_user character varying(50),
     change_time timestamp without time zone,
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
-
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 2193)),
@@ -15141,6 +15217,22 @@ ALTER TABLE ONLY rrr_share
 
 
 --
+-- Name: rrr_sub_type_display_value_unique; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY rrr_sub_type
+    ADD CONSTRAINT rrr_sub_type_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: rrr_sub_type_pkey; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY rrr_sub_type
+    ADD CONSTRAINT rrr_sub_type_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: rrr_type_display_value_unique; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
@@ -19248,6 +19340,14 @@ ALTER TABLE ONLY rrr
 
 
 --
+-- Name: rrr_rrr_sub_type_fkey; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE ONLY rrr
+    ADD CONSTRAINT rrr_rrr_sub_type_fkey FOREIGN KEY (sub_type_code) REFERENCES rrr_sub_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
 -- Name: rrr_share_rrr_id_fk79; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
 --
 
@@ -19261,6 +19361,14 @@ ALTER TABLE ONLY rrr_share
 
 ALTER TABLE ONLY rrr
     ADD CONSTRAINT rrr_status_code_fk43 FOREIGN KEY (status_code) REFERENCES transaction.reg_status_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: rrr_sub_type_rrr_type_fkey; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE ONLY rrr_sub_type
+    ADD CONSTRAINT rrr_sub_type_rrr_type_fkey FOREIGN KEY (rrr_type_code) REFERENCES rrr_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --

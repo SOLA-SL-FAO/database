@@ -188,7 +188,8 @@ SELECT 'stateLandServices', 'State Land Services', 'Services used to support sta
 (SELECT code FROM application.request_category_type);
 
 -- Default existing request types (a.k.a. service types) to disabled
-UPDATE application.request_type SET status = 'x';
+UPDATE application.request_type SET status = 'x'
+WHERE code NOT IN ('recordStateLand');
 
 INSERT INTO application.request_type(code, request_category_code, display_value, 
             status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
@@ -256,23 +257,23 @@ COMMENT ON COLUMN cadastre.state_land_status_type.status IS 'Status of the state
 
 INSERT INTO cadastre.state_land_status_type(code, display_value, status, description)
 SELECT 'proposed', 'Proposed', 'c', 'The land has been nominated for aquisition by the state.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'proposed'); 
+WHERE NOT EXISTS (SELECT code FROM cadastre.state_land_status_type WHERE code = 'proposed'); 
 
 INSERT INTO cadastre.state_land_status_type(code, display_value, status, description)
 SELECT 'current', 'Current', 'c', 'The state is currently responsible for managing or maintaining the land'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'current'); 
+WHERE NOT EXISTS (SELECT code FROM cadastre.state_land_status_type WHERE code = 'current'); 
 
 INSERT INTO cadastre.state_land_status_type(code, display_value, status, description)
 SELECT 'dormant', 'Dormant', 'c', 'The land is not being used for any purpose (e.g. it has been land banked)'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'dormant');
+WHERE NOT EXISTS (SELECT code FROM cadastre.state_land_status_type WHERE code = 'dormant');
 
 INSERT INTO cadastre.state_land_status_type(code, display_value, status, description)
 SELECT 'surplus', 'Surplus', 'c', 'The land is no longer required by the state and can be disposed of.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'surplus');
+WHERE NOT EXISTS (SELECT code FROM cadastre.state_land_status_type WHERE code = 'surplus');
 
 INSERT INTO cadastre.state_land_status_type(code, display_value, status, description)
 SELECT 'disposed', 'Disposed', 'c', 'The land has been disposed of and is no longer the responsiblity of the state.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'disposed');
+WHERE NOT EXISTS (SELECT code FROM cadastre.state_land_status_type WHERE code = 'disposed');
 
 
 ALTER TABLE cadastre.cadastre_object
@@ -300,63 +301,63 @@ ALTER TABLE cadastre.cadastre_object
 -- Add New Land Use Types and update existing values
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'road', 'Road', 'c', 'The land is used for roading.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'road');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'road');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'school', 'School', 'c', 'The land is part of a school site.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'school');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'school');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'riverBed', 'River bed', 'c', 'The land is part of a river bed.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'riverBed');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'riverBed');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'park', 'Park or Playground', 'c', 'The land is used for a local park, playground or local reserve.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'park');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'park');
   
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'regionalPark', 'Regional Park', 'c', 'The land is used for a regional park.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'regionalPark');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'regionalPark');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'nationalPark', 'National Park', 'c', 'The land is used for a national park.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'nationalPark');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'nationalPark');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'seabed', 'Seabed', 'c', 'The land is seabed.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'seabed');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'seabed');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'greenZone', 'Green Zone', 'c', 'The land is designated as a green zone between developed and less developed or undeveloped areas.'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'greenZone');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'greenZone');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'accessway', 'Accessway', 'c', 'The land is used for public access'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'accessway');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'accessway');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'building', 'Building', 'c', 'The land is used for a public or commerical building'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'building');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'building');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'mining', 'Mining', 'c', 'The land is used for a mine'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'mining');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'mining');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'marineReserve', 'Marine Reserve', 'c', 'The land is used for a marine reserve'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'marineReserve');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'marineReserve');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'hospital', 'Hospital', 'c', 'The land is part of a hospital'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'hospital');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'hospital');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'forestry', 'Forestry', 'c', 'The land is part of a forest'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'forestry');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'forestry');
 
 INSERT INTO cadastre.land_use_type(code, display_value, status, description)
 SELECT 'pastoral', 'Pastoral', 'c', 'The land is pastoral land'
-WHERE NOT EXISTS (SELECT code FROM administrative.notation_status_type WHERE code = 'pastoral');
+WHERE NOT EXISTS (SELECT code FROM cadastre.land_use_type WHERE code = 'pastoral');
   
 -- Add new role for the Measure tool
 INSERT INTO system.approle (code, display_value, status, description)

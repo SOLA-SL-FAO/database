@@ -220,6 +220,13 @@ FROM application.application_uses_source a_s
 	INNER JOIN source.source s ON (a_s.source_id= s.id)
 WHERE a_s.application_id = #{id}
 AND s.type_code = ''title''');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('application-br5-check-there-are-front-desk-services', '2014-02-20', 'infinity', 'SELECT CASE WHEN (COUNT(*)= 0) THEN NULL
+	ELSE FALSE 
+	end AS vl
+FROM application.service
+WHERE application_id = #{id} 
+AND action_code != ''cancel''
+AND request_type_code IN (''serviceEnquiry'', ''documentCopy'', ''cadastrePrint'', ''surveyPlanCopy'', ''titleSearch'')');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('applicant-name-to-owner-name-check', '2014-02-20', 'infinity', 'WITH apStr AS (SELECT  COALESCE(name, '''') || '' '' || COALESCE(last_name, '''') AS searchStr FROM party.party pty
 		INNER JOIN application.application ap ON (ap.contact_person_id = pty.id)
 		WHERE ap.id = #{id}),
@@ -354,13 +361,6 @@ SELECT CASE WHEN fhCheck IS TRUE THEN (SELECT COUNT(liveTitle) FROM parent_title
 		ELSE NULL
 	END AS vl FROM newFreeholdApp
 ');
-INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('application-br5-check-there-are-front-desk-services', '2014-02-20', 'infinity', 'SELECT CASE WHEN (COUNT(*)= 0) THEN NULL
-	ELSE FALSE 
-	end AS vl
-FROM application.service
-WHERE application_id = #{id} 
-AND action_code != ''cancel''
-AND request_type_code IN (''serviceEnquiry'', ''documentCopy'', ''cadastrePrint'', ''surveyPlanCopy'', ''titleSearch'')');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('application-for-new-title-has-cancel-property-service', '2014-02-20', 'infinity', '
 WITH 	newFreeholdApp	AS	(SELECT (SUM(1) > 0) AS fhCheck FROM application.service se
 				WHERE se.application_id = #{id}
@@ -482,6 +482,10 @@ INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('rrr-
 from administrative.rrr rrr1 inner join administrative.rrr rrr2 on (rrr1.ba_unit_id, rrr1.nr) = (rrr2.ba_unit_id, rrr2.nr)
 where rrr1.id = #{id} and rrr2.id!=rrr1.id and rrr2.status_code = ''pending''
 ');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('rrr-shares-total-check', '2014-02-20', 'infinity', 'SELECT (SUM(nominator::DECIMAL/denominator::DECIMAL)*10000)::INT = 10000  AS vl
+FROM   administrative.rrr_share 
+WHERE  rrr_id = #{id}
+AND    denominator != 0');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('application-baunit-check-area', '2014-02-20', 'infinity', 'select
        ( 
          select coalesce(cast(sum(a.size)as float),0)
@@ -771,10 +775,6 @@ INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('rrr-
 from administrative.rrr r
 where r.id= #{id} and type_code in (select code from administrative.rrr_type where party_required)
 and (select count(*) from administrative.party_for_rrr where rrr_id= r.id) = 0');
-INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('rrr-shares-total-check', '2014-02-20', 'infinity', 'SELECT (SUM(nominator::DECIMAL/denominator::DECIMAL)*10000)::INT = 10000  AS vl
-FROM   administrative.rrr_share 
-WHERE  rrr_id = #{id}
-AND    denominator != 0');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('ba_unit-has-caveat', '2014-02-20', 'infinity', 'WITH caveatCheck AS	(SELECT COUNT(*) AS present FROM administrative.rrr rr2 
 				 INNER JOIN administrative.ba_unit ba ON (rr2.ba_unit_id = ba.id)
 				 INNER JOIN administrative.rrr rr1 ON ((ba.id = rr1.ba_unit_id) AND (rr1.type_code = ''caveat'') AND (rr1.status_code IN (''pending'', ''current'')))

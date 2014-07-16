@@ -141,6 +141,8 @@ INSERT INTO config_panel_launcher (code, display_value, description, status, lau
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('lease', 'Lease Panel', NULL, 'c', 'leaseRRR', 'org.sola.clients.swing.desktop.administrative.LeasePanel', NULL, 'leasePanel');
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('ownership', 'Ownership Share Panel', NULL, 'c', 'generalRRR', 'org.sola.clients.swing.desktop.administrative.OwnershipPanel', NULL, 'ownershipPanel');
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('slProperty', 'State Land Property Panel', NULL, 'c', 'newPropServices', 'org.sola.clients.swing.desktop.administrative.SLPropertyPanel', 'cliprgs009', 'slPropertyPanel');
+INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('simpleRightCondPanel', 'Simple Right Condition Panel', NULL, 'c', 'generalRRR', 'org.sola.clients.swing.desktop.administrative.SimpleRightConditionPanel', NULL, 'simpleRightCondPanel');
+INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('simpleRholdConPanel', 'Simple Rightholder Condition Panel', NULL, 'c', 'generalRRR', 'org.sola.clients.swing.desktop.administrative.SimpleRightholderConditionPanel', NULL, 'simpleRightholderCondPanel');
 
 
 ALTER TABLE config_panel_launcher ENABLE TRIGGER ALL;
