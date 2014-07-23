@@ -18,8 +18,9 @@ SET SESSION AUTHORIZATION DEFAULT;
 
 ALTER TABLE ba_unit_rel_type DISABLE TRIGGER ALL;
 
-INSERT INTO ba_unit_rel_type (code, display_value, description, status) VALUES ('priorTitle', 'Prior Title::::Предыдущая недвижимость::::سند الملكية السابق::::Titre précédent', 'Prior Title::::Предыдущая недвижимость::::...::::Titre précédent', 'c');
-INSERT INTO ba_unit_rel_type (code, display_value, description, status) VALUES ('rootTitle', 'Root of Title::::Корневая недвижимость::::أصل  سند الملكية::::Racine du Titre', 'Root of Title::::Корневая недвижимость::::...::::Racine du Titre', 'c');
+INSERT INTO ba_unit_rel_type (code, display_value, description, status) VALUES ('priorTitle', 'Prior Title::::Предыдущая недвижимость::::سند الملكية السابق::::Titre précédent', 'Prior Title::::Предыдущая недвижимость::::...::::Titre précédent', 'x');
+INSERT INTO ba_unit_rel_type (code, display_value, description, status) VALUES ('rootTitle', 'Root of Title::::Корневая недвижимость::::أصل  سند الملكية::::Racine du Titre', 'Root of Title::::Корневая недвижимость::::...::::Racine du Titre', 'x');
+INSERT INTO ba_unit_rel_type (code, display_value, description, status) VALUES ('underlyingTitle', 'Underlying Title', 'The title from which the state land was taken.', 'c');
 
 
 ALTER TABLE ba_unit_rel_type ENABLE TRIGGER ALL;
@@ -31,10 +32,10 @@ ALTER TABLE ba_unit_rel_type ENABLE TRIGGER ALL;
 ALTER TABLE ba_unit_type DISABLE TRIGGER ALL;
 
 INSERT INTO ba_unit_type (code, display_value, description, status) VALUES ('administrativeUnit', 'Administrative Unit::::Административная единица::::وحدة ادارية::::Unité Administrative', '...::::::::...::::...', 'x');
-INSERT INTO ba_unit_type (code, display_value, description, status) VALUES ('basicPropertyUnit', 'Basic Property Unit::::Базовая единица недвижимости::::وحدة ملكية اساسة::::Unité de Base Propriété', 'This is the basic property unit that is used by default::::Это базовая единица недвижимости используемая по умолчанию::::...::::Ceci est l''unité de base de propriété utilisée par défaut', 'c');
 INSERT INTO ba_unit_type (code, display_value, description, status) VALUES ('leasedUnit', 'Leased Unit::::Единица для Аренды::::وحدة  مؤجرة::::Unité de Bail', '...::::::::...::::...', 'x');
 INSERT INTO ba_unit_type (code, display_value, description, status) VALUES ('propertyRightUnit', 'Property Right Unit::::Единица права недвижимости::::وحدة حقوق الملكية::::Unité de Droit de Propriété', '...::::::::...::::...', 'x');
 INSERT INTO ba_unit_type (code, display_value, description, status) VALUES ('stateLand', 'State Land', 'State land property type', 'c');
+INSERT INTO ba_unit_type (code, display_value, description, status) VALUES ('basicPropertyUnit', 'Property', 'This is the basic property unit that is used by default::::Это базовая единица недвижимости используемая по умолчанию::::...::::Ceci est l''unité de base de propriété utilisée par défaut', 'c');
 
 
 ALTER TABLE ba_unit_type ENABLE TRIGGER ALL;

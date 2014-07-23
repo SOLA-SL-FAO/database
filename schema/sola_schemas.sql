@@ -348,6 +348,42 @@ COMMENT ON FUNCTION get_concatenated_name(baunit_id character varying) IS 'Retur
 
 
 --
+-- Name: get_land_use_code(character varying); Type: FUNCTION; Schema: administrative; Owner: postgres
+--
+
+CREATE FUNCTION get_land_use_code(prop_id character varying) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+    RETURN 
+	   (WITH use_area AS 
+           (SELECT  co3.land_use_code, 
+		            SUM(sva3.size) AS area 
+            FROM administrative.ba_unit_contains_spatial_unit bas3, 
+			     cadastre.cadastre_object co3 LEFT OUTER JOIN
+                 cadastre.spatial_value_area sva3 ON sva3.spatial_unit_id = co3.id 
+				                                  AND sva3.type_code = 'officialArea'
+            WHERE bas3.ba_unit_id = prop_id 
+			AND   co3.id = bas3.spatial_unit_id 
+            AND co3.land_use_code IS NOT NULL      
+            GROUP BY co3.land_use_code)
+			
+            SELECT land_use_code FROM use_area 
+            ORDER BY area LIMIT 1);
+END;
+$$;
+
+
+ALTER FUNCTION administrative.get_land_use_code(prop_id character varying) OWNER TO postgres;
+
+--
+-- Name: FUNCTION get_land_use_code(prop_id character varying); Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON FUNCTION get_land_use_code(prop_id character varying) IS 'Returns the land use code for a ba unit based on the land use code of the largest combined parcel by area';
+
+
+--
 -- Name: get_objections(character varying); Type: FUNCTION; Schema: administrative; Owner: postgres
 --
 
@@ -2349,6 +2385,54 @@ ALTER FUNCTION administrative.getsysregstatus(fromdate character varying, todate
 --
 
 COMMENT ON FUNCTION getsysregstatus(fromdate character varying, todate character varying, namelastpart character varying) IS 'Indicates the number of applications at various states of the systematic registration process';
+
+
+--
+-- Name: is_linked_document(character varying, character varying); Type: FUNCTION; Schema: administrative; Owner: postgres
+--
+
+CREATE FUNCTION is_linked_document(prop_id character varying, doc_ref character varying) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+    RETURN EXISTS (WITH docs AS 
+	       (SELECT s.reference_nr 
+            FROM   administrative.source_describes_ba_unit sbu, 
+			       source.source s
+            WHERE  sbu.ba_unit_id = prop_id
+			AND    s.id = sbu.source_id
+			AND    s.reference_nr IS NOT NULL
+			UNION
+			SELECT s.reference_nr 
+            FROM   administrative.rrr r,
+			       administrative.source_describes_rrr srr, 
+			       source.source s
+            WHERE  r.ba_unit_id = prop_id
+			AND    srr.rrr_id = r.id
+			AND    s.id = srr.source_id
+			AND    s.reference_nr IS NOT NULL
+			UNION
+			SELECT s.reference_nr 
+            FROM   administrative.notation n,
+			       administrative.source_describes_notation sn, 
+			       source.source s
+            WHERE  n.ba_unit_id = prop_id
+			AND    sn.notation_id = n.id
+			AND    s.id = sn.source_id
+			AND    s.reference_nr IS NOT NULL)			
+            SELECT reference_nr FROM docs 
+            WHERE compare_strings(doc_ref, docs.reference_nr));
+END;
+$$;
+
+
+ALTER FUNCTION administrative.is_linked_document(prop_id character varying, doc_ref character varying) OWNER TO postgres;
+
+--
+-- Name: FUNCTION is_linked_document(prop_id character varying, doc_ref character varying); Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON FUNCTION is_linked_document(prop_id character varying, doc_ref character varying) IS 'Returns true if any documents associated with the property match the document reference speicfied.';
 
 
 SET search_path = application, pg_catalog;
@@ -4772,13 +4856,12 @@ CREATE TABLE condition_for_rrr (
     custom_condition_text text,
     condition_quantity integer,
     condition_unit character varying(15),
-	custom_condition_name character varying(500), 
+    custom_condition_name character varying(500),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
     change_user character varying(50),
     change_time timestamp without time zone DEFAULT now() NOT NULL
-
 );
 
 
@@ -4835,6 +4918,13 @@ COMMENT ON COLUMN condition_for_rrr.condition_unit IS 'The unit of measure appli
 
 
 --
+-- Name: COLUMN condition_for_rrr.custom_condition_name; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN condition_for_rrr.custom_condition_name IS 'SOLA State Land Extension: The name for the custom lease or license condition';
+
+
+--
 -- Name: COLUMN condition_for_rrr.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
@@ -4870,13 +4960,6 @@ COMMENT ON COLUMN condition_for_rrr.change_time IS 'The date and time the row wa
 
 
 --
--- Name: COLUMN condition_for_rrr.custom_condition_name; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN condition_for_rrr.custom_condition_name IS 'SOLA State Land Extension: The name for the custom lease or license condition';
-
-
---
 -- Name: condition_for_rrr_historic; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
@@ -4887,14 +4970,13 @@ CREATE TABLE condition_for_rrr_historic (
     custom_condition_text text,
     condition_quantity integer,
     condition_unit character varying(15),
-	custom_condition_name character varying(500), 
+    custom_condition_name character varying(500),
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
     change_user character varying(50),
     change_time timestamp without time zone,
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
-
 );
 
 
@@ -5532,12 +5614,12 @@ CREATE TABLE rrr (
     mortgage_interest_rate numeric(5,2),
     mortgage_ranking integer,
     mortgage_type_code character varying(20),
-	sub_type_code character varying(20),
+    sub_type_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
     change_user character varying(50),
-    change_time timestamp without time zone DEFAULT now() NOT NULL  
+    change_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -5657,6 +5739,13 @@ COMMENT ON COLUMN rrr.mortgage_type_code IS 'LADM Definition: The type of mortga
 
 
 --
+-- Name: COLUMN rrr.sub_type_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr.sub_type_code IS 'SOLA State Land Extension: The sub type of the RRR.';
+
+
+--
 -- Name: COLUMN rrr.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
@@ -5689,13 +5778,6 @@ COMMENT ON COLUMN rrr.change_user IS 'SOLA Extension: The user id of the last pe
 --
 
 COMMENT ON COLUMN rrr.change_time IS 'SOLA Extension: The date and time the row was last modified.';
-
-
---
--- Name: COLUMN rrr.sub_type_code; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN rrr.sub_type_code IS 'SOLA State Land Extension: The sub type of the RRR.';
 
 
 --
@@ -5768,7 +5850,7 @@ CREATE TABLE rrr_historic (
     mortgage_interest_rate numeric(5,2),
     mortgage_ranking integer,
     mortgage_type_code character varying(20),
-    sub_type_code character varying(20), 
+    sub_type_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
