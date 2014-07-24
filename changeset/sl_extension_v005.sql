@@ -26,3 +26,11 @@ WHERE NOT EXISTS (SELECT code FROM administrative.condition_type WHERE code = 'c
 
 UPDATE system.config_map_layer SET visible_on_start = TRUE WHERE name = 'house_num';
 
+
+-- Make description a text field on the source table
+ALTER TABLE source.source 
+   ALTER COLUMN description TYPE TEXT;
+
+ALTER TABLE source.source_historic
+   ALTER COLUMN description TYPE TEXT;	
+
