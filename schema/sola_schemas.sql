@@ -4463,7 +4463,12 @@ ALTER TABLE administrative.ba_unit_area_historic OWNER TO postgres;
 
 CREATE TABLE ba_unit_as_party (
     ba_unit_id character varying(40) NOT NULL,
-    party_id character varying(40) NOT NULL
+    party_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -4490,6 +4495,59 @@ COMMENT ON COLUMN ba_unit_as_party.ba_unit_id IS 'Identifier for the BA Unit.';
 
 COMMENT ON COLUMN ba_unit_as_party.party_id IS 'Identifier for the Party.';
 
+
+--
+-- Name: COLUMN ba_unit_as_party.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN ba_unit_as_party.rowidentifier IS 'SOLA SL Extension: Identifies the all change records for the row in the ba_unit_as_party_historic table';
+
+
+--
+-- Name: COLUMN ba_unit_as_party.rowversion; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN ba_unit_as_party.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN ba_unit_as_party.change_action; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN ba_unit_as_party.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN ba_unit_as_party.change_user; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN ba_unit_as_party.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN ba_unit_as_party.change_time; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN ba_unit_as_party.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: ba_unit_as_party_historic; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE ba_unit_as_party_historic (
+    ba_unit_id character varying(40),
+    party_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE administrative.ba_unit_as_party_historic OWNER TO postgres;
 
 --
 -- Name: ba_unit_contains_spatial_unit; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
@@ -6450,7 +6508,7 @@ CREATE TABLE application (
     id character varying(40) NOT NULL,
     nr character varying(15) NOT NULL,
     agent_id character varying(40),
-    contact_person_id character varying(40) NOT NULL,
+    contact_person_id character varying(40),
     lodging_datetime timestamp without time zone DEFAULT now() NOT NULL,
     expected_completion_date date DEFAULT now() NOT NULL,
     assignee_id character varying(40),
@@ -6470,6 +6528,7 @@ CREATE TABLE application (
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
     change_user character varying(50),
     change_time timestamp without time zone DEFAULT now() NOT NULL,
+    description text,
     CONSTRAINT application_check_assigned CHECK ((((assignee_id IS NULL) AND (assigned_datetime IS NULL)) OR ((assignee_id IS NOT NULL) AND (assigned_datetime IS NOT NULL)))),
     CONSTRAINT enforce_dims_location CHECK ((public.st_ndims(location) = 2)),
     CONSTRAINT enforce_geotype_location CHECK (((public.geometrytype(location) = 'MULTIPOINT'::text) OR (location IS NULL))),
@@ -6647,6 +6706,13 @@ COMMENT ON COLUMN application.change_user IS 'The user id of the last person to 
 --
 
 COMMENT ON COLUMN application.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: COLUMN application.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN application.description IS 'SOLA State Land Extension: A summary description for the SL Job';
 
 
 --
@@ -7525,6 +7591,7 @@ CREATE TABLE application_historic (
     change_user character varying(50),
     change_time timestamp without time zone,
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
+    description text,
     CONSTRAINT enforce_dims_location CHECK ((public.st_ndims(location) = 2)),
     CONSTRAINT enforce_geotype_location CHECK (((public.geometrytype(location) = 'MULTIPOINT'::text) OR (location IS NULL))),
     CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 2193)),
@@ -12642,7 +12709,7 @@ CREATE TABLE source (
     transaction_id character varying(40),
     owner_name character varying(255),
     version character varying(10),
-    description character varying(255),
+    description text,
     signing_date date,
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
@@ -12845,7 +12912,7 @@ CREATE TABLE source_historic (
     transaction_id character varying(40),
     owner_name character varying(255),
     version character varying(10),
-    description character varying(255),
+    description text,
     signing_date date,
     rowidentifier character varying(40),
     rowversion integer,
@@ -16666,6 +16733,13 @@ CREATE INDEX ba_unit_as_party_ba_unit_id_fk71_ind ON ba_unit_as_party USING btre
 
 
 --
+-- Name: ba_unit_as_party_historic_index_on_rowidentifier; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX ba_unit_as_party_historic_index_on_rowidentifier ON ba_unit_as_party_historic USING btree (rowidentifier);
+
+
+--
 -- Name: ba_unit_as_party_party_id_fk72_ind; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
@@ -18527,6 +18601,13 @@ CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON source_describes_rrr F
 
 
 --
+-- Name: __track_changes; Type: TRIGGER; Schema: administrative; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON ba_unit_as_party FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
 -- Name: __track_history; Type: TRIGGER; Schema: administrative; Owner: postgres
 --
 
@@ -18615,6 +18696,13 @@ CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON source_describes_ba_uni
 --
 
 CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON source_describes_rrr FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: administrative; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON ba_unit_as_party FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
 --
