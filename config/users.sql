@@ -119,6 +119,7 @@ INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversi
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('BaUnitNotes', 'super-group-id', '56ae10ca-00da-11e4-abee-a7c2922e39f7', 1, 'i', 'db:postgres', '2014-07-01 16:44:08.477');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('recordStateLand', 'super-group-id', '56bd7a4c-00da-11e4-b19f-f3a046be73c4', 1, 'i', 'db:postgres', '2014-07-01 16:44:08.477');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('MeasureMap', 'super-group-id', '56bdef86-00da-11e4-8fc8-f33f40fe4e44', 1, 'i', 'db:postgres', '2014-07-01 16:44:08.477');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('BaunitTeam', 'super-group-id', 'f9bf838a-1c3b-11e4-ae6b-8bf749cbbba4', 1, 'i', 'db:postgres', '2014-08-05 13:01:04.462');
 
 
 ALTER TABLE approle_appgroup ENABLE TRIGGER ALL;
@@ -157,6 +158,20 @@ ALTER TABLE appuser_setting DISABLE TRIGGER ALL;
 
 
 ALTER TABLE appuser_setting ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: appuser_team; Type: TABLE DATA; Schema: system; Owner: postgres
+--
+
+ALTER TABLE appuser_team DISABLE TRIGGER ALL;
+
+INSERT INTO appuser_team (appuser_id, party_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('test-id', 'sl_party_1', '42b04118-1c3e-11e4-bc82-ef10ec0cf16c', 1, 'i', 'db:postgres', '2014-08-05 13:17:26.022');
+INSERT INTO appuser_team (appuser_id, party_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('e21f7c3d-bb02-4a15-94f3-d076861bf343', 'sl_party_1', '42b0b652-1c3e-11e4-b47d-7ffdf6685556', 1, 'i', 'db:postgres', '2014-08-05 13:17:26.022');
+INSERT INTO appuser_team (appuser_id, party_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('test-id', 'sl_party_2', '42b215e2-1c3e-11e4-9472-8fdf58363aa5', 1, 'i', 'db:postgres', '2014-08-05 13:17:26.022');
+INSERT INTO appuser_team (appuser_id, party_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('e21f7c3d-bb02-4a15-94f3-d076861bf343', 'sl_party_2', '42b23cf2-1c3e-11e4-9d83-0b9e907bee00', 1, 'i', 'db:postgres', '2014-08-05 13:17:26.022');
+
+
+ALTER TABLE appuser_team ENABLE TRIGGER ALL;
 
 --
 -- PostgreSQL database dump complete

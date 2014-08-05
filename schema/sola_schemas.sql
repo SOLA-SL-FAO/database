@@ -13716,6 +13716,80 @@ COMMENT ON COLUMN appuser_setting.active IS 'Flag to indicate if the setting is 
 
 
 --
+-- Name: appuser_team; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE appuser_team (
+    appuser_id character varying(40) NOT NULL,
+    party_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE system.appuser_team OWNER TO postgres;
+
+--
+-- Name: TABLE appuser_team; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON TABLE appuser_team IS 'Associates users to a party (a.k.a. Team). Used to associated users with Property Manager teams. A user can be associated with multiple teams if required. This table omits a foriegn key to the party table to avoid data dependency issues on data load. 
+Tags: FLOSS SOLA State Land Extension, User Admin';
+
+
+--
+-- Name: COLUMN appuser_team.appuser_id; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN appuser_team.appuser_id IS 'Identifier for the SOLA user.';
+
+
+--
+-- Name: COLUMN appuser_team.party_id; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN appuser_team.party_id IS 'Identifier for the party (a.k.a. Team) the user is associated to.';
+
+
+--
+-- Name: COLUMN appuser_team.rowidentifier; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN appuser_team.rowidentifier IS 'Identifies the all change records for the row in the system.appuser_party_historic table';
+
+
+--
+-- Name: COLUMN appuser_team.rowversion; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN appuser_team.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN appuser_team.change_action; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN appuser_team.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN appuser_team.change_user; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN appuser_team.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN appuser_team.change_time; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN appuser_team.change_time IS 'The date and time the row was last modified.';
+
+
+--
 -- Name: br; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
 --
 
@@ -16334,6 +16408,14 @@ ALTER TABLE ONLY appuser_setting
 
 
 --
+-- Name: appuser_team_pkey; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY appuser_team
+    ADD CONSTRAINT appuser_team_pkey PRIMARY KEY (appuser_id, party_id);
+
+
+--
 -- Name: appuser_username_unique; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
 --
 
@@ -18315,6 +18397,20 @@ CREATE INDEX appuser_setting_user_id_fk103_ind ON appuser_setting USING btree (u
 
 
 --
+-- Name: appuser_team_appuser_id_fk_ind; Type: INDEX; Schema: system; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX appuser_team_appuser_id_fk_ind ON appuser_team USING btree (appuser_id);
+
+
+--
+-- Name: appuser_team_party_id_fk_ind; Type: INDEX; Schema: system; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX appuser_team_party_id_fk_ind ON appuser_team USING btree (party_id);
+
+
+--
 -- Name: br_definition_br_id_fk116_ind; Type: INDEX; Schema: system; Owner: postgres; Tablespace: 
 --
 
@@ -19233,6 +19329,13 @@ CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON appuser_appgroup FOR E
 
 
 --
+-- Name: __track_changes; Type: TRIGGER; Schema: system; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON appuser_team FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
 -- Name: __track_history; Type: TRIGGER; Schema: system; Owner: postgres
 --
 
@@ -19251,6 +19354,13 @@ CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON approle_appgroup FOR EA
 --
 
 CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON appuser_appgroup FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: system; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON appuser_team FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
 SET search_path = transaction, pg_catalog;
@@ -20353,6 +20463,14 @@ ALTER TABLE ONLY appuser_appgroup
 
 ALTER TABLE ONLY appuser_setting
     ADD CONSTRAINT appuser_setting_user_id_fk103 FOREIGN KEY (user_id) REFERENCES appuser(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: appuser_team_appuser_id_fkey; Type: FK CONSTRAINT; Schema: system; Owner: postgres
+--
+
+ALTER TABLE ONLY appuser_team
+    ADD CONSTRAINT appuser_team_appuser_id_fkey FOREIGN KEY (appuser_id) REFERENCES appuser(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

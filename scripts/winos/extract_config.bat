@@ -83,7 +83,7 @@ echo ### Dumping user tables... >> %EXTRACT_LOG% 2>&1
     --column-inserts --disable-dollar-quoting --disable-triggers ^
     -t system.appuser -t system.appgroup ^
 	-t system.appuser_appgroup -t system.approle_appgroup ^
-	-t system.appuser_setting ^
+	-t system.appuser_setting -t system.appuser_team ^
 	-f "%config_path%users.sql" %db_name% >> %EXTRACT_LOG% 2>&1
 
 echo Dumping unlocalized reference tables...

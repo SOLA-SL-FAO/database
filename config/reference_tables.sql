@@ -440,6 +440,7 @@ INSERT INTO land_use_type (code, display_value, description, status) VALUES ('tr
 INSERT INTO land_use_type (code, display_value, description, status) VALUES ('wharf', 'Wharf, Ramp or Jetty', 'The land has a wharf, boat ramp or jetty erected on it.', 'c');
 INSERT INTO land_use_type (code, display_value, description, status) VALUES ('marginalStrip', 'Marginal Strip', 'The land extending along the landward margins of the foreshore and other water bodies.', 'c');
 INSERT INTO land_use_type (code, display_value, description, status) VALUES ('foreshore', 'Foreshore', 'The foreshore of water bodies such as seas, lakes and rivers.', 'c');
+INSERT INTO land_use_type (code, display_value, description, status) VALUES ('cemetery', 'Cemetery', 'The land is used for a cemetery or burial ground.', 'c');
 
 
 ALTER TABLE land_use_type ENABLE TRIGGER ALL;
@@ -650,6 +651,7 @@ INSERT INTO party_role_type (code, display_value, status, description) VALUES ('
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('transferee', 'Transferee (to)::::Получатель::::منقول له::::Cessionnaire (à)', 'c', 'Extension to LADM::::Расширение LADM::::...::::Extension au LADM');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('applicant', 'Applicant::::Заявитель::::مقدم الطلب::::Demandeur', 'c', 'Extension to LADM::::Расширение LADM::::...::::Extension au LADM');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('propManager', 'Property Manager', 'c', 'Extension to LADM for State Land. Identifies the party as being a property manager. ');
+INSERT INTO party_role_type (code, display_value, status, description) VALUES ('team', 'Team', 'c', 'Extension to LADM for State Land. Identifies the party as being a team. ');
 
 
 ALTER TABLE party_role_type ENABLE TRIGGER ALL;
@@ -860,6 +862,7 @@ INSERT INTO approle (code, display_value, status, description) VALUES ('Moderate
 INSERT INTO approle (code, display_value, status, description) VALUES ('BaUnitNotes', 'Property - Add & Edit Notes', 'c', 'Allows property notes to be added or edited.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('recordStateLand', 'Service - Record State Land', 'c', 'State Land Service. Allows the Record State Land service to be started.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('MeasureMap', 'Map - Measure', 'c', 'Allows the user to measure distances on the map using the Measure tool.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('BaunitTeam', 'Property - Assign Team', 'c', 'Allows the user to assign a team (e.g. Property Manager) to a property.');
 
 
 ALTER TABLE approle ENABLE TRIGGER ALL;
