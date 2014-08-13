@@ -4224,6 +4224,8 @@ CREATE TABLE ba_unit (
     status_code character varying(20) DEFAULT 'pending'::character varying NOT NULL,
     transaction_id character varying(40),
     description text,
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
@@ -4345,6 +4347,20 @@ COMMENT ON COLUMN ba_unit.change_user IS 'SOLA Extension: The user id of the las
 --
 
 COMMENT ON COLUMN ba_unit.change_time IS 'SOLA Extension: The date and time the row was last modified.';
+
+
+--
+-- Name: COLUMN ba_unit.classification_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN ba_unit.classification_code IS 'SOLA State Land Extension: The security classification for this Ba Unit. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN ba_unit.redact_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN ba_unit.redact_code IS 'SOLA State Land Extension: The redact classification for this Ba Unit. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
 
 
 --
@@ -4678,6 +4694,8 @@ CREATE TABLE ba_unit_historic (
     status_code character varying(20),
     transaction_id character varying(40),
     description text,
+    classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
@@ -5245,6 +5263,8 @@ CREATE TABLE notation (
     notation_text text,
     notation_date timestamp without time zone,
     status_code character varying(20) DEFAULT 'pending'::character varying NOT NULL,
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
@@ -5355,6 +5375,20 @@ COMMENT ON COLUMN notation.change_time IS 'The date and time the row was last mo
 
 
 --
+-- Name: COLUMN notation.classification_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN notation.classification_code IS 'SOLA State Land Extension: The security classification for this Notation. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN notation.redact_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN notation.redact_code IS 'SOLA State Land Extension: The redact classification for this Notation. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
 -- Name: notation_historic; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
@@ -5367,6 +5401,8 @@ CREATE TABLE notation_historic (
     notation_text text,
     notation_date timestamp without time zone,
     status_code character varying(20),
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
@@ -5673,6 +5709,8 @@ CREATE TABLE rrr (
     mortgage_ranking integer,
     mortgage_type_code character varying(20),
     sub_type_code character varying(20),
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
@@ -5839,6 +5877,20 @@ COMMENT ON COLUMN rrr.change_time IS 'SOLA Extension: The date and time the row 
 
 
 --
+-- Name: COLUMN rrr.classification_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr.classification_code IS 'SOLA State Land Extension: The security classification for this RRR. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN rrr.redact_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr.redact_code IS 'SOLA State Land Extension: The redact classification for this RRR. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
 -- Name: rrr_group_type; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
@@ -5909,6 +5961,8 @@ CREATE TABLE rrr_historic (
     mortgage_ranking integer,
     mortgage_type_code character varying(20),
     sub_type_code character varying(20),
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
@@ -6523,12 +6577,14 @@ CREATE TABLE application (
     action_notes character varying(255),
     status_code character varying(20) DEFAULT 'lodged'::character varying NOT NULL,
     receipt_reference character varying(100),
+	description text,
+    classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
     change_user character varying(50),
     change_time timestamp without time zone DEFAULT now() NOT NULL,
-    description text,
     CONSTRAINT application_check_assigned CHECK ((((assignee_id IS NULL) AND (assigned_datetime IS NULL)) OR ((assignee_id IS NOT NULL) AND (assigned_datetime IS NOT NULL)))),
     CONSTRAINT enforce_dims_location CHECK ((public.st_ndims(location) = 2)),
     CONSTRAINT enforce_geotype_location CHECK (((public.geometrytype(location) = 'MULTIPOINT'::text) OR (location IS NULL))),
@@ -6716,6 +6772,20 @@ COMMENT ON COLUMN application.description IS 'SOLA State Land Extension: A summa
 
 
 --
+-- Name: COLUMN application.classification_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN application.classification_code IS 'SOLA State Land Extension: The security classification for this Application/Job. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN application.redact_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN application.redact_code IS 'SOLA State Land Extension: The redact classification for this Application/Job. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
 -- Name: service; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -6855,6 +6925,8 @@ CREATE TABLE cadastre_object (
     land_use_code character varying(255) DEFAULT 'residential'::character varying,
     state_land_status_code character varying(20),
     description text,
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
@@ -7008,6 +7080,20 @@ COMMENT ON COLUMN cadastre_object.change_user IS 'The user id of the last person
 --
 
 COMMENT ON COLUMN cadastre_object.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: COLUMN cadastre_object.classification_code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.classification_code IS 'SOLA State Land Extension: The security classification for this Parcel. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN cadastre_object.redact_code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.redact_code IS 'SOLA State Land Extension: The redact classification for this Parcel. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
 
 
 --
@@ -7168,6 +7254,8 @@ CREATE TABLE party (
     fax character varying(15),
     preferred_communication_code character varying(20),
     birth_date date,
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
@@ -7346,6 +7434,20 @@ COMMENT ON COLUMN party.change_user IS 'SOLA Extension: The user id of the last 
 --
 
 COMMENT ON COLUMN party.change_time IS 'SOLA Extension: The date and time the row was last modified.';
+
+
+--
+-- Name: COLUMN party.classification_code; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party.classification_code IS 'SOLA State Land Extension: The security classification for this Party. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN party.redact_code; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party.redact_code IS 'SOLA State Land Extension: The redact classification for this Party. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
 
 
 SET search_path = transaction, pg_catalog;
@@ -7585,13 +7687,15 @@ CREATE TABLE application_historic (
     action_notes character varying(255),
     status_code character varying(20),
     receipt_reference character varying(100),
+	description text,
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
     change_user character varying(50),
     change_time timestamp without time zone,
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
-    description text,
     CONSTRAINT enforce_dims_location CHECK ((public.st_ndims(location) = 2)),
     CONSTRAINT enforce_geotype_location CHECK (((public.geometrytype(location) = 'MULTIPOINT'::text) OR (location IS NULL))),
     CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 2193)),
@@ -8667,6 +8771,8 @@ CREATE TABLE cadastre_object_historic (
     land_use_code character varying(255),
     state_land_status_code character varying(20),
     description text,
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
@@ -12029,6 +12135,8 @@ CREATE TABLE party_historic (
     fax character varying(15),
     preferred_communication_code character varying(20),
     birth_date date,
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
@@ -12711,6 +12819,8 @@ CREATE TABLE source (
     version character varying(10),
     description text,
     signing_date date,
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
@@ -12891,6 +13001,20 @@ COMMENT ON COLUMN source.change_time IS 'The date and time the row was last modi
 
 
 --
+-- Name: COLUMN source.classification_code; Type: COMMENT; Schema: source; Owner: postgres
+--
+
+COMMENT ON COLUMN source.classification_code IS 'SOLA State Land Extension: The security classification for this Source. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN source.redact_code; Type: COMMENT; Schema: source; Owner: postgres
+--
+
+COMMENT ON COLUMN source.redact_code IS 'SOLA State Land Extension: The redact classification for this Source. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
 -- Name: source_historic; Type: TABLE; Schema: source; Owner: postgres; Tablespace: 
 --
 
@@ -12914,6 +13038,8 @@ CREATE TABLE source_historic (
     version character varying(10),
     description text,
     signing_date date,
+	classification_code character varying(20),
+    redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),

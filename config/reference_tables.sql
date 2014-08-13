@@ -863,6 +863,13 @@ INSERT INTO approle (code, display_value, status, description) VALUES ('BaUnitNo
 INSERT INTO approle (code, display_value, status, description) VALUES ('recordStateLand', 'Service - Record State Land', 'c', 'State Land Service. Allows the Record State Land service to be started.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('MeasureMap', 'Map - Measure', 'c', 'Allows the user to measure distances on the map using the Measure tool.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('BaunitTeam', 'Property - Assign Team', 'c', 'Allows the user to assign a team (e.g. Property Manager) to a property.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('ChangeSecClass', 'Security - Change Security Classification', 'c', 'Allows the user to set or change the security classification for a record.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('01SEC_Unrestricted', 'Security - Unrestricted', 'c', 'Grants user clearance to view and/or access all unrestricted records.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('02SEC_Restricted', 'Security - Restricted', 'c', 'Grants user clearance to view and/or access all unrestricted and restricted records.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('03SEC_Confidential', 'Security - Confidential', 'c', 'Grants user clearance to view and/or access all unrestricted, restricted and confidential records.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('04SEC_Secret', 'Security - Secret', 'c', 'Grants user clearance to view and/or access all unrestricted, restricted, confidential and secret records.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('05SEC_TopSecret', 'Security - Top Secret', 'c', 'Grants user clearance to view and/or access all records.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('10SEC_SuppressOrd', 'Security - Suppression Order', 'c', 'Grants user clearance to view and/or access all records marked with the Supression Order security classification.');
 
 
 ALTER TABLE approle ENABLE TRIGGER ALL;
