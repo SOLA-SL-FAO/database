@@ -4224,7 +4224,7 @@ CREATE TABLE ba_unit (
     status_code character varying(20) DEFAULT 'pending'::character varying NOT NULL,
     transaction_id character varying(40),
     description text,
-	classification_code character varying(20),
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
@@ -4315,6 +4315,20 @@ COMMENT ON COLUMN ba_unit.description IS 'SOLA State Land Extension: A summary d
 
 
 --
+-- Name: COLUMN ba_unit.classification_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN ba_unit.classification_code IS 'SOLA State Land Extension: The security classification for this Ba Unit. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN ba_unit.redact_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN ba_unit.redact_code IS 'SOLA State Land Extension: The redact classification for this Ba Unit. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
 -- Name: COLUMN ba_unit.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
@@ -4347,20 +4361,6 @@ COMMENT ON COLUMN ba_unit.change_user IS 'SOLA Extension: The user id of the las
 --
 
 COMMENT ON COLUMN ba_unit.change_time IS 'SOLA Extension: The date and time the row was last modified.';
-
-
---
--- Name: COLUMN ba_unit.classification_code; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN ba_unit.classification_code IS 'SOLA State Land Extension: The security classification for this Ba Unit. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
-
-
---
--- Name: COLUMN ba_unit.redact_code; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN ba_unit.redact_code IS 'SOLA State Land Extension: The redact classification for this Ba Unit. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
 
 
 --
@@ -5263,7 +5263,7 @@ CREATE TABLE notation (
     notation_text text,
     notation_date timestamp without time zone,
     status_code character varying(20) DEFAULT 'pending'::character varying NOT NULL,
-	classification_code character varying(20),
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
@@ -5340,6 +5340,20 @@ COMMENT ON COLUMN notation.status_code IS 'The status of the notation.';
 
 
 --
+-- Name: COLUMN notation.classification_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN notation.classification_code IS 'SOLA State Land Extension: The security classification for this Notation. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN notation.redact_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN notation.redact_code IS 'SOLA State Land Extension: The redact classification for this Notation. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
 -- Name: COLUMN notation.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
@@ -5375,20 +5389,6 @@ COMMENT ON COLUMN notation.change_time IS 'The date and time the row was last mo
 
 
 --
--- Name: COLUMN notation.classification_code; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN notation.classification_code IS 'SOLA State Land Extension: The security classification for this Notation. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
-
-
---
--- Name: COLUMN notation.redact_code; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN notation.redact_code IS 'SOLA State Land Extension: The redact classification for this Notation. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
-
-
---
 -- Name: notation_historic; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
@@ -5401,7 +5401,7 @@ CREATE TABLE notation_historic (
     notation_text text,
     notation_date timestamp without time zone,
     status_code character varying(20),
-	classification_code character varying(20),
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
@@ -5709,7 +5709,7 @@ CREATE TABLE rrr (
     mortgage_ranking integer,
     mortgage_type_code character varying(20),
     sub_type_code character varying(20),
-	classification_code character varying(20),
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
@@ -5842,6 +5842,20 @@ COMMENT ON COLUMN rrr.sub_type_code IS 'SOLA State Land Extension: The sub type 
 
 
 --
+-- Name: COLUMN rrr.classification_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr.classification_code IS 'SOLA State Land Extension: The security classification for this RRR. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN rrr.redact_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr.redact_code IS 'SOLA State Land Extension: The redact classification for this RRR. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
 -- Name: COLUMN rrr.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
@@ -5874,20 +5888,6 @@ COMMENT ON COLUMN rrr.change_user IS 'SOLA Extension: The user id of the last pe
 --
 
 COMMENT ON COLUMN rrr.change_time IS 'SOLA Extension: The date and time the row was last modified.';
-
-
---
--- Name: COLUMN rrr.classification_code; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN rrr.classification_code IS 'SOLA State Land Extension: The security classification for this RRR. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
-
-
---
--- Name: COLUMN rrr.redact_code; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN rrr.redact_code IS 'SOLA State Land Extension: The redact classification for this RRR. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
 
 
 --
@@ -5961,7 +5961,7 @@ CREATE TABLE rrr_historic (
     mortgage_ranking integer,
     mortgage_type_code character varying(20),
     sub_type_code character varying(20),
-	classification_code character varying(20),
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
@@ -6577,7 +6577,7 @@ CREATE TABLE application (
     action_notes character varying(255),
     status_code character varying(20) DEFAULT 'lodged'::character varying NOT NULL,
     receipt_reference character varying(100),
-	description text,
+    description text,
     classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
@@ -6730,6 +6730,27 @@ COMMENT ON COLUMN application.receipt_reference IS 'The number of the receipt is
 
 
 --
+-- Name: COLUMN application.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN application.description IS 'SOLA State Land Extension: A summary description for the SL Job';
+
+
+--
+-- Name: COLUMN application.classification_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN application.classification_code IS 'SOLA State Land Extension: The security classification for this Application/Job. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN application.redact_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN application.redact_code IS 'SOLA State Land Extension: The redact classification for this Application/Job. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
 -- Name: COLUMN application.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
 --
 
@@ -6762,27 +6783,6 @@ COMMENT ON COLUMN application.change_user IS 'The user id of the last person to 
 --
 
 COMMENT ON COLUMN application.change_time IS 'The date and time the row was last modified.';
-
-
---
--- Name: COLUMN application.description; Type: COMMENT; Schema: application; Owner: postgres
---
-
-COMMENT ON COLUMN application.description IS 'SOLA State Land Extension: A summary description for the SL Job';
-
-
---
--- Name: COLUMN application.classification_code; Type: COMMENT; Schema: application; Owner: postgres
---
-
-COMMENT ON COLUMN application.classification_code IS 'SOLA State Land Extension: The security classification for this Application/Job. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
-
-
---
--- Name: COLUMN application.redact_code; Type: COMMENT; Schema: application; Owner: postgres
---
-
-COMMENT ON COLUMN application.redact_code IS 'SOLA State Land Extension: The redact classification for this Application/Job. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
 
 
 --
@@ -6925,7 +6925,7 @@ CREATE TABLE cadastre_object (
     land_use_code character varying(255) DEFAULT 'residential'::character varying,
     state_land_status_code character varying(20),
     description text,
-	classification_code character varying(20),
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
@@ -7048,6 +7048,20 @@ COMMENT ON COLUMN cadastre_object.description IS 'SOLA State Land Extension: A d
 
 
 --
+-- Name: COLUMN cadastre_object.classification_code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.classification_code IS 'SOLA State Land Extension: The security classification for this Parcel. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN cadastre_object.redact_code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.redact_code IS 'SOLA State Land Extension: The redact classification for this Parcel. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
 -- Name: COLUMN cadastre_object.rowidentifier; Type: COMMENT; Schema: cadastre; Owner: postgres
 --
 
@@ -7080,20 +7094,6 @@ COMMENT ON COLUMN cadastre_object.change_user IS 'The user id of the last person
 --
 
 COMMENT ON COLUMN cadastre_object.change_time IS 'The date and time the row was last modified.';
-
-
---
--- Name: COLUMN cadastre_object.classification_code; Type: COMMENT; Schema: cadastre; Owner: postgres
---
-
-COMMENT ON COLUMN cadastre_object.classification_code IS 'SOLA State Land Extension: The security classification for this Parcel. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
-
-
---
--- Name: COLUMN cadastre_object.redact_code; Type: COMMENT; Schema: cadastre; Owner: postgres
---
-
-COMMENT ON COLUMN cadastre_object.redact_code IS 'SOLA State Land Extension: The redact classification for this Parcel. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
 
 
 --
@@ -7254,7 +7254,7 @@ CREATE TABLE party (
     fax character varying(15),
     preferred_communication_code character varying(20),
     birth_date date,
-	classification_code character varying(20),
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
@@ -7402,6 +7402,20 @@ COMMENT ON COLUMN party.birth_date IS 'SOLA Extension: Date of birth.';
 
 
 --
+-- Name: COLUMN party.classification_code; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party.classification_code IS 'SOLA State Land Extension: The security classification for this Party. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN party.redact_code; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party.redact_code IS 'SOLA State Land Extension: The redact classification for this Party. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
 -- Name: COLUMN party.rowidentifier; Type: COMMENT; Schema: party; Owner: postgres
 --
 
@@ -7434,20 +7448,6 @@ COMMENT ON COLUMN party.change_user IS 'SOLA Extension: The user id of the last 
 --
 
 COMMENT ON COLUMN party.change_time IS 'SOLA Extension: The date and time the row was last modified.';
-
-
---
--- Name: COLUMN party.classification_code; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN party.classification_code IS 'SOLA State Land Extension: The security classification for this Party. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
-
-
---
--- Name: COLUMN party.redact_code; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN party.redact_code IS 'SOLA State Land Extension: The redact classification for this Party. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
 
 
 SET search_path = transaction, pg_catalog;
@@ -7687,8 +7687,8 @@ CREATE TABLE application_historic (
     action_notes character varying(255),
     status_code character varying(20),
     receipt_reference character varying(100),
-	description text,
-	classification_code character varying(20),
+    description text,
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
@@ -8771,7 +8771,7 @@ CREATE TABLE cadastre_object_historic (
     land_use_code character varying(255),
     state_land_status_code character varying(20),
     description text,
-	classification_code character varying(20),
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
@@ -10773,10 +10773,10 @@ ALTER TABLE document.document_historic OWNER TO postgres;
 --
 
 CREATE SEQUENCE document_nr_seq
-    START WITH 1
+    START WITH 1000
     INCREMENT BY 1
-    NO MINVALUE
-    MAXVALUE 9999
+    MINVALUE 1000
+    MAXVALUE 99999999
     CACHE 1
     CYCLE;
 
@@ -12135,7 +12135,7 @@ CREATE TABLE party_historic (
     fax character varying(15),
     preferred_communication_code character varying(20),
     birth_date date,
-	classification_code character varying(20),
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
@@ -12819,7 +12819,7 @@ CREATE TABLE source (
     version character varying(10),
     description text,
     signing_date date,
-	classification_code character varying(20),
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
@@ -12966,6 +12966,20 @@ COMMENT ON COLUMN source.signing_date IS 'SOLA Extension: The date the document 
 
 
 --
+-- Name: COLUMN source.classification_code; Type: COMMENT; Schema: source; Owner: postgres
+--
+
+COMMENT ON COLUMN source.classification_code IS 'SOLA State Land Extension: The security classification for this Source. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN source.redact_code; Type: COMMENT; Schema: source; Owner: postgres
+--
+
+COMMENT ON COLUMN source.redact_code IS 'SOLA State Land Extension: The redact classification for this Source. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
 -- Name: COLUMN source.rowidentifier; Type: COMMENT; Schema: source; Owner: postgres
 --
 
@@ -13001,20 +13015,6 @@ COMMENT ON COLUMN source.change_time IS 'The date and time the row was last modi
 
 
 --
--- Name: COLUMN source.classification_code; Type: COMMENT; Schema: source; Owner: postgres
---
-
-COMMENT ON COLUMN source.classification_code IS 'SOLA State Land Extension: The security classification for this Source. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
-
-
---
--- Name: COLUMN source.redact_code; Type: COMMENT; Schema: source; Owner: postgres
---
-
-COMMENT ON COLUMN source.redact_code IS 'SOLA State Land Extension: The redact classification for this Source. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
-
-
---
 -- Name: source_historic; Type: TABLE; Schema: source; Owner: postgres; Tablespace: 
 --
 
@@ -13038,7 +13038,7 @@ CREATE TABLE source_historic (
     version character varying(10),
     description text,
     signing_date date,
-	classification_code character varying(20),
+    classification_code character varying(20),
     redact_code character varying(20),
     rowidentifier character varying(40),
     rowversion integer,
