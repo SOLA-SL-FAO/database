@@ -64,3 +64,11 @@ COMMENT ON FUNCTION administrative.get_state_land_status(character varying) IS '
 UPDATE cadastre.cadastre_object 
 SET type_code = 'stateLand'
 WHERE name_lastpart = 'DP 34562';
+
+-- Change CO Unique Name constraint to include type_code so that state land parcels  
+-- can have the same name as registered parcels. 
+ALTER TABLE cadastre.cadastre_object
+DROP CONSTRAINT cadastre_object_name; 
+
+ALTER TABLE cadastre.cadastre_object
+ADD CONSTRAINT cadastre_object_name UNIQUE (name_firstpart, name_lastpart, type_code); 

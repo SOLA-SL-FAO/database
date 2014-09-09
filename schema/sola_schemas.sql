@@ -369,7 +369,7 @@ BEGIN
             GROUP BY co3.land_use_code)
 			
             SELECT land_use_code FROM use_area 
-            ORDER BY area LIMIT 1);
+            ORDER BY area DESC LIMIT 1);
 END;
 $$;
 
@@ -654,6 +654,44 @@ ALTER FUNCTION administrative.get_parcel_ownernames(baunit_id character varying)
 --
 
 COMMENT ON FUNCTION get_parcel_ownernames(baunit_id character varying) IS 'Returns a list of names of people associated to the BA Unit as an owner.';
+
+
+--
+-- Name: get_state_land_status(character varying); Type: FUNCTION; Schema: administrative; Owner: postgres
+--
+
+CREATE FUNCTION get_state_land_status(prop_id character varying) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+    RETURN 
+	   (WITH sl_status AS 
+           (SELECT  co.state_land_status_code, 
+		            CASE  co.state_land_status_code 
+					   WHEN 'current' THEN 1
+					   WHEN 'surplus' THEN 2
+					   WHEN 'dormant' THEN 3
+					   WHEN 'proposed' THEN 4
+					   ELSE 5 END AS status_order
+            FROM administrative.ba_unit_contains_spatial_unit bas, 
+			     cadastre.cadastre_object co
+            WHERE bas.ba_unit_id = prop_id 
+			AND   co.id = bas.spatial_unit_id 
+            AND   co.state_land_status_code IS NOT NULL)
+			
+            SELECT state_land_status_code FROM sl_status 
+            ORDER BY status_order LIMIT 1);
+END;
+$$;
+
+
+ALTER FUNCTION administrative.get_state_land_status(prop_id character varying) OWNER TO postgres;
+
+--
+-- Name: FUNCTION get_state_land_status(prop_id character varying); Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON FUNCTION get_state_land_status(prop_id character varying) IS 'Returns the state land status for the property based on the status of the parcels linked to the property';
 
 
 --
@@ -15840,7 +15878,7 @@ ALTER TABLE ONLY building_unit_type
 --
 
 ALTER TABLE ONLY cadastre_object
-    ADD CONSTRAINT cadastre_object_name UNIQUE (name_firstpart, name_lastpart);
+    ADD CONSTRAINT cadastre_object_name UNIQUE (name_firstpart, name_lastpart, type_code);
 
 
 --
