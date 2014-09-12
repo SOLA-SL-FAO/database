@@ -37,7 +37,6 @@ INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getSurveyContr
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getRoads', 'select id, label, st_asewkb(st_transform(geom, #{srid})) as the_geom from cadastre.road where ST_Intersects(st_transform(geom, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', NULL);
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getPlaceNames', 'select id, label, st_asewkb(st_transform(geom, #{srid})) as the_geom from cadastre.place_name where ST_Intersects(st_transform(geom, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', NULL);
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getApplications', 'select id, nr as label, st_asewkb(st_transform(location, #{srid})) as the_geom from application.application where ST_Intersects(st_transform(location, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', NULL);
-INSERT INTO query (name, sql, description) VALUES ('dynamic.informationtool.get_parcel', 'select co.id, co.name_firstpart || ''/'' || co.name_lastpart as parcel_nr,      (select string_agg(ba.name_firstpart || ''/'' || ba.name_lastpart, '','')      from administrative.ba_unit_contains_spatial_unit bas, administrative.ba_unit ba      where spatial_unit_id= co.id and bas.ba_unit_id= ba.id) as ba_units,      ( SELECT spatial_value_area.size FROM cadastre.spatial_value_area      WHERE spatial_value_area.type_code=''officialArea'' and spatial_value_area.spatial_unit_id = co.id) AS area_official_sqm,       st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom      from cadastre.cadastre_object co      where type_code= ''parcel'' and status_code= ''current''      and ST_Intersects(st_transform(co.geom_polygon, #{srid}), ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))', NULL);
 INSERT INTO query (name, sql, description) VALUES ('dynamic.informationtool.get_parcel_pending', 'select co.id, co.name_firstpart || ''/'' || co.name_lastpart as parcel_nr,       ( SELECT spatial_value_area.size FROM cadastre.spatial_value_area         WHERE spatial_value_area.type_code=''officialArea'' and spatial_value_area.spatial_unit_id = co.id) AS area_official_sqm,   st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom    from cadastre.cadastre_object co  where type_code= ''parcel'' and ((status_code= ''pending''    and ST_Intersects(st_transform(co.geom_polygon, #{srid}), ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid})))   or (co.id in (select cadastre_object_id           from cadastre.cadastre_object_target co_t inner join transaction.transaction t on co_t.transaction_id=t.id           where ST_Intersects(st_transform(co.geom_polygon, #{srid}), ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid})) and t.status_code not in (''approved''))))', NULL);
 INSERT INTO query (name, sql, description) VALUES ('dynamic.informationtool.get_place_name', 'select id, label,  st_asewkb(st_transform(geom, #{srid})) as the_geom from cadastre.place_name where ST_Intersects(st_transform(geom, #{srid}), ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))', NULL);
 INSERT INTO query (name, sql, description) VALUES ('dynamic.informationtool.get_road', 'select id, label,  st_asewkb(st_transform(geom, #{srid})) as the_geom from cadastre.road where ST_Intersects(st_transform(geom, #{srid}), ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))', NULL);
@@ -64,18 +63,74 @@ INSERT INTO query (name, sql, description) VALUES ('map_search.locality', 'SELEC
   AND compare_strings(#{search_string}, a.description)
   AND co.geom_polygon IS NOT NULL
   ORDER BY a.description', NULL);
-INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getStateLands', 'SELECT id, co.name_firstpart || '' '' || co.name_lastpart AS label, 
+INSERT INTO query (name, sql, description) VALUES ('dynamic.informationtool.get_parcel', 'SELECT co.id, co.name_firstpart || ''/'' || co.name_lastpart AS parcel_nr, 
+	   (SELECT string_agg(ba.name_firstpart || ''/'' || ba.name_lastpart, '', '') 
+	    FROM administrative.ba_unit_contains_spatial_unit bas, 
+		     administrative.ba_unit ba 
+		WHERE spatial_unit_id = co.id 
+		AND   bas.ba_unit_id = ba.id) AS ba_units,
+	   (SELECT cadastre.format_area_metric(sva.size)
+	    FROM cadastre.spatial_value_area  sva    
+		WHERE sva.type_code = ''officialArea'' 
+		AND   sva.spatial_unit_id = co.id) AS area_official_sqm,
+       (SELECT string_agg(a.description, '' - '')
+	    FROM   cadastre.spatial_unit_address sua,
+		       address.address a
+		WHERE  sua.spatial_unit_id = co.id
+		AND    a.id = sua.address_id) AS locality,				
         st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom 
+  FROM cadastre.cadastre_object  co
+  WHERE co.type_code = ''parcel''
+  AND   status_code = ''current''
+  AND   geom_polygon IS NOT NULL
+  AND  ST_Intersects(st_transform(geom_polygon, #{srid}), ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))', NULL);
+INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getStateLands', 'SELECT id, co.name_firstpart || '' '' || co.name_lastpart AS label, 
+        co.state_land_status_code AS filter_category,
+        st_asewkb(st_transform(geom_polygon, #{srid})) AS the_geom 
  FROM cadastre.cadastre_object  co
  WHERE co.type_code = ''stateLand''
- AND geom_polygon IS NOT NULL
+ AND co.status_code = ''current''
+ AND co.geom_polygon IS NOT NULL
  AND ST_Intersects(st_transform(geom_polygon, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'Retrieves state land polygons');
 INSERT INTO query (name, sql, description) VALUES ('dynamic.informationtool.get_state_land', 'SELECT id, co.name_firstpart || '' '' || co.name_lastpart AS label, 
+	   (SELECT string_agg(ba.name_firstpart || ba.name_lastpart, '', '') 
+	    FROM administrative.ba_unit_contains_spatial_unit bas, 
+		     administrative.ba_unit ba 
+		WHERE spatial_unit_id = co.id 
+		AND   bas.ba_unit_id = ba.id) AS property,
+	   (SELECT cadastre.format_area_metric(sva.size)
+	    FROM cadastre.spatial_value_area  sva    
+		WHERE sva.type_code = ''officialArea'' 
+		AND   sva.spatial_unit_id = co.id) AS area,
+       (SELECT string_agg(a.description, '' - '')
+	    FROM   cadastre.spatial_unit_address sua,
+		       address.address a
+		WHERE  sua.spatial_unit_id = co.id
+		AND    a.id = sua.address_id) AS locality,		
+       (SELECT sl.display_value 
+	    FROM   cadastre.state_land_status_type sl
+		WHERE  sl.code = co.state_land_status_code) AS sl_status,		
         st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom 
   FROM cadastre.cadastre_object  co
   WHERE co.type_code = ''stateLand''
-  AND geom_polygon IS NOT NULL
+  AND   geom_polygon IS NOT NULL
   AND  ST_Intersects(st_transform(geom_polygon, #{srid}), ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))', NULL);
+INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getDisposedStateLands', 'SELECT id, co.name_firstpart || '' '' || co.name_lastpart AS label, 
+        st_asewkb(st_transform(geom_polygon, #{srid})) AS the_geom 
+ FROM cadastre.cadastre_object  co
+ WHERE co.type_code = ''stateLand''
+ AND co.status_code = ''current''
+ AND co.state_land_status_code = ''disposed''
+ AND co.geom_polygon IS NOT NULL
+ AND ST_Intersects(st_transform(geom_polygon, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'Retrieves state land polygons');
+INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getPendingStateLands', 'SELECT id, co.name_firstpart || '' '' || co.name_lastpart AS label, 
+        co.state_land_status_code AS filter_category,
+        st_asewkb(st_transform(geom_polygon, #{srid})) AS the_geom 
+ FROM cadastre.cadastre_object  co
+ WHERE co.type_code = ''stateLand''
+ AND co.status_code = ''pending''
+ AND co.geom_polygon IS NOT NULL
+ AND ST_Intersects(st_transform(geom_polygon, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'Retrieves state land polygons');
 
 
 ALTER TABLE query ENABLE TRIGGER ALL;
@@ -90,7 +145,6 @@ INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, 
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('place-names', 'Places names::::Nomi di luoghi', 'pojo', true, true, 60, 'place_name.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Point,label:""', 'SpatialResult.getPlaceNames', 'dynamic.informationtool.get_place_name', NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('orthophoto', 'Orthophoto', 'wms', true, false, 10, NULL, 'http://demo.flossola.org/geoserver/sola/wms', 'sola:nz_orthophoto', '1.1.1', 'image/jpeg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('road-centerlines', 'Road centerlines', 'pojo', true, true, 45, 'road_centerline.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:MultiLineString,label:""', 'SpatialResult.getRoadCenterlines', NULL, NULL, NULL, NULL, false, false, false);
-INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('roads', 'Roads::::Strade', 'pojo', true, false, 40, 'road.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:MultiPolygon,label:""', 'SpatialResult.getRoads', 'dynamic.informationtool.get_road', NULL, NULL, NULL, false, true, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('house_num', 'House number', 'pojo', true, true, 43, 'house_num.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Point,label:""', 'SpatialResult.getHouseNum', NULL, NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('public-display-parcels', 'Public display parcels', 'pojo_public_display', false, true, 35, 'public_display_parcel.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'public_display.parcels', NULL, NULL, NULL, NULL, false, true, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('sug_hierarchy', 'Hierarchy', 'pojo', false, false, 9, 'sug-hierarchy.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:"",filter_category', 'SpatialResult.getHierarchy', NULL, NULL, NULL, NULL, false, true, false);
@@ -101,7 +155,10 @@ INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, 
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('applications', 'Applications::::Pratiche', 'pojo', false, false, 70, 'application.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:MultiPoint,label:""', 'SpatialResult.getApplications', 'dynamic.informationtool.get_application', NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('parcels-historic-current-ba', 'Historic parcels with current titles', 'pojo', false, false, 20, 'parcel_historic_current_ba.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsHistoricWithCurrentBA', 'dynamic.informationtool.get_parcel_historic_current_ba', NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('parcel-nodes', 'Parcel nodes', 'pojo', false, false, 15, 'parcel_node.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getParcelNodes', NULL, NULL, NULL, NULL, false, false, false);
-INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('state-land', 'State land', 'pojo', true, true, 41, 'state_land.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getStateLands', 'dynamic.informationtool.get_state_land', NULL, NULL, NULL, false, false, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('state-land', 'State land', 'pojo', true, true, 36, 'state_land.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:"",filter_category:""', 'SpatialResult.getStateLands', 'dynamic.informationtool.get_state_land', NULL, NULL, NULL, false, false, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('state-land-disposed', 'Disposed state land', 'pojo', true, false, 33, 'state_land_disposed.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getDisposedStateLands', NULL, NULL, NULL, NULL, false, false, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('state-land-pending', 'Pending state land', 'pojo', true, true, 39, 'state_land_pending.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:"",filter_category:""', 'SpatialResult.getPendingStateLands', NULL, NULL, NULL, NULL, false, false, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('roads', 'Roads::::Strade', 'pojo', true, false, 29, 'road.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:MultiPolygon,label:""', 'SpatialResult.getRoads', 'dynamic.informationtool.get_road', NULL, NULL, NULL, false, true, false);
 
 
 ALTER TABLE config_map_layer ENABLE TRIGGER ALL;
@@ -290,11 +347,6 @@ ALTER TABLE map_search_option ENABLE TRIGGER ALL;
 
 ALTER TABLE query_field DISABLE TRIGGER ALL;
 
-INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel', 1, 'parcel_nr', 'Parcel number::::Numero Particella');
-INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel', 2, 'ba_units', 'Properties::::Proprieta');
-INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel', 3, 'area_official_sqm', 'Official area (m2)::::Area ufficiale (m2)');
-INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel', 0, 'id', NULL);
-INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel', 4, 'the_geom', NULL);
 INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel_pending', 0, 'id', NULL);
 INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel_pending', 1, 'parcel_nr', 'Parcel number::::Numero Particella');
 INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel_pending', 2, 'area_official_sqm', 'Official area (m2)::::Area ufficiale (m2)');
@@ -317,8 +369,18 @@ INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES
 INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel_historic_current_ba', 3, 'area_official_sqm', 'Official area (m2)::::Area ufficiale (m2)');
 INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel_historic_current_ba', 4, 'the_geom', NULL);
 INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_state_land', 0, 'id', NULL);
-INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_state_land', 1, 'label', 'Parcel name');
-INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_state_land', 2, 'the_geom', NULL);
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_state_land', 1, 'label', 'Parcel');
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_state_land', 2, 'property', 'Property');
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_state_land', 3, 'area', 'Area');
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_state_land', 4, 'locality', 'Locality');
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_state_land', 5, 'sl_status', 'Status');
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_state_land', 6, 'the_geom', NULL);
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel', 0, 'id', NULL);
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel', 1, 'parcel_nr', 'Parcel');
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel', 2, 'ba_units', 'Property');
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel', 3, 'area_official_sqm', 'Area');
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel', 4, 'locality', 'Locality');
+INSERT INTO query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_parcel', 5, 'the_geom', NULL);
 
 
 ALTER TABLE query_field ENABLE TRIGGER ALL;

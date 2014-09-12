@@ -3494,6 +3494,31 @@ COMMENT ON FUNCTION f_for_tbl_cadastre_object_trg_remove() IS 'Function triggere
 
 
 --
+-- Name: format_area_metric(numeric); Type: FUNCTION; Schema: cadastre; Owner: postgres
+--
+
+CREATE FUNCTION format_area_metric(area numeric) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+	CASE WHEN area IS NULL OR area < 0.05 THEN RETURN NULL;
+	WHEN area < 1 THEN RETURN '    < 1 m' || chr(178);
+	WHEN area < 10000 THEN RETURN to_char(area, '999,999 m') || chr(178);
+	ELSE RETURN to_char((area/10000), '999,999.999 ha'); 
+	END CASE; 
+  END; $$;
+
+
+ALTER FUNCTION cadastre.format_area_metric(area numeric) OWNER TO postgres;
+
+--
+-- Name: FUNCTION format_area_metric(area numeric); Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON FUNCTION format_area_metric(area numeric) IS 'Formats a metric area to m2 or hectares if area > 10,000m2';
+
+
+--
 -- Name: generate_spatial_unit_group_name(public.geometry, integer, character varying); Type: FUNCTION; Schema: cadastre; Owner: postgres
 --
 
