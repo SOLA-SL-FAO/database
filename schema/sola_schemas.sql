@@ -15899,14 +15899,6 @@ ALTER TABLE ONLY building_unit_type
 
 
 --
--- Name: cadastre_object_name; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY cadastre_object
-    ADD CONSTRAINT cadastre_object_name UNIQUE (name_firstpart, name_lastpart, type_code);
-
-
---
 -- Name: cadastre_object_node_target_pkey; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
 --
 
