@@ -441,3 +441,61 @@ state_land_pending AS (
  
  INSERT INTO system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer)
  VALUES ('OWNER_OF_BAUNIT', 'Property owner', 'map_search.cadastre_object_by_baunit_owner', TRUE, 3, 50);  
+  
+ 
+ -- *** State Land application services ***
+INSERT INTO system.config_panel_launcher(code, display_value, description, status, launch_group, panel_class, message_code, card_name)
+SELECT 'newSLProperty', 'New State Land Property Panel', null, 'c', 'newPropServices', 'org.sola.clients.swing.desktop.administrative.SLPropertyPanel', 'cliprgs009', 'slPropertyPanel'
+WHERE NOT EXISTS (SELECT code FROM system.config_panel_launcher WHERE code = 'newSLProperty');
+
+UPDATE system.config_panel_launcher 
+SET launch_group = 'slPropertyServices' WHERE code = 'slProperty'; 
+
+UPDATE application.request_type 
+SET service_panel_code = 'newSLProperty',
+    display_value = 'Record New Property',
+	description = 'Create a new State Land Property'
+WHERE code = 'recordStateLand';
+
+UPDATE application.request_type 
+SET display_value = 'Create or Change Parcels',
+    description = 'Create, change or dispose State Land Parcels'
+WHERE code = 'changeSLParcels'; 
+
+ 
+ -- Add additional request types
+ INSERT INTO application.request_type(code, request_category_code, display_value, 
+            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
+            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
+            description, display_group_name, service_panel_code)
+    SELECT 'maintainStateLand','stateLandServices','Maintain Property','c',5,0.00,0.00,0.00,0,
+	null,null,null,'Add or change details for an existing State Land Property including interests, parcels and relationships','General', 'slProperty'
+	WHERE NOT EXISTS (SELECT code FROM application.request_type WHERE code = 'maintainStateLand');
+	
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'maintainStateLand', 'Service - Maintain State Land','c', 'State Land Service. Allows the Maintain State Land service to be started.'
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'maintainStateLand');
+
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) 
+    (SELECT 'maintainStateLand', ag.id FROM system.appgroup ag WHERE ag."name" = 'Super group'
+	 AND NOT EXISTS (SELECT approle_code FROM system.approle_appgroup 
+	                 WHERE  approle_code = 'maintainStateLand'
+					 AND    appgroup_id = ag.id));
+					 
+ INSERT INTO application.request_type(code, request_category_code, display_value, 
+            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
+            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
+            description, display_group_name, service_panel_code)
+    SELECT 'cancelInterest','stateLandServices','Cancel Interest','c',5,0.00,0.00,0.00,0,
+	null,null,'cancel','Cancel one or more interests on an existing State Land Property','General', 'slProperty'
+	WHERE NOT EXISTS (SELECT code FROM application.request_type WHERE code = 'cancelInterest');
+	
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'cancelInterest', 'Service - Cancel State Land Interest','c', 'State Land Service. Allows the Cancel State Land Interest service to be started.'
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'cancelInterest');
+
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) 
+    (SELECT 'cancelInterest', ag.id FROM system.appgroup ag WHERE ag."name" = 'Super group'
+	 AND NOT EXISTS (SELECT approle_code FROM system.approle_appgroup 
+	                 WHERE  approle_code = 'cancelInterest'
+					 AND    appgroup_id = ag.id));

@@ -44,10 +44,7 @@ INSERT INTO query (name, sql, description) VALUES ('dynamic.informationtool.get_
 INSERT INTO query (name, sql, description) VALUES ('dynamic.informationtool.get_survey_control', 'select id, label,  st_asewkb(st_transform(geom, #{srid})) as the_geom from cadastre.survey_control where ST_Intersects(st_transform(geom, #{srid}), ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))', NULL);
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getParcelsHistoricWithCurrentBA', 'select co.id, co.name_firstpart || ''/'' || co.name_lastpart as label,  st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom from cadastre.cadastre_object co inner join administrative.ba_unit_contains_spatial_unit ba_co on co.id = ba_co.spatial_unit_id   inner join administrative.ba_unit ba_unit on ba_unit.id= ba_co.ba_unit_id where co.type_code=''parcel'' and co.status_code= ''historic'' and ba_unit.status_code = ''current'' and ST_Intersects(st_transform(co.geom_polygon, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', NULL);
 INSERT INTO query (name, sql, description) VALUES ('dynamic.informationtool.get_parcel_historic_current_ba', 'select co.id, co.name_firstpart || ''/'' || co.name_lastpart as parcel_nr,         (select string_agg(ba.name_firstpart || ''/'' || ba.name_lastpart, '','')           from administrative.ba_unit_contains_spatial_unit bas, administrative.ba_unit ba           where spatial_unit_id= co.id and bas.ba_unit_id= ba.id) as ba_units,         (SELECT spatial_value_area.size      FROM cadastre.spatial_value_area           WHERE spatial_value_area.type_code=''officialArea'' and spatial_value_area.spatial_unit_id = co.id) AS area_official_sqm,         st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom        from cadastre.cadastre_object co inner join administrative.ba_unit_contains_spatial_unit ba_co on co.id = ba_co.spatial_unit_id   inner join administrative.ba_unit ba_unit on ba_unit.id= ba_co.ba_unit_id where co.type_code=''parcel'' and co.status_code= ''historic'' and ba_unit.status_code = ''current''       and ST_Intersects(st_transform(co.geom_polygon, #{srid}), ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))', NULL);
-INSERT INTO query (name, sql, description) VALUES ('map_search.cadastre_object_by_number', 'select id, name_firstpart || ''/ '' || name_lastpart as label, st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom  from cadastre.cadastre_object  where status_code= ''current'' and compare_strings(#{search_string}, name_firstpart || '' '' || name_lastpart) limit 30', NULL);
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getParcels', 'select co.id, co.name_firstpart || ''/'' || co.name_lastpart as label,  st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom from cadastre.cadastre_object co where type_code= ''parcel'' and status_code= ''current'' and ST_Intersects(st_transform(co.geom_polygon, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', NULL);
-INSERT INTO query (name, sql, description) VALUES ('map_search.cadastre_object_by_baunit', 'select distinct co.id,  ba_unit.name_firstpart || ''/ '' || ba_unit.name_lastpart || '' > '' || co.name_firstpart || ''/ '' || co.name_lastpart as label,  st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom from cadastre.cadastre_object  co    inner join administrative.ba_unit_contains_spatial_unit bas on co.id = bas.spatial_unit_id     inner join administrative.ba_unit on ba_unit.id = bas.ba_unit_id  where (co.status_code= ''current'' or ba_unit.status_code= ''current'')    and compare_strings(#{search_string}, ba_unit.name_firstpart || '' '' || ba_unit.name_lastpart) limit 30', NULL);
-INSERT INTO query (name, sql, description) VALUES ('map_search.cadastre_object_by_baunit_owner', 'select distinct co.id,  coalesce(party.name, '''') || '' '' || coalesce(party.last_name, '''') || '' > '' || co.name_firstpart || ''/ '' || co.name_lastpart as label,  st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom  from cadastre.cadastre_object  co     inner join administrative.ba_unit_contains_spatial_unit bas on co.id = bas.spatial_unit_id     inner join administrative.ba_unit on bas.ba_unit_id= ba_unit.id     inner join administrative.rrr on (ba_unit.id = rrr.ba_unit_id and rrr.status_code = ''current'' and rrr.type_code = ''ownership'')     inner join administrative.party_for_rrr pfr on rrr.id = pfr.rrr_id     inner join party.party on pfr.party_id= party.id where (co.status_code= ''current'' or ba_unit.status_code= ''current'')     and compare_strings(#{search_string}, coalesce(party.name, '''') || '' '' || coalesce(party.last_name, '''')) limit 30', NULL);
 INSERT INTO query (name, sql, description) VALUES ('system_search.cadastre_object_by_baunit_id', 'SELECT id,  name_firstpart || ''/ '' || name_lastpart as label, st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom  FROM cadastre.cadastre_object WHERE transaction_id IN (  SELECT cot.transaction_id FROM (administrative.ba_unit_contains_spatial_unit ba_su     INNER JOIN cadastre.cadastre_object co ON ba_su.spatial_unit_id = co.id)     INNER JOIN cadastre.cadastre_object_target cot ON co.id = cot.cadastre_object_id     WHERE ba_su.ba_unit_id = #{search_string})  AND (SELECT COUNT(1) FROM administrative.ba_unit_contains_spatial_unit WHERE spatial_unit_id = cadastre_object.id) = 0 AND status_code = ''current''', 'Query used by BaUnitBean.loadNewParcels');
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getParcelNodes', 'select distinct st_astext(st_transform(geom, #{srid})) as id, '''' as label, st_asewkb(st_transform(geom, #{srid})) as the_geom from (select (ST_DumpPoints(geom_polygon)).* from cadastre.cadastre_object co  where type_code= ''parcel'' and status_code= ''current''  and ST_Intersects(st_transform(co.geom_polygon, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))) tmp_table ', NULL);
 INSERT INTO query (name, sql, description) VALUES ('public_display.parcels', 'select co.id, co.name_firstpart as label,  st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom from cadastre.cadastre_object co where type_code= ''parcel'' and status_code= ''current'' and name_lastpart = #{name_lastpart} and ST_Intersects(st_transform(co.geom_polygon, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'Query is used from public display map. It retrieves parcels being of a certain area (name_lastpart).');
@@ -55,14 +52,6 @@ INSERT INTO query (name, sql, description) VALUES ('public_display.parcels_next'
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getHierarchy', 'select id, label, st_asewkb(geom) as the_geom, filter_category  from cadastre.hierarchy where ST_Intersects(geom, ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'Query is used from Spatial Unit Group Editor to edit hierarchy records');
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getRoadCenterlines', 'select id, label, st_asewkb(st_transform(geom, #{srid})) as the_geom from cadastre.spatial_unit where level_id = ''road-centerline'' and ST_Intersects(st_transform(geom, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', NULL);
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getHouseNum', 'select su.id, su.label,  st_asewkb(su.reference_point) as the_geom from cadastre.spatial_unit su, cadastre.level l where su.level_id = l.id and l."name" = ''House Number'' and ST_Intersects(su.reference_point, ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', NULL);
-INSERT INTO query (name, sql, description) VALUES ('map_search.locality', 'SELECT co.id, a.description as label, st_asewkb(co.geom_polygon) as the_geom 
-  FROM cadastre.cadastre_object co, cadastre.spatial_unit_address sa,
-       address.address a
-  WHERE co.id = sa.spatial_unit_id
-  AND   a.id = sa.address_id  
-  AND compare_strings(#{search_string}, a.description)
-  AND co.geom_polygon IS NOT NULL
-  ORDER BY a.description', NULL);
 INSERT INTO query (name, sql, description) VALUES ('dynamic.informationtool.get_parcel', 'SELECT co.id, co.name_firstpart || ''/'' || co.name_lastpart AS parcel_nr, 
 	   (SELECT string_agg(ba.name_firstpart || ''/'' || ba.name_lastpart, '', '') 
 	    FROM administrative.ba_unit_contains_spatial_unit bas, 
@@ -179,6 +168,181 @@ INSERT INTO query (name, sql, description) VALUES ('dynamic.informationtool.get_
   AND   co.state_land_status_code = ''disposed''
   AND   geom_polygon IS NOT NULL
   AND  ST_Intersects(st_transform(geom_polygon, #{srid}), ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))', NULL);
+INSERT INTO query (name, sql, description) VALUES ('map_search.locality', 'WITH state_land AS ( SELECT co.id, a.description as label, st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co, cadastre.spatial_unit_address sa,
+       address.address a
+  WHERE co.id = sa.spatial_unit_id
+  AND   a.id = sa.address_id  
+  AND compare_strings(#{search_string}, a.description)
+  AND co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code IN (''pending'', ''current''))
+  
+ SELECT co.id, a.description as label, 
+        st_asewkb(co.geom_polygon) as the_geom	
+  FROM cadastre.cadastre_object co, cadastre.spatial_unit_address sa,
+       address.address a
+  WHERE co.id = sa.spatial_unit_id
+  AND   a.id = sa.address_id  
+  AND compare_strings(#{search_string}, a.description)
+  AND co.geom_polygon IS NOT NULL
+  AND co.type_code != ''stateLand''
+  AND co.status_code IN (''pending'', ''current'')
+  AND NOT EXISTS (SELECT sl.id FROM state_land sl 
+                  WHERE a.description = sl.label)
+  UNION
+  SELECT id, label, the_geom  FROM state_land ', NULL);
+INSERT INTO query (name, sql, description) VALUES ('map_search.cadastre_object_by_number', 'WITH state_land AS ( 
+  SELECT co.id, TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''current''
+  AND compare_strings(#{search_string}, co.name_firstpart || '' '' || co.name_lastpart)),
+  
+state_land_pending AS ( 
+  SELECT co.id, TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''pending''
+  AND compare_strings(#{search_string}, co.name_firstpart || '' '' || co.name_lastpart))
+  
+ SELECT co.id, TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code != ''stateLand''
+  AND co.status_code = ''current''
+  AND compare_strings(#{search_string}, co.name_firstpart || '' '' || co.name_lastpart)
+  AND NOT EXISTS (SELECT sl.id FROM state_land sl 
+                  WHERE TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) = sl.label)
+  AND NOT EXISTS (SELECT slp.id FROM state_land_pending slp
+                  WHERE TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) = slp.label)
+  UNION 
+  SELECT id, label, the_geom FROM state_land_pending slp
+  WHERE NOT EXISTS (SELECT sl.id FROM state_land sl 
+                    WHERE slp.label = sl.label)
+  UNION
+  SELECT id, label, the_geom FROM state_land 
+  LIMIT 50 ', NULL);
+INSERT INTO query (name, sql, description) VALUES ('map_search.cadastre_object_by_baunit', 'WITH state_land AS ( 
+  SELECT co.id, TRIM(ba.name_firstpart) || TRIM(ba.name_lastpart)
+    || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.ba_unit ba
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''current''
+  AND bas.spatial_unit_id = co.id
+  AND ba.id = bas.ba_unit_id
+  AND ba.status_code = ''current''
+  AND compare_strings(#{search_string}, ba.name_firstpart || '' '' || ba.name_lastpart)),
+  
+state_land_pending AS ( 
+  SELECT co.id, TRIM(ba.name_firstpart) || TRIM(ba.name_lastpart) 
+       || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label, 
+         st_asewkb(co.geom_polygon) as the_geom
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.ba_unit ba
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''pending''
+  AND bas.spatial_unit_id = co.id
+  AND ba.id = bas.ba_unit_id
+  AND ba.status_code = ''current''
+  AND compare_strings(#{search_string}, ba.name_firstpart || '' '' || ba.name_lastpart))
+  
+  SELECT id, label, the_geom, 1 AS sort_idx FROM state_land_pending slp
+  WHERE NOT EXISTS (SELECT sl.id FROM state_land sl 
+                    WHERE slp.label = sl.label)
+  UNION
+  SELECT id, label, the_geom, 1 AS sort_idx FROM state_land
+  UNION
+  SELECT co.id, TRIM(ba.name_firstpart) || ''/'' || TRIM(ba.name_lastpart) 
+     || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label,   
+         st_asewkb(co.geom_polygon) as the_geom, 2 AS sort_idx
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.ba_unit ba
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code != ''stateLand''
+  AND co.status_code = ''current''
+  AND bas.spatial_unit_id = co.id
+  AND ba.id = bas.ba_unit_id
+  AND ba.status_code = ''current''
+  AND compare_strings(#{search_string}, ba.name_firstpart || '' '' || ba.name_lastpart)
+  LIMIT 50 ', NULL);
+INSERT INTO query (name, sql, description) VALUES ('map_search.cadastre_object_by_baunit_owner', 'WITH state_land AS ( 
+  SELECT co.id,  COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, '''') 
+       || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.rrr rrr, 
+	   administrative.party_for_rrr pfr,
+	   party.party p   
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''current''
+  AND bas.spatial_unit_id = co.id
+  AND rrr.ba_unit_id = bas.ba_unit_id
+  AND rrr.is_primary = TRUE
+  AND rrr.status_code = ''current''
+  AND pfr.rrr_id = rrr.id
+  AND p.id = pfr.party_id
+  AND compare_strings(#{search_string}, COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, ''''))),
+  
+state_land_pending AS ( 
+  SELECT co.id,  COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, '''') 
+    || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.rrr rrr, 
+	   administrative.party_for_rrr pfr,
+	   party.party p   
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''pending''
+  AND bas.spatial_unit_id = co.id
+  AND rrr.ba_unit_id = bas.ba_unit_id
+  AND rrr.is_primary = TRUE
+  AND rrr.status_code = ''current''
+  AND pfr.rrr_id = rrr.id
+  AND p.id = pfr.party_id
+  AND compare_strings(#{search_string}, COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, '''')))
+  
+  SELECT id, label, the_geom, 1 AS sort_idx FROM state_land_pending slp
+  WHERE NOT EXISTS (SELECT sl.id FROM state_land sl 
+                    WHERE slp.label = sl.label)
+  UNION
+  SELECT id, label, the_geom, 1 AS sort_idx FROM state_land
+  UNION
+  SELECT co.id,  COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, '''') 
+     || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label,   
+         st_asewkb(co.geom_polygon) as the_geom, 2 AS sort_idx 
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.rrr rrr, 
+	   administrative.party_for_rrr pfr,
+	   party.party p   
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code != ''stateLand''
+  AND co.status_code = ''current''
+  AND bas.spatial_unit_id = co.id
+  AND rrr.ba_unit_id = bas.ba_unit_id
+  AND rrr.is_primary = TRUE
+  AND rrr.status_code = ''current''
+  AND pfr.rrr_id = rrr.id
+  AND p.id = pfr.party_id
+  AND compare_strings(#{search_string}, COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, ''''))
+  LIMIT 50 ', NULL);
 
 
 ALTER TABLE query ENABLE TRIGGER ALL;
@@ -258,9 +422,10 @@ INSERT INTO config_panel_launcher (code, display_value, description, status, lau
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('mortgage', 'Mortgage Panel', NULL, 'c', 'generalRRR', 'org.sola.clients.swing.desktop.administrative.MortgagePanel', NULL, 'mortgagePanel');
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('lease', 'Lease Panel', NULL, 'c', 'leaseRRR', 'org.sola.clients.swing.desktop.administrative.LeasePanel', NULL, 'leasePanel');
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('ownership', 'Ownership Share Panel', NULL, 'c', 'generalRRR', 'org.sola.clients.swing.desktop.administrative.OwnershipPanel', NULL, 'ownershipPanel');
-INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('slProperty', 'State Land Property Panel', NULL, 'c', 'newPropServices', 'org.sola.clients.swing.desktop.administrative.SLPropertyPanel', 'cliprgs009', 'slPropertyPanel');
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('simpleRightCondPanel', 'Simple Right Condition Panel', NULL, 'c', 'generalRRR', 'org.sola.clients.swing.desktop.administrative.SimpleRightConditionPanel', NULL, 'simpleRightCondPanel');
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('simpleRholdConPanel', 'Simple Rightholder Condition Panel', NULL, 'c', 'generalRRR', 'org.sola.clients.swing.desktop.administrative.SimpleRightholderConditionPanel', NULL, 'simpleRightholderCondPanel');
+INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('newSLProperty', 'New State Land Property Panel', NULL, 'c', 'newPropServices', 'org.sola.clients.swing.desktop.administrative.SLPropertyPanel', 'cliprgs009', 'slPropertyPanel');
+INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('slProperty', 'State Land Property Panel', NULL, 'c', 'slPropertyServices', 'org.sola.clients.swing.desktop.administrative.SLPropertyPanel', 'cliprgs009', 'slPropertyPanel');
 
 
 ALTER TABLE config_panel_launcher ENABLE TRIGGER ALL;
@@ -381,10 +546,10 @@ ALTER TABLE crs ENABLE TRIGGER ALL;
 
 ALTER TABLE map_search_option DISABLE TRIGGER ALL;
 
-INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('NUMBER', 'Number', 'map_search.cadastre_object_by_number', true, 3, 50.00, NULL);
+INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('LOCALITY', 'Locality', 'map_search.locality', true, 3, 100.00, NULL);
+INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('NUMBER', 'Parcel number', 'map_search.cadastre_object_by_number', true, 3, 50.00, NULL);
 INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('BAUNIT', 'Property number', 'map_search.cadastre_object_by_baunit', true, 3, 50.00, NULL);
 INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('OWNER_OF_BAUNIT', 'Property owner', 'map_search.cadastre_object_by_baunit_owner', true, 3, 50.00, NULL);
-INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('LOCALITY', 'Locality', 'map_search.locality', true, 3, 100.00, NULL);
 
 
 ALTER TABLE map_search_option ENABLE TRIGGER ALL;

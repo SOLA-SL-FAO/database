@@ -241,6 +241,8 @@ INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversi
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('RevertService', 'dfbf675a-b449-43b5-9392-d624c0b3618d', '3e3cf76a-93c2-4033-a70a-76d3e8e921cd', 1, 'i', 'test', '2014-08-13 10:46:59.342');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('StartService', 'dfbf675a-b449-43b5-9392-d624c0b3618d', 'af84a624-9fa9-4dde-bcf1-68809e0c04cb', 1, 'i', 'test', '2014-08-13 10:46:59.342');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('changeSLParcels', 'super-group-id', 'aa738934-2dc5-11e4-8d98-1f7030d3eb16', 1, 'i', 'db:postgres', '2014-08-27 20:39:31.825');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('maintainStateLand', 'super-group-id', '28279380-3e14-11e4-8c97-0359e7b19e0a', 1, 'i', 'db:postgres', '2014-09-17 14:41:42.072');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('cancelInterest', 'super-group-id', '2828cc0a-3e14-11e4-88c8-13133815a6f5', 1, 'i', 'db:postgres', '2014-09-17 14:41:42.072');
 
 
 ALTER TABLE approle_appgroup ENABLE TRIGGER ALL;
