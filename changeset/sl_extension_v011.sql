@@ -180,5 +180,264 @@ INSERT INTO system.query_field(query_name, index_in_query, "name", display_value
  VALUES ('dynamic.informationtool.get_disposed_state_land', 6, 'the_geom', null); 
 
 
- INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, added_from_bulk_operation, use_in_public_display) VALUES ('state-land-disposed', 'Disposed state land', 'pojo', true, false, 33, 'state_land_disposed.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getDisposedStateLands', 'dynamic.informationtool.get_disposed_state_land', false, false);				 
-				
+ INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, added_from_bulk_operation, use_in_public_display) VALUES ('state-land-disposed', 'Disposed state land', 'pojo', true, false, 33, 'state_land_disposed.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getDisposedStateLands', 'dynamic.informationtool.get_disposed_state_land', false, false);
+
+
+ -- Update compare_strings function to recognize \s
+ CREATE OR REPLACE FUNCTION compare_strings(string1 character varying, string2 character varying)
+  RETURNS boolean AS
+$BODY$
+  DECLARE
+    rec record;
+    result boolean;
+  BEGIN
+      result = false;
+      for rec in select regexp_split_to_table(lower(string1),'[^a-z0-9\\s]') as word loop
+          if rec.word != '' then 
+            if not string2 ~* rec.word then
+                return false;
+            end if;
+            result = true;
+          end if;
+      end loop;
+      return result;
+  END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION compare_strings(character varying, character varying)
+  OWNER TO postgres;
+COMMENT ON FUNCTION compare_strings(character varying, character varying) IS E'Special string compare function. Allows spaces to be recognized as valid search parameters when entered as \s';
+
+
+
+-- Fix Locality Map Search so that only one record is returned if
+-- both the state land parcel and an underlying parcel share
+-- the same address. 
+DELETE FROM system.map_search_option
+ WHERE query_name = 'map_search.locality';
+ 
+ DELETE FROM system.query
+ WHERE "name" = 'map_search.locality';
+ 
+ INSERT INTO system.query("name", sql)
+ VALUES ('map_search.locality', 
+ 'WITH state_land AS ( SELECT co.id, a.description as label, st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co, cadastre.spatial_unit_address sa,
+       address.address a
+  WHERE co.id = sa.spatial_unit_id
+  AND   a.id = sa.address_id  
+  AND compare_strings(#{search_string}, a.description)
+  AND co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code IN (''pending'', ''current''))
+  
+ SELECT co.id, a.description as label, 
+        st_asewkb(co.geom_polygon) as the_geom	
+  FROM cadastre.cadastre_object co, cadastre.spatial_unit_address sa,
+       address.address a
+  WHERE co.id = sa.spatial_unit_id
+  AND   a.id = sa.address_id  
+  AND compare_strings(#{search_string}, a.description)
+  AND co.geom_polygon IS NOT NULL
+  AND co.type_code != ''stateLand''
+  AND co.status_code IN (''pending'', ''current'')
+  AND NOT EXISTS (SELECT sl.id FROM state_land sl 
+                  WHERE a.description = sl.label)
+  UNION
+  SELECT id, label, the_geom  FROM state_land ');
+ 
+ INSERT INTO system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer)
+ VALUES ('LOCALITY', 'Locality', 'map_search.locality', TRUE, 3, 100);  
+ 
+ 
+ -- Update Parcel Number map search
+ DELETE FROM system.map_search_option
+ WHERE query_name = 'map_search.cadastre_object_by_number';
+ 
+ DELETE FROM system.query
+ WHERE "name" = 'map_search.cadastre_object_by_number';
+ 
+ INSERT INTO system.query("name", sql)
+ VALUES ('map_search.cadastre_object_by_number', 
+'WITH state_land AS ( 
+  SELECT co.id, TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''current''
+  AND compare_strings(#{search_string}, co.name_firstpart || '' '' || co.name_lastpart)),
+  
+state_land_pending AS ( 
+  SELECT co.id, TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''pending''
+  AND compare_strings(#{search_string}, co.name_firstpart || '' '' || co.name_lastpart))
+  
+ SELECT co.id, TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code != ''stateLand''
+  AND co.status_code = ''current''
+  AND compare_strings(#{search_string}, co.name_firstpart || '' '' || co.name_lastpart)
+  AND NOT EXISTS (SELECT sl.id FROM state_land sl 
+                  WHERE TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) = sl.label)
+  AND NOT EXISTS (SELECT slp.id FROM state_land_pending slp
+                  WHERE TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) = slp.label)
+  UNION 
+  SELECT id, label, the_geom FROM state_land_pending slp
+  WHERE NOT EXISTS (SELECT sl.id FROM state_land sl 
+                    WHERE slp.label = sl.label)
+  UNION
+  SELECT id, label, the_geom FROM state_land 
+  LIMIT 50 ');
+ 
+ INSERT INTO system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer)
+ VALUES ('NUMBER', 'Parcel number', 'map_search.cadastre_object_by_number', TRUE, 3, 50);  
+ 
+ 
+  -- Update Property Number map search
+ DELETE FROM system.map_search_option
+ WHERE query_name = 'map_search.cadastre_object_by_baunit';
+ 
+ DELETE FROM system.query
+ WHERE "name" = 'map_search.cadastre_object_by_baunit';
+ 
+ INSERT INTO system.query("name", sql)
+ VALUES ('map_search.cadastre_object_by_baunit', 
+'WITH state_land AS ( 
+  SELECT co.id, TRIM(ba.name_firstpart) || TRIM(ba.name_lastpart)
+    || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.ba_unit ba
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''current''
+  AND bas.spatial_unit_id = co.id
+  AND ba.id = bas.ba_unit_id
+  AND ba.status_code = ''current''
+  AND compare_strings(#{search_string}, ba.name_firstpart || '' '' || ba.name_lastpart)),
+  
+state_land_pending AS ( 
+  SELECT co.id, TRIM(ba.name_firstpart) || TRIM(ba.name_lastpart) 
+       || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label, 
+         st_asewkb(co.geom_polygon) as the_geom
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.ba_unit ba
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''pending''
+  AND bas.spatial_unit_id = co.id
+  AND ba.id = bas.ba_unit_id
+  AND ba.status_code = ''current''
+  AND compare_strings(#{search_string}, ba.name_firstpart || '' '' || ba.name_lastpart))
+  
+  SELECT id, label, the_geom, 1 AS sort_idx FROM state_land_pending slp
+  WHERE NOT EXISTS (SELECT sl.id FROM state_land sl 
+                    WHERE slp.label = sl.label)
+  UNION
+  SELECT id, label, the_geom, 1 AS sort_idx FROM state_land
+  UNION
+  SELECT co.id, TRIM(ba.name_firstpart) || ''/'' || TRIM(ba.name_lastpart) 
+     || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label,   
+         st_asewkb(co.geom_polygon) as the_geom, 2 AS sort_idx
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.ba_unit ba
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code != ''stateLand''
+  AND co.status_code = ''current''
+  AND bas.spatial_unit_id = co.id
+  AND ba.id = bas.ba_unit_id
+  AND ba.status_code = ''current''
+  AND compare_strings(#{search_string}, ba.name_firstpart || '' '' || ba.name_lastpart)
+  LIMIT 50 ');
+ 
+ INSERT INTO system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer)
+ VALUES ('BAUNIT', 'Property number', 'map_search.cadastre_object_by_baunit', TRUE, 3, 50);  
+ 
+   -- Update Property Owner map search
+ DELETE FROM system.map_search_option
+ WHERE query_name = 'map_search.cadastre_object_by_baunit_owner';
+ 
+ DELETE FROM system.query
+ WHERE "name" = 'map_search.cadastre_object_by_baunit_owner';
+ 
+ INSERT INTO system.query("name", sql)
+ VALUES ('map_search.cadastre_object_by_baunit_owner', 
+'WITH state_land AS ( 
+  SELECT co.id,  COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, '''') 
+       || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.rrr rrr, 
+	   administrative.party_for_rrr pfr,
+	   party.party p   
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''current''
+  AND bas.spatial_unit_id = co.id
+  AND rrr.ba_unit_id = bas.ba_unit_id
+  AND rrr.is_primary = TRUE
+  AND rrr.status_code = ''current''
+  AND pfr.rrr_id = rrr.id
+  AND p.id = pfr.party_id
+  AND compare_strings(#{search_string}, COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, ''''))),
+  
+state_land_pending AS ( 
+  SELECT co.id,  COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, '''') 
+    || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label, 
+         st_asewkb(co.geom_polygon) as the_geom 
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.rrr rrr, 
+	   administrative.party_for_rrr pfr,
+	   party.party p   
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code = ''stateLand''
+  AND co.status_code = ''pending''
+  AND bas.spatial_unit_id = co.id
+  AND rrr.ba_unit_id = bas.ba_unit_id
+  AND rrr.is_primary = TRUE
+  AND rrr.status_code = ''current''
+  AND pfr.rrr_id = rrr.id
+  AND p.id = pfr.party_id
+  AND compare_strings(#{search_string}, COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, '''')))
+  
+  SELECT id, label, the_geom, 1 AS sort_idx FROM state_land_pending slp
+  WHERE NOT EXISTS (SELECT sl.id FROM state_land sl 
+                    WHERE slp.label = sl.label)
+  UNION
+  SELECT id, label, the_geom, 1 AS sort_idx FROM state_land
+  UNION
+  SELECT co.id,  COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, '''') 
+     || '' ('' || TRIM(co.name_firstpart) || '' '' || TRIM(co.name_lastpart) || '')'' as label,   
+         st_asewkb(co.geom_polygon) as the_geom, 2 AS sort_idx 
+  FROM cadastre.cadastre_object co,
+       administrative.ba_unit_contains_spatial_unit bas,
+	   administrative.rrr rrr, 
+	   administrative.party_for_rrr pfr,
+	   party.party p   
+  WHERE co.geom_polygon IS NOT NULL
+  AND co.type_code != ''stateLand''
+  AND co.status_code = ''current''
+  AND bas.spatial_unit_id = co.id
+  AND rrr.ba_unit_id = bas.ba_unit_id
+  AND rrr.is_primary = TRUE
+  AND rrr.status_code = ''current''
+  AND pfr.rrr_id = rrr.id
+  AND p.id = pfr.party_id
+  AND compare_strings(#{search_string}, COALESCE(p.name, '''') || '' '' || COALESCE(p.last_name, ''''))
+  LIMIT 50 ');
+ 
+ INSERT INTO system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer)
+ VALUES ('OWNER_OF_BAUNIT', 'Property owner', 'map_search.cadastre_object_by_baunit_owner', TRUE, 3, 50);  
