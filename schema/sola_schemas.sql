@@ -2484,43 +2484,97 @@ CREATE FUNCTION get_concatenated_name(service_id character varying) RETURNS char
     AS $$
 declare
   rec record;
-  name character varying;
+  category varchar; 
+  req_type varchar; 
+  name character varying; 
+  status_desc character varying; 
+  plan varchar; 
   
 BEGIN
-  name = '';
-   
-	for rec in 
-	   Select bu.name_firstpart||'/'||bu.name_lastpart||' ( '||pippo.firstpart||'/'||pippo.lastpart || ' ' || pippo.cadtype||' )'  as value,
-	        pippo.id
-		from application.service s 
-		join application.application_property ap on (s.application_id=ap.application_id)
-		join administrative.ba_unit bu on (ap.name_firstpart||ap.name_lastpart=bu.name_firstpart||bu.name_lastpart)
-		join (select co.name_firstpart firstpart,
-			   co.name_lastpart lastpart,
-			   get_translation(cot.display_value, null) cadtype,
-			   bsu.ba_unit_id unit_id,
-			   co.id id
-			   from administrative.ba_unit_contains_spatial_unit  bsu
-			   join cadastre.cadastre_object co on (bsu.spatial_unit_id = co.id)
-			   join cadastre.cadastre_object_type cot on (co.type_code = cot.code)) pippo
-			   on (bu.id = pippo.unit_id)
-	   where s.id = service_id 
-	    and (s.request_type_code = 'cadastreChange' or s.request_type_code = 'redefineCadastre' or s.request_type_code = 'newApartment' 
-	   or s.request_type_code = 'newDigitalProperty' or s.request_type_code = 'newDigitalTitle' or s.request_type_code = 'newFreehold' 
-	   or s.request_type_code = 'newOwnership' or s.request_type_code = 'newState')
-	   and s.status_code != 'lodged'
-	loop
-	   name = name || ', ' || replace (rec.value,rec.id, '');
-	end loop;
+	name = '';
+	status_desc = '';
+	
+	IF service_id IS NULL THEN
+	 RETURN NULL; 
+	END IF;
+      
+    SELECT  rt.request_category_code, rt.code
+	INTO    category, req_type
+	FROM 	application.service ser,
+			application.request_type rt
+	WHERE	ser.id = service_id
+	AND		rt.code = ser.request_type_code; 
+	
+	CASE WHEN req_type = 'changeSLParcels' THEN
+	    -- Change to state land parcels so list the parcels affected
+		FOR rec IN 
+			SELECT TRIM(co.name_firstpart) as parcel_num,
+				   TRIM(co.name_lastpart)  as plan
+			FROM   transaction.transaction t,
+				   cadastre.cadastre_object co
+			WHERE  t.from_service_id = service_id
+			AND	   co.transaction_id = t.id
+			ORDER BY co.name_firstpart, co.name_lastpart
+		
+		LOOP
+			name = name || ', ' || rec.parcel_num;
+			IF plan IS NULL THEN plan = rec.plan; END IF; 
+			IF plan != rec.plan THEN
+				name = name || ' ' || plan; 
+				plan = rec.plan; 
+			END IF; 
+		END LOOP;
+		
+		IF name != '' THEN  
+			name = TRIM(SUBSTR(name,2)) || ' ' || plan;
+		END IF;		
+	WHEN  category = 'stateLandServices' THEN	
+	    -- Registration Services - list the properties affected
+		-- by this service
+		FOR rec IN 
+			SELECT bu.name_firstpart || bu.name_lastpart  as prop
+			FROM   transaction.transaction t,
+				  administrative.ba_unit bu
+			WHERE  t.from_service_id = service_id
+			AND	  bu.transaction_id = t.id
+			UNION
+			SELECT bu.name_firstpart || bu.name_lastpart  as prop
+			FROM   transaction.transaction t,
+				  administrative.ba_unit bu,
+				  administrative.rrr r
+			WHERE  t.from_service_id = service_id
+			AND	  r.transaction_id = t.id
+			AND    bu.id = r.ba_unit_id
+			UNION
+			SELECT bu.name_firstpart || bu.name_lastpart  as prop
+			FROM   transaction.transaction t,
+				  administrative.ba_unit bu,
+				  administrative.notation n
+			WHERE  t.from_service_id = service_id
+			AND	  n.transaction_id = t.id
+			AND    n.rrr_id IS NULL
+			AND    bu.id = n.ba_unit_id
+			UNION
+			SELECT bu.name_firstpart || bu.name_lastpart  as prop
+			FROM   transaction.transaction t,
+				  administrative.ba_unit bu,
+				  administrative.ba_unit_target tar
+			WHERE  t.from_service_id = service_id
+			AND	  tar.transaction_id = t.id
+			AND    bu.id = tar.ba_unit_id
 
-        if name = '' then
-	  return name;
-	end if;
-
-	if substr(name, 1, 1) = ',' then
-          name = substr(name,2);
-        end if;
-return name;
+		LOOP
+		   name = name || ', ' || rec.prop;
+		END LOOP;
+		
+		IF name != '' THEN  
+			name = TRIM(SUBSTR(name,2));
+		END IF;	
+	ELSE
+		-- do nothing as Information Service or Application Service
+	END CASE;
+	
+RETURN name ;
 END;
 
 $$;
@@ -2532,7 +2586,7 @@ ALTER FUNCTION application.get_concatenated_name(service_id character varying) O
 -- Name: FUNCTION get_concatenated_name(service_id character varying); Type: COMMENT; Schema: application; Owner: postgres
 --
 
-COMMENT ON FUNCTION get_concatenated_name(service_id character varying) IS 'Returns a concatenated list of all cadastre objects associated to the BA Unit referenced by the application.';
+COMMENT ON FUNCTION get_concatenated_name(service_id character varying) IS 'Returns the list properties that have been changed due to the service and/or summary details about the service.';
 
 
 --

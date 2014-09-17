@@ -499,3 +499,112 @@ INSERT INTO system.approle_appgroup (approle_code, appgroup_id)
 	 AND NOT EXISTS (SELECT approle_code FROM system.approle_appgroup 
 	                 WHERE  approle_code = 'cancelInterest'
 					 AND    appgroup_id = ag.id));
+
+					 
+					 
+
+-- Update function used to provide a description for each task on the Job					 
+CREATE OR REPLACE FUNCTION application.get_concatenated_name(service_id character varying)
+  RETURNS character varying AS
+$BODY$
+declare
+  rec record;
+  category varchar; 
+  req_type varchar; 
+  name character varying; 
+  status_desc character varying; 
+  plan varchar; 
+  
+BEGIN
+	name = '';
+	status_desc = '';
+	
+	IF service_id IS NULL THEN
+	 RETURN NULL; 
+	END IF;
+      
+    SELECT  rt.request_category_code, rt.code
+	INTO    category, req_type
+	FROM 	application.service ser,
+			application.request_type rt
+	WHERE	ser.id = service_id
+	AND		rt.code = ser.request_type_code; 
+	
+	CASE WHEN req_type = 'changeSLParcels' THEN
+	    -- Change to state land parcels so list the parcels affected
+		FOR rec IN 
+			SELECT TRIM(co.name_firstpart) as parcel_num,
+				   TRIM(co.name_lastpart)  as plan
+			FROM   transaction.transaction t,
+				   cadastre.cadastre_object co
+			WHERE  t.from_service_id = service_id
+			AND	   co.transaction_id = t.id
+			ORDER BY co.name_firstpart, co.name_lastpart
+		
+		LOOP
+			name = name || ', ' || rec.parcel_num;
+			IF plan IS NULL THEN plan = rec.plan; END IF; 
+			IF plan != rec.plan THEN
+				name = name || ' ' || plan; 
+				plan = rec.plan; 
+			END IF; 
+		END LOOP;
+		
+		IF name != '' THEN  
+			name = TRIM(SUBSTR(name,2)) || ' ' || plan;
+		END IF;		
+	WHEN  category = 'stateLandServices' THEN	
+	    -- Registration Services - list the properties affected
+		-- by this service
+		FOR rec IN 
+			SELECT bu.name_firstpart || bu.name_lastpart  as prop
+			FROM   transaction.transaction t,
+				  administrative.ba_unit bu
+			WHERE  t.from_service_id = service_id
+			AND	  bu.transaction_id = t.id
+			UNION
+			SELECT bu.name_firstpart || bu.name_lastpart  as prop
+			FROM   transaction.transaction t,
+				  administrative.ba_unit bu,
+				  administrative.rrr r
+			WHERE  t.from_service_id = service_id
+			AND	  r.transaction_id = t.id
+			AND    bu.id = r.ba_unit_id
+			UNION
+			SELECT bu.name_firstpart || bu.name_lastpart  as prop
+			FROM   transaction.transaction t,
+				  administrative.ba_unit bu,
+				  administrative.notation n
+			WHERE  t.from_service_id = service_id
+			AND	  n.transaction_id = t.id
+			AND    n.rrr_id IS NULL
+			AND    bu.id = n.ba_unit_id
+			UNION
+			SELECT bu.name_firstpart || bu.name_lastpart  as prop
+			FROM   transaction.transaction t,
+				  administrative.ba_unit bu,
+				  administrative.ba_unit_target tar
+			WHERE  t.from_service_id = service_id
+			AND	  tar.transaction_id = t.id
+			AND    bu.id = tar.ba_unit_id
+
+		LOOP
+		   name = name || ', ' || rec.prop;
+		END LOOP;
+		
+		IF name != '' THEN  
+			name = TRIM(SUBSTR(name,2));
+		END IF;	
+	ELSE
+		-- do nothing as Information Service or Application Service
+	END CASE;
+	
+RETURN name ;
+END;
+
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION application.get_concatenated_name(character varying)
+  OWNER TO postgres;
+COMMENT ON FUNCTION application.get_concatenated_name(character varying) IS 'Returns the list properties that have been changed due to the service and/or summary details about the service.';
