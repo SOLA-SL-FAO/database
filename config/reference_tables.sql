@@ -228,6 +228,58 @@ INSERT INTO application_action_type (code, display_value, status_to_set, status,
 ALTER TABLE application_action_type ENABLE TRIGGER ALL;
 
 --
+-- Data for Name: checklist_group; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+ALTER TABLE checklist_group DISABLE TRIGGER ALL;
+
+INSERT INTO checklist_group (code, display_value, description, status) VALUES ('compulsory', 'Compulsory Acquisition', 'Items to confirm when using compulsory powers to acquire new land for state purposes', 'c');
+INSERT INTO checklist_group (code, display_value, description, status) VALUES ('voluntary', 'Voluntary Acquisition', 'Items to confirm when using voluntary powers to acquire new land for state purposes', 'c');
+INSERT INTO checklist_group (code, display_value, description, status) VALUES ('lease', 'Lease', 'Items to confirm when leasing new land for state purposes', 'c');
+
+
+ALTER TABLE checklist_group ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: checklist_item; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+ALTER TABLE checklist_item DISABLE TRIGGER ALL;
+
+INSERT INTO checklist_item (code, display_value, description, status, display_order) VALUES ('landIdentified', 'Land Identified', 'All land affected by the proposed works has been identified ', 'c', 10);
+INSERT INTO checklist_item (code, display_value, description, status, display_order) VALUES ('publishPlan', 'Publish Plan', 'The plan outlining the requirements for land to be acquired has been published', 'c', 20);
+INSERT INTO checklist_item (code, display_value, description, status, display_order) VALUES ('notifyLandholders', 'Notify Landholders', 'All affected landholders and adjoining landholders have been notified of the works to be undertaken.', 'c', 30);
+INSERT INTO checklist_item (code, display_value, description, status, display_order) VALUES ('consents', 'Consents', 'Any planning consents for the proposed works have been obtained from the appropriate authority.', 'c', 40);
+INSERT INTO checklist_item (code, display_value, description, status, display_order) VALUES ('regInterests', 'Registered Interests', 'All interests registered on the land have been investigated and addressed.', 'c', 50);
+INSERT INTO checklist_item (code, display_value, description, status, display_order) VALUES ('transferDocs', 'Transfer Documents', 'Documents to transfer land have been prepared and submitted to the Land Registration Authority', 'c', 60);
+INSERT INTO checklist_item (code, display_value, description, status, display_order) VALUES ('conditions', 'Lease Conditions', 'Lease conditions have been negotiated and agreeded', 'c', 70);
+
+
+ALTER TABLE checklist_item ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: checklist_item_in_group; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+ALTER TABLE checklist_item_in_group DISABLE TRIGGER ALL;
+
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('compulsory', 'landIdentified');
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('compulsory', 'publishPlan');
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('compulsory', 'notifyLandholders');
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('compulsory', 'consents');
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('compulsory', 'regInterests');
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('compulsory', 'transferDocs');
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('voluntary', 'landIdentified');
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('voluntary', 'consents');
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('voluntary', 'regInterests');
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('voluntary', 'transferDocs');
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('lease', 'landIdentified');
+INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) VALUES ('lease', 'conditions');
+
+
+ALTER TABLE checklist_item_in_group ENABLE TRIGGER ALL;
+
+--
 -- Data for Name: request_category_type; Type: TABLE DATA; Schema: application; Owner: postgres
 --
 
@@ -307,6 +359,7 @@ INSERT INTO request_type (code, request_category_code, display_value, descriptio
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('changeSLParcels', 'stateLandServices', 'Create or Change Parcels', 'Create, change or dispose State Land Parcels', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'cadastreTransMap');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('maintainStateLand', 'stateLandServices', 'Maintain Property', 'Add or change details for an existing State Land Property including interests, parcels and relationships', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'slProperty');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('cancelInterest', 'stateLandServices', 'Cancel Interest', 'Cancel one or more interests on an existing State Land Property', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, 'cancel', 'General', 'slProperty');
+INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('checklist', 'stateLandServices', 'Checklist', 'Identifies a checklist of items to be completed for this Job', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'checklist');
 
 
 ALTER TABLE request_type ENABLE TRIGGER ALL;
@@ -876,6 +929,7 @@ INSERT INTO approle (code, display_value, status, description) VALUES ('10SEC_Su
 INSERT INTO approle (code, display_value, status, description) VALUES ('changeSLParcels', 'Service - Change State Land Parcels', 'c', 'State Land Service. Allows the Change State Land Parcels service to be started.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('maintainStateLand', 'Service - Maintain State Land', 'c', 'State Land Service. Allows the Maintain State Land service to be started.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('cancelInterest', 'Service - Cancel State Land Interest', 'c', 'State Land Service. Allows the Cancel State Land Interest service to be started.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('checklist', 'Service - Checklist', 'c', 'State Land Service. Allows the Checklist service to be started.');
 
 
 ALTER TABLE approle ENABLE TRIGGER ALL;

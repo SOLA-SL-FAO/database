@@ -2476,10 +2476,10 @@ COMMENT ON FUNCTION is_linked_document(prop_id character varying, doc_ref charac
 SET search_path = application, pg_catalog;
 
 --
--- Name: get_concatenated_name(character varying); Type: FUNCTION; Schema: application; Owner: postgres
+-- Name: get_concatenated_name(character varying, character varying); Type: FUNCTION; Schema: application; Owner: postgres
 --
 
-CREATE FUNCTION get_concatenated_name(service_id character varying) RETURNS character varying
+CREATE FUNCTION get_concatenated_name(service_id character varying, language_code character varying DEFAULT NULL::character varying) RETURNS character varying
     LANGUAGE plpgsql
     AS $$
 declare
@@ -2527,7 +2527,16 @@ BEGIN
 		
 		IF name != '' THEN  
 			name = TRIM(SUBSTR(name,2)) || ' ' || plan;
-		END IF;		
+		END IF;
+    WHEN req_type = 'checklist' THEN
+	
+	     SELECT get_translation(cg.display_value, language_code)
+		 INTO   name
+		 FROM   application.service s,
+		        application.checklist_group cg
+		 WHERE  s.id = service_id
+		 AND    cg.code = s.action_notes;
+		 
 	WHEN  category = 'stateLandServices' THEN	
 	    -- Registration Services - list the properties affected
 		-- by this service
@@ -2580,13 +2589,13 @@ END;
 $$;
 
 
-ALTER FUNCTION application.get_concatenated_name(service_id character varying) OWNER TO postgres;
+ALTER FUNCTION application.get_concatenated_name(service_id character varying, language_code character varying) OWNER TO postgres;
 
 --
--- Name: FUNCTION get_concatenated_name(service_id character varying); Type: COMMENT; Schema: application; Owner: postgres
+-- Name: FUNCTION get_concatenated_name(service_id character varying, language_code character varying); Type: COMMENT; Schema: application; Owner: postgres
 --
 
-COMMENT ON FUNCTION get_concatenated_name(service_id character varying) IS 'Returns the list properties that have been changed due to the service and/or summary details about the service.';
+COMMENT ON FUNCTION get_concatenated_name(service_id character varying, language_code character varying) IS 'Returns the list properties that have been changed due to the service and/or summary details about the service.';
 
 
 --
@@ -8243,6 +8252,148 @@ CREATE TABLE application_uses_source_historic (
 ALTER TABLE application.application_uses_source_historic OWNER TO postgres;
 
 --
+-- Name: checklist_group; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE checklist_group (
+    code character varying(20) NOT NULL,
+    display_value character varying(250) NOT NULL,
+    description text,
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE application.checklist_group OWNER TO postgres;
+
+--
+-- Name: TABLE checklist_group; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE checklist_group IS 'Indicates a group of checklist items that should be applied to various transaction types.
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN checklist_group.code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN checklist_group.code IS 'The code for the checklist item group.';
+
+
+--
+-- Name: COLUMN checklist_group.display_value; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN checklist_group.display_value IS 'Displayed value of the checklist item group.';
+
+
+--
+-- Name: COLUMN checklist_group.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN checklist_group.description IS 'Description of the checklist item group.';
+
+
+--
+-- Name: COLUMN checklist_group.status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN checklist_group.status IS 'Status of the checklist item group.';
+
+
+--
+-- Name: checklist_item; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE checklist_item (
+    code character varying(20) NOT NULL,
+    display_value character varying(250) NOT NULL,
+    description text,
+    status character(1) NOT NULL,
+    display_order integer DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE application.checklist_item OWNER TO postgres;
+
+--
+-- Name: TABLE checklist_item; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE checklist_item IS 'An item that must be checked and confirmed before the application can proceed.
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN checklist_item.code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN checklist_item.code IS 'The code for the checklist item.';
+
+
+--
+-- Name: COLUMN checklist_item.display_value; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN checklist_item.display_value IS 'Displayed value of the checklist item.';
+
+
+--
+-- Name: COLUMN checklist_item.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN checklist_item.description IS 'Description of the checklist item.';
+
+
+--
+-- Name: COLUMN checklist_item.status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN checklist_item.status IS 'Status of the checklist item.';
+
+
+--
+-- Name: COLUMN checklist_item.display_order; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN checklist_item.display_order IS 'The relative display order for the checklist item.';
+
+
+--
+-- Name: checklist_item_in_group; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE checklist_item_in_group (
+    checklist_group_code character varying(20) NOT NULL,
+    checklist_item_code character varying(20) NOT NULL
+);
+
+
+ALTER TABLE application.checklist_item_in_group OWNER TO postgres;
+
+--
+-- Name: TABLE checklist_item_in_group; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE checklist_item_in_group IS 'Identifies the checklist items within each checklist group.
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN checklist_item_in_group.checklist_group_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN checklist_item_in_group.checklist_group_code IS 'The code for the checklist group.';
+
+
+--
+-- Name: COLUMN checklist_item_in_group.checklist_item_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN checklist_item_in_group.checklist_item_code IS 'Code of the checklist item related to the checklist group.';
+
+
+--
 -- Name: request_category_type; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -8520,6 +8671,150 @@ COMMENT ON COLUMN service_action_type.status IS 'Status of the service action ty
 --
 
 COMMENT ON COLUMN service_action_type.description IS 'Description of the service action type.';
+
+
+--
+-- Name: service_checklist_item; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE service_checklist_item (
+    id character varying(40) NOT NULL,
+    service_id character varying(40) NOT NULL,
+    checklist_item_code character varying(20),
+    name character varying(250) NOT NULL,
+    description text,
+    result character(1),
+    comment text,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.service_checklist_item OWNER TO postgres;
+
+--
+-- Name: TABLE service_checklist_item; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE service_checklist_item IS 'Indicates if the checklist items applicable to a service are satisified as well as any comments from the user.
+Tags: SOLA State Land Extension, Change History';
+
+
+--
+-- Name: COLUMN service_checklist_item.id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.id IS 'Identifier for the service checklist item.';
+
+
+--
+-- Name: COLUMN service_checklist_item.service_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.service_id IS 'Identifier for the service.';
+
+
+--
+-- Name: COLUMN service_checklist_item.checklist_item_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.checklist_item_code IS 'Code of the checklist item. If null, then the service checklist item is a custom item created by the user.';
+
+
+--
+-- Name: COLUMN service_checklist_item.name; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.name IS 'The name or title for the checklist item. Entered by the user for a custom item.';
+
+
+--
+-- Name: COLUMN service_checklist_item.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.description IS 'The description for the checklist item. Entered by the user for a custom item.';
+
+
+--
+-- Name: COLUMN service_checklist_item.result; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.result IS 'Flag indicating if the checklist item passed (t), failed (f) or is not applicable (null)';
+
+
+--
+-- Name: COLUMN service_checklist_item.comment; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.comment IS 'Comment entered by the user to clarify why the checklist item passed, failed or is not applicable.';
+
+
+--
+-- Name: COLUMN service_checklist_item.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.rowidentifier IS 'Identifies the all change records for the row in the service_checklist_item_historic table';
+
+
+--
+-- Name: COLUMN service_checklist_item.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN service_checklist_item.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN service_checklist_item.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN service_checklist_item.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN service_checklist_item.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: service_checklist_item_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE service_checklist_item_historic (
+    id character varying(40),
+    service_id character varying(40),
+    checklist_item_code character varying(20),
+    name character varying(250) NOT NULL,
+    description text,
+    result character(1),
+    comment character varying(1000),
+    rowidentifier character varying(40),
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.service_checklist_item_historic OWNER TO postgres;
+
+--
+-- Name: TABLE service_checklist_item_historic; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE service_checklist_item_historic IS 'History table for the application.servie_checklist_item table';
 
 
 --
@@ -15813,6 +16108,46 @@ ALTER TABLE ONLY application_uses_source
 
 
 --
+-- Name: checklist_group_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY checklist_group
+    ADD CONSTRAINT checklist_group_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: checklist_group_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY checklist_group
+    ADD CONSTRAINT checklist_group_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: checklist_item_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY checklist_item
+    ADD CONSTRAINT checklist_item_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: checklist_item_in_group_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY checklist_item_in_group
+    ADD CONSTRAINT checklist_item_in_group_pkey PRIMARY KEY (checklist_group_code, checklist_item_code);
+
+
+--
+-- Name: checklist_item_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY checklist_item
+    ADD CONSTRAINT checklist_item_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: request_category_type_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -15866,6 +16201,14 @@ ALTER TABLE ONLY service_action_type
 
 ALTER TABLE ONLY service_action_type
     ADD CONSTRAINT service_action_type_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: service_checklist_item_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY service_checklist_item
+    ADD CONSTRAINT service_checklist_item_pkey PRIMARY KEY (id);
 
 
 --
@@ -17724,6 +18067,27 @@ CREATE INDEX service_application_id_fk7_ind ON service USING btree (application_
 
 
 --
+-- Name: service_checklist_item_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX service_checklist_item_historic_index_on_rowidentifier ON service_checklist_item_historic USING btree (rowidentifier);
+
+
+--
+-- Name: service_checklist_item_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX service_checklist_item_index_on_rowidentifier ON service_checklist_item USING btree (rowidentifier);
+
+
+--
+-- Name: service_checklist_item_index_on_service_id; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX service_checklist_item_index_on_service_id ON service_checklist_item USING btree (service_id);
+
+
+--
 -- Name: service_historic_id_idx; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -19081,6 +19445,13 @@ CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON service FOR EACH ROW E
 
 
 --
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON service_checklist_item FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
 -- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
 --
 
@@ -19113,6 +19484,13 @@ CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON application_uses_source
 --
 
 CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON service FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON service_checklist_item FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
 SET search_path = bulk_operation, pg_catalog;
@@ -20073,6 +20451,22 @@ ALTER TABLE ONLY application_uses_source
 
 
 --
+-- Name: checklist_item_in_group_group_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY checklist_item_in_group
+    ADD CONSTRAINT checklist_item_in_group_group_code_fk FOREIGN KEY (checklist_group_code) REFERENCES checklist_group(code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: checklist_item_in_group_item_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY checklist_item_in_group
+    ADD CONSTRAINT checklist_item_in_group_item_code_fk FOREIGN KEY (checklist_item_code) REFERENCES checklist_item(code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: request_type_config_panel_launcher_fkey; Type: FK CONSTRAINT; Schema: application; Owner: postgres
 --
 
@@ -20142,6 +20536,22 @@ ALTER TABLE ONLY service_action_type
 
 ALTER TABLE ONLY service
     ADD CONSTRAINT service_application_id_fk7 FOREIGN KEY (application_id) REFERENCES application(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: service_checklist_item_item_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY service_checklist_item
+    ADD CONSTRAINT service_checklist_item_item_code_fk FOREIGN KEY (checklist_item_code) REFERENCES checklist_item(code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: service_checklist_item_service_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY service_checklist_item
+    ADD CONSTRAINT service_checklist_item_service_id_fk FOREIGN KEY (service_id) REFERENCES service(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
