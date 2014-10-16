@@ -4151,6 +4151,67 @@ COMMENT ON FUNCTION get_text_from_schema(schema_name character varying) IS 'Gene
 
 
 --
+-- Name: has_security_clearance(character varying, character varying); Type: FUNCTION; Schema: system; Owner: postgres
+--
+
+CREATE FUNCTION has_security_clearance(user_name character varying, classification_code character varying) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+declare
+  has_clearance BOOLEAN; 
+BEGIN
+    IF classification_code IS NULL OR classification_code = '01SEC_Unrestricted' THEN
+        RETURN TRUE; 
+    END IF;  
+
+    has_clearance = FALSE;
+    IF SUBSTRING(classification_code FROM 1 FOR 5) > '05SEC' THEN
+	    -- This is a custom security classification so check the user 
+		-- has this exact classification or the Top Secret classification
+        IF EXISTS (
+            SELECT u.id
+            FROM   system.appuser u,
+                   system.appuser_appgroup ug,
+                   system.approle_appgroup rg
+            WHERE  u.username = user_name
+            AND	   ug.appuser_id = u.id
+            AND    rg.appgroup_id = ug.appgroup_id
+            AND    rg.approle_code IN (classification_code, '05SEC_TopSecret')) THEN
+			    has_clearance = TRUE; 
+        END IF;
+    ELSE 
+	    -- General security classification, check the user has
+		-- this classification or a higher one. 
+        IF EXISTS (
+            SELECT u.id
+            FROM   system.appuser u,
+                   system.appuser_appgroup ug,
+                   system.approle_appgroup rg
+            WHERE  u.username = user_name
+            AND	   ug.appuser_id = u.id
+            AND    rg.appgroup_id = ug.appgroup_id
+			AND    SUBSTRING(rg.approle_code FROM 3 FOR 3) = 'SEC' 
+			AND    SUBSTRING(rg.approle_code FROM 1 FOR 5) <= '05SEC' 
+			AND    SUBSTRING(rg.approle_code FROM 1 FOR 5) >= SUBSTRING(classification_code FROM 1 FOR 5)) THEN
+			    has_clearance = TRUE; 
+        END IF;
+    END IF;  	
+    RETURN  has_clearance ;
+END;
+
+$$;
+
+
+ALTER FUNCTION system.has_security_clearance(user_name character varying, classification_code character varying) OWNER TO postgres;
+
+--
+-- Name: FUNCTION has_security_clearance(user_name character varying, classification_code character varying); Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON FUNCTION has_security_clearance(user_name character varying, classification_code character varying) IS 'Determines if the user has the appropriate security classification to view access the record.';
+
+
+--
 -- Name: script_to_schema(text); Type: FUNCTION; Schema: system; Owner: postgres
 --
 

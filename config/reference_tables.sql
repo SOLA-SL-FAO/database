@@ -147,6 +147,7 @@ INSERT INTO rrr_type (code, rrr_group_type_code, display_value, is_primary, shar
 INSERT INTO rrr_type (code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status, rrr_panel_code) VALUES ('notice', 'restrictions', 'Notice', false, false, false, 'Public or legal notices that have been issued in relation to the property such as noticies for trespass, littering or rubbish dumping, etc.', 'c', 'simpleRight');
 INSERT INTO rrr_type (code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status, rrr_panel_code) VALUES ('rsensitivity', 'restrictions', 'Reverse Sensitivity', false, false, false, 'Indicates that in a mixed use area, once a particular use for land is established (e.g. road or highway), any new uses for surronding property (e.g. residential development) cannot impose restrictions on the established use.', 'c', 'simpleRight');
 INSERT INTO rrr_type (code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status, rrr_panel_code) VALUES ('order', 'restrictions', 'Order', false, false, false, 'An order issued by the court or a decision from a tribunal or other judicial authority that imposes a specific action on the property (e.g. transfer from one owner to another or a demolition order, etc.', 'c', 'simpleRight');
+INSERT INTO rrr_type (code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status, rrr_panel_code) VALUES ('ppp', 'rights', 'Public Private Partnership', false, false, true, 'Indicates that the state has entered into a public private partnership along with any coniditions relating to that partnership.', 'c', 'simpleRholdConPanel');
 
 
 ALTER TABLE rrr_type ENABLE TRIGGER ALL;
@@ -180,6 +181,8 @@ INSERT INTO rrr_sub_type (code, display_value, description, status, rrr_type_cod
 INSERT INTO rrr_sub_type (code, display_value, description, status, rrr_type_code) VALUES ('disposal', 'Disposal', 'The conditions relate to disposal of the property.', 'c', 'condition');
 INSERT INTO rrr_sub_type (code, display_value, description, status, rrr_type_code) VALUES ('structure', 'Structure', 'The land has a heritage building or structure site located on it.', 'c', 'heritage');
 INSERT INTO rrr_sub_type (code, display_value, description, status, rrr_type_code) VALUES ('recreation', 'Recreation', 'The license applies to use of the land for recreational purposes such as a ski field.', 'c', 'license');
+INSERT INTO rrr_sub_type (code, display_value, description, status, rrr_type_code) VALUES ('bank1', 'Oneroa Settlement', 'Land allocated for housing in and around the settlement of Oneroa.', 'c', 'landbank');
+INSERT INTO rrr_sub_type (code, display_value, description, status, rrr_type_code) VALUES ('bank2', 'Hooks Bay', 'Land allocated for farming in and around the Hooks Bay.', 'c', 'landbank');
 
 
 ALTER TABLE rrr_sub_type ENABLE TRIGGER ALL;
