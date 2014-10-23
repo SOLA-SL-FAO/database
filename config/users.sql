@@ -244,6 +244,8 @@ INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversi
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('maintainStateLand', 'super-group-id', '28279380-3e14-11e4-8c97-0359e7b19e0a', 1, 'i', 'db:postgres', '2014-09-17 14:41:42.072');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('cancelInterest', 'super-group-id', '2828cc0a-3e14-11e4-88c8-13133815a6f5', 1, 'i', 'db:postgres', '2014-09-17 14:41:42.072');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('checklist', 'super-group-id', 'e8e37240-4ebf-11e4-9f2c-cfc0ffa96763', 1, 'i', 'db:postgres', '2014-10-08 20:51:27.967');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('disposeSLProperty', 'super-group-id', 'e69325de-5aff-11e4-bcd0-c7e266538315', 1, 'i', 'db:postgres', '2014-10-24 10:59:45.909');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('publicDisplay', 'super-group-id', 'e699dcb2-5aff-11e4-9ccc-232844895a36', 1, 'i', 'db:postgres', '2014-10-24 10:59:45.909');
 
 
 ALTER TABLE approle_appgroup ENABLE TRIGGER ALL;

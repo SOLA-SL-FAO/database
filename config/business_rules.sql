@@ -587,45 +587,6 @@ FROM application.service s inner join application.application_property ap on s.a
 WHERE s.id = #{id} 
 order by 1 desc
 limit 1');
-INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('target-ba_unit-check-if-pending', '2014-02-20', 'infinity', 'WITH	otherCancel AS	(SELECT (SELECT (COUNT(*) = 0)FROM administrative.ba_unit_target ba_t2 
-				INNER JOIN transaction.transaction tn ON (ba_t2.transaction_id = tn.id)
-				WHERE ba_t2.ba_unit_id = ba_t.ba_unit_id
-				AND ba_t2.transaction_id != ba_t.transaction_id
-				AND tn.status_code != ''approved'') AS chkOther
-			FROM administrative.ba_unit_target ba_t
-			WHERE ba_t.ba_unit_id = #{id}), 
-	cancelAp AS	(SELECT ap.id FROM administrative.ba_unit_target ba_t 
-			INNER JOIN application.application_property pr ON (ba_t.ba_unit_id = pr.ba_unit_id)
-			INNER JOIN application.service sv ON (pr.application_id = sv.application_id)
-			INNER JOIN application.application ap ON (pr.application_id = ap.id)
-			WHERE ba_t.ba_unit_id = #{id}
-			AND sv.request_type_code = ''cancelProperty''
-			AND sv.status_code != ''cancelled''
-			AND ap.status_code NOT IN (''annulled'', ''approved'')),
-	otherAps AS	(SELECT (SELECT (count(*) = 0) FROM administrative.ba_unit ba
-			INNER JOIN administrative.rrr rr ON (ba.id = rr.ba_unit_id)
-			INNER JOIN transaction.transaction tn ON (rr.transaction_id = tn.id)
-			INNER JOIN application.service sv ON (tn.from_service_id = sv.id)
-			INNER JOIN application.application ap ON (sv.application_id = ap.id)
-			WHERE ba.id = #{id} 
-			AND ap.status_code = ''lodged''
-			AND ap.id NOT IN (SELECT id FROM cancelAp)) AS chkNoOtherAps),
-
-	pendingRRR AS	(SELECT (SELECT (count(*) = 0) FROM administrative.rrr rr
-				INNER JOIN administrative.ba_unit_target ba_t2 ON (rr.ba_unit_id = ba_t2.ba_unit_id)
-				INNER JOIN transaction.transaction t2 ON (ba_t2.transaction_id = t2.id)
-				INNER JOIN application.service s2 ON (t2.from_service_id = s2.id) 
-				WHERE ba_t2.ba_unit_id = ba_t.ba_unit_id
-				AND s2.application_id != s1.application_id
-				AND ba_t2.transaction_id != ba_t.transaction_id
-				AND rr.status_code = ''pending'') AS chkPend 
-			FROM administrative.ba_unit_target ba_t
-			INNER JOIN transaction.transaction t1 ON (ba_t.transaction_id = t1.id)
-			INNER JOIN application.service s1 ON (t1.from_service_id = s1.id) 
-			WHERE ba_t.ba_unit_id = #{id})
-SELECT ((SELECT chkPend  FROM pendingRRR) AND (SELECT chkOther FROM otherCancel)  AND (SELECT chkNoOtherAps FROM otherAps)) AS vl 
-FROM administrative.ba_unit_target tg
-WHERE tg.ba_unit_id  = #{id}');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('ba_unit-has-cadastre-object', '2014-02-20', 'infinity', 'SELECT count(*)>0 vl
 from administrative.ba_unit_contains_spatial_unit ba_s 
 WHERE ba_s.ba_unit_id = #{id}');
@@ -647,14 +608,6 @@ FROM administrative.ba_unit ba left join administrative.ba_unit_area ba_a
   on ba.id= ba_a.ba_unit_id and ba_a.type_code = ''officialArea''
 WHERE ba.id = #{id}
 ');
-INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('ba_unit-has-a-valid-primary-right', '2014-02-20', 'infinity', 'SELECT (COUNT(*) = 1) AS vl FROM administrative.rrr rr1 
-	 INNER JOIN administrative.ba_unit ba ON (rr1.ba_unit_id = ba.id)
-	 INNER JOIN transaction.transaction tn ON (rr1.transaction_id = tn.id)
-	 INNER JOIN application.service sv ON ((tn.from_service_id = sv.id) AND (sv.request_type_code != ''cancelProperty''))
- WHERE ba.id = #{id}
- AND rr1.status_code != ''cancelled''
- AND rr1.is_primary
- AND rr1.type_code IN (''ownership'', ''apartment'', ''stateOwnership'', ''lease'')');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('newtitle-br22-check-different-owners', '2014-02-20', 'infinity', 'WITH new_property_owner AS (
 	SELECT  COALESCE(name, '''') || '' '' || COALESCE(last_name, '''') AS newOwnerStr FROM party.party po
 		INNER JOIN administrative.party_for_rrr pfr1 ON (po.id = pfr1.party_id)
@@ -980,6 +933,55 @@ INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('gene
         ELSE coalesce(system.get_setting(''system-id''), '''') || to_char(now(), ''yymm'') 
         || trim(to_char(nextval(''administrative.ba_unit_first_name_part_seq''), ''0000''))
         || ''/'' || trim(to_char(nextval(''administrative.ba_unit_last_name_part_seq''), ''0000'')) END AS vl');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('target-ba_unit-check-if-pending', '2014-02-20', 'infinity', 'WITH	otherCancel AS	(SELECT (SELECT (COUNT(*) = 0)FROM administrative.ba_unit_target ba_t2 
+				INNER JOIN transaction.transaction tn ON (ba_t2.transaction_id = tn.id)
+				WHERE ba_t2.ba_unit_id = ba_t.ba_unit_id
+				AND ba_t2.transaction_id != ba_t.transaction_id
+				AND tn.status_code != ''approved'') AS chkOther
+			FROM administrative.ba_unit_target ba_t
+			WHERE ba_t.ba_unit_id = #{id}), 
+	cancelAp AS	(SELECT ap.id FROM administrative.ba_unit_target ba_t 
+			INNER JOIN application.application_property pr ON (ba_t.ba_unit_id = pr.ba_unit_id)
+			INNER JOIN application.service sv ON (pr.application_id = sv.application_id)
+			INNER JOIN application.application ap ON (pr.application_id = ap.id)
+			WHERE ba_t.ba_unit_id = #{id}
+			AND sv.request_type_code IN (''cancelProperty'', ''disposeSLProperty'')
+			AND sv.status_code != ''cancelled''
+			AND ap.status_code NOT IN (''annulled'', ''approved'')),
+	otherAps AS	(SELECT (SELECT (count(*) = 0) FROM administrative.ba_unit ba
+			INNER JOIN administrative.rrr rr ON (ba.id = rr.ba_unit_id)
+			INNER JOIN transaction.transaction tn ON (rr.transaction_id = tn.id)
+			INNER JOIN application.service sv ON (tn.from_service_id = sv.id)
+			INNER JOIN application.application ap ON (sv.application_id = ap.id)
+			WHERE ba.id = #{id} 
+			AND ap.status_code = ''lodged''
+			AND ap.id NOT IN (SELECT id FROM cancelAp)) AS chkNoOtherAps),
+
+	pendingRRR AS	(SELECT (SELECT (count(*) = 0) FROM administrative.rrr rr
+				INNER JOIN administrative.ba_unit_target ba_t2 ON (rr.ba_unit_id = ba_t2.ba_unit_id)
+				INNER JOIN transaction.transaction t2 ON (ba_t2.transaction_id = t2.id)
+				INNER JOIN application.service s2 ON (t2.from_service_id = s2.id) 
+				WHERE ba_t2.ba_unit_id = ba_t.ba_unit_id
+				AND s2.application_id != s1.application_id
+				AND ba_t2.transaction_id != ba_t.transaction_id
+				AND rr.status_code = ''pending'') AS chkPend 
+			FROM administrative.ba_unit_target ba_t
+			INNER JOIN transaction.transaction t1 ON (ba_t.transaction_id = t1.id)
+			INNER JOIN application.service s1 ON (t1.from_service_id = s1.id) 
+			WHERE ba_t.ba_unit_id = #{id})
+SELECT ((SELECT chkPend  FROM pendingRRR) AND (SELECT chkOther FROM otherCancel)  AND (SELECT chkNoOtherAps FROM otherAps)) AS vl 
+FROM administrative.ba_unit_target tg
+WHERE tg.ba_unit_id  = #{id}');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('ba_unit-has-a-valid-primary-right', '2014-02-20', 'infinity', '
+SELECT (COUNT(*) = 1) AS vl FROM administrative.rrr rr1 
+	 INNER JOIN administrative.ba_unit ba ON (rr1.ba_unit_id = ba.id)
+	 INNER JOIN transaction.transaction tn ON (rr1.transaction_id = tn.id)
+	 INNER JOIN application.service sv ON ((tn.from_service_id = sv.id) 
+	      AND (sv.request_type_code NOT IN (''cancelProperty'', ''disposeSLProperty'')))
+ WHERE ba.id = #{id}
+ AND rr1.status_code != ''cancelled''
+ AND rr1.is_primary
+ AND rr1.type_code IN (''ownership'', ''apartment'', ''stateOwnership'', ''lease'')');
 
 
 ALTER TABLE br_definition ENABLE TRIGGER ALL;

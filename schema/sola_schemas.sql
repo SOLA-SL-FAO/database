@@ -2486,6 +2486,7 @@ declare
   rec record;
   category varchar; 
   req_type varchar; 
+  launch_group varchar;
   name character varying; 
   status_desc character varying; 
   plan varchar; 
@@ -2498,12 +2499,14 @@ BEGIN
 	 RETURN NULL; 
 	END IF;
       
-    SELECT  rt.request_category_code, rt.code
-	INTO    category, req_type
+    SELECT  rt.request_category_code, rt.code, pl.launch_group
+	INTO    category, req_type, launch_group
 	FROM 	application.service ser,
-			application.request_type rt
+			application.request_type rt,
+			system.config_panel_launcher pl
 	WHERE	ser.id = service_id
-	AND		rt.code = ser.request_type_code; 
+	AND		rt.code = ser.request_type_code
+	AND     pl.code = rt.service_panel_code; 
 	
 	CASE WHEN req_type = 'changeSLParcels' THEN
 	    -- Change to state land parcels so list the parcels affected
@@ -2528,6 +2531,7 @@ BEGIN
 		IF name != '' THEN  
 			name = TRIM(SUBSTR(name,2)) || ' ' || plan;
 		END IF;
+		
     WHEN req_type = 'checklist' THEN
 	
 	     SELECT get_translation(cg.display_value, language_code)
@@ -2536,6 +2540,13 @@ BEGIN
 		        application.checklist_group cg
 		 WHERE  s.id = service_id
 		 AND    cg.code = s.action_notes;
+		 
+    WHEN launch_group = 'generalServices' THEN
+	
+	     SELECT s.action_notes
+		 INTO   name
+		 FROM   application.service s
+		 WHERE  s.id = service_id;
 		 
 	WHEN  category = 'stateLandServices' THEN	
 	    -- Registration Services - list the properties affected
