@@ -8466,6 +8466,369 @@ COMMENT ON COLUMN checklist_item_in_group.checklist_item_code IS 'Code of the ch
 
 
 --
+-- Name: public_display_item; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE public_display_item (
+    id character varying(40) NOT NULL,
+    service_id character varying(40) NOT NULL,
+    nr character varying(50),
+    type_code character varying(20) NOT NULL,
+    status_code character varying(20) NOT NULL,
+    display_from timestamp without time zone,
+    display_to timestamp without time zone,
+    description text,
+    classification_code character varying(20),
+    redact_code character varying(20),
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.public_display_item OWNER TO postgres;
+
+--
+-- Name: TABLE public_display_item; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE public_display_item IS 'Indicates if the checklist items applicable to a service are satisified as well as any comments from the user.
+Tags: SOLA State Land Extension, Change History';
+
+
+--
+-- Name: COLUMN public_display_item.id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.id IS 'Identifier for the public display item.';
+
+
+--
+-- Name: COLUMN public_display_item.service_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.service_id IS 'Identifier for the service.';
+
+
+--
+-- Name: COLUMN public_display_item.nr; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.nr IS 'The reference number assigned to the public display item by the user';
+
+
+--
+-- Name: COLUMN public_display_item.type_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.type_code IS 'The type of public display item. One of Public Display Map, Gazette Notice, Newspaper, etc.';
+
+
+--
+-- Name: COLUMN public_display_item.status_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.status_code IS 'The status code for the public display item. One of Being Prepared, On Display or Completed, Withdrawn, etc.';
+
+
+--
+-- Name: COLUMN public_display_item.display_from; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.display_from IS 'Optional date indicating when the item is (or was) going to be on display from';
+
+
+--
+-- Name: COLUMN public_display_item.display_to; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.display_to IS 'Optional date indicating when the item is (or was) going to be on display to';
+
+
+--
+-- Name: COLUMN public_display_item.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.description IS 'The description for the public display item. Entered by the user.';
+
+
+--
+-- Name: COLUMN public_display_item.classification_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.classification_code IS 'SOLA State Land Extension: The security classification for this Application/Job. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN public_display_item.redact_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.redact_code IS 'SOLA State Land Extension: The redact classification for this Application/Job. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
+-- Name: COLUMN public_display_item.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.rowidentifier IS 'Identifies the all change records for the row in the public_display_item_historic table';
+
+
+--
+-- Name: COLUMN public_display_item.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN public_display_item.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN public_display_item.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN public_display_item.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: public_display_item_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE public_display_item_historic (
+    id character varying(40),
+    service_id character varying(40),
+    nr character varying(50),
+    type_code character varying(20),
+    status_code character varying(20),
+    display_from timestamp without time zone,
+    display_to timestamp without time zone,
+    description text,
+    classification_code character varying(20),
+    redact_code character varying(20),
+    rowidentifier character varying(40),
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.public_display_item_historic OWNER TO postgres;
+
+--
+-- Name: TABLE public_display_item_historic; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE public_display_item_historic IS 'History table for the application.spublic_display_item table';
+
+
+--
+-- Name: public_display_item_uses_source; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE public_display_item_uses_source (
+    public_display_item_id character varying(40) NOT NULL,
+    source_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.public_display_item_uses_source OWNER TO postgres;
+
+--
+-- Name: TABLE public_display_item_uses_source; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE public_display_item_uses_source IS 'Links the public display items to the sources (a.k.a. documents) submitted with the application. 
+Tags: FLOSS SOLA Extension, Change History';
+
+
+--
+-- Name: COLUMN public_display_item_uses_source.public_display_item_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item_uses_source.public_display_item_id IS 'Identifier for the public display item the record is associated to.';
+
+
+--
+-- Name: COLUMN public_display_item_uses_source.source_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item_uses_source.source_id IS 'Identifier of the source associated to the application.';
+
+
+--
+-- Name: COLUMN public_display_item_uses_source.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item_uses_source.rowidentifier IS 'Identifies the all change records for the row in the public_display_item_uses_source_historic table';
+
+
+--
+-- Name: COLUMN public_display_item_uses_source.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item_uses_source.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN public_display_item_uses_source.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item_uses_source.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN public_display_item_uses_source.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item_uses_source.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN public_display_item_uses_source.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_item_uses_source.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: public_display_item_uses_source_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE public_display_item_uses_source_historic (
+    public_display_item_id character varying(40),
+    source_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.public_display_item_uses_source_historic OWNER TO postgres;
+
+--
+-- Name: public_display_status; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE public_display_status (
+    code character varying(20) NOT NULL,
+    display_value character varying(250) NOT NULL,
+    description text,
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE application.public_display_status OWNER TO postgres;
+
+--
+-- Name: TABLE public_display_status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE public_display_status IS 'Code list of public display statuses
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN public_display_status.code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_status.code IS 'The code for the public display status.';
+
+
+--
+-- Name: COLUMN public_display_status.display_value; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_status.display_value IS 'Displayed value of the public display status.';
+
+
+--
+-- Name: COLUMN public_display_status.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_status.description IS 'Description of the public display status.';
+
+
+--
+-- Name: COLUMN public_display_status.status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_status.status IS 'Status of the public display status.';
+
+
+--
+-- Name: public_display_type; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE public_display_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(250) NOT NULL,
+    description text,
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE application.public_display_type OWNER TO postgres;
+
+--
+-- Name: TABLE public_display_type; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE public_display_type IS 'Code list of public display types
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN public_display_type.code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_type.code IS 'The code for the public display type.';
+
+
+--
+-- Name: COLUMN public_display_type.display_value; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_type.display_value IS 'Displayed value of the public display type.';
+
+
+--
+-- Name: COLUMN public_display_type.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_type.description IS 'Description of the public display type.';
+
+
+--
+-- Name: COLUMN public_display_type.status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN public_display_type.status IS 'Status of the public display type.';
+
+
+--
 -- Name: request_category_type; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -16220,6 +16583,54 @@ ALTER TABLE ONLY checklist_item
 
 
 --
+-- Name: public_display_item_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_display_item
+    ADD CONSTRAINT public_display_item_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: public_display_item_uses_source_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_display_item_uses_source
+    ADD CONSTRAINT public_display_item_uses_source_pkey PRIMARY KEY (public_display_item_id, source_id);
+
+
+--
+-- Name: public_display_status_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_display_status
+    ADD CONSTRAINT public_display_status_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: public_display_status_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_display_status
+    ADD CONSTRAINT public_display_status_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: public_display_type_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_display_type
+    ADD CONSTRAINT public_display_type_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: public_display_type_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY public_display_type
+    ADD CONSTRAINT public_display_type_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: request_category_type_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -18069,6 +18480,55 @@ CREATE INDEX application_uses_source_source_id_fk127_ind ON application_uses_sou
 
 
 --
+-- Name: public_display_item_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX public_display_item_historic_index_on_rowidentifier ON public_display_item_historic USING btree (rowidentifier);
+
+
+--
+-- Name: public_display_item_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX public_display_item_index_on_rowidentifier ON public_display_item USING btree (rowidentifier);
+
+
+--
+-- Name: public_display_item_index_on_service_id; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX public_display_item_index_on_service_id ON public_display_item USING btree (service_id);
+
+
+--
+-- Name: public_display_item_uses_source_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX public_display_item_uses_source_historic_index_on_rowidentifier ON public_display_item_uses_source_historic USING btree (rowidentifier);
+
+
+--
+-- Name: public_display_item_uses_source_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX public_display_item_uses_source_index_on_rowidentifier ON public_display_item_uses_source USING btree (rowidentifier);
+
+
+--
+-- Name: public_display_item_uses_source_public_display_item_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX public_display_item_uses_source_public_display_item_id_fk_ind ON public_display_item_uses_source USING btree (public_display_item_id);
+
+
+--
+-- Name: public_display_item_uses_source_source_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX public_display_item_uses_source_source_id_fk_ind ON public_display_item_uses_source USING btree (source_id);
+
+
+--
 -- Name: request_type_config_panel_launcher_fkey_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -19524,6 +19984,20 @@ CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON service_checklist_item
 
 
 --
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON public_display_item FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON public_display_item_uses_source FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
 -- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
 --
 
@@ -19563,6 +20037,20 @@ CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON service FOR EACH ROW EX
 --
 
 CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON service_checklist_item FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON public_display_item FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON public_display_item_uses_source FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
 SET search_path = bulk_operation, pg_catalog;
@@ -20536,6 +21024,46 @@ ALTER TABLE ONLY checklist_item_in_group
 
 ALTER TABLE ONLY checklist_item_in_group
     ADD CONSTRAINT checklist_item_in_group_item_code_fk FOREIGN KEY (checklist_item_code) REFERENCES checklist_item(code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: public_display_item_service_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY public_display_item
+    ADD CONSTRAINT public_display_item_service_id_fk FOREIGN KEY (service_id) REFERENCES service(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: public_display_item_status_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY public_display_item
+    ADD CONSTRAINT public_display_item_status_code_fk FOREIGN KEY (status_code) REFERENCES public_display_status(code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: public_display_item_type_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY public_display_item
+    ADD CONSTRAINT public_display_item_type_code_fk FOREIGN KEY (type_code) REFERENCES public_display_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: public_display_item_uses_source_public_display_item_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY public_display_item_uses_source
+    ADD CONSTRAINT public_display_item_uses_source_public_display_item_id_fk FOREIGN KEY (public_display_item_id) REFERENCES public_display_item(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: public_display_item_uses_source_source_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY public_display_item_uses_source
+    ADD CONSTRAINT public_display_item_uses_source_source_id_fk FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

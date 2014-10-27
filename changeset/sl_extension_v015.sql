@@ -81,31 +81,33 @@ SELECT (COUNT(*) = 1) AS vl FROM administrative.rrr rr1
  WHERE br_id = 'ba_unit-has-a-valid-primary-right';
 
 
--- Add Public Display task
-DELETE FROM application.request_type WHERE code = 'publicDisplay';
-DELETE FROM system.config_panel_launcher WHERE code = 'publicDisplay';
+-- Add Public Display Map task
+DELETE FROM application.service where request_type_code IN ('publicDisplay', 'publicDisplayMap');
+DELETE FROM application.request_type WHERE code IN ('publicDisplay', 'publicDisplayMap');
+DELETE FROM system.config_panel_launcher WHERE code IN ('publicDisplay', 'publicDisplayMap');
+DELETE FROM system.approle WHERE code IN ('publicDisplay', 'publicDisplayMap');
 
 INSERT INTO system.config_panel_launcher(code, display_value, description, status, launch_group, panel_class, message_code, card_name)
-SELECT 'publicDisplay', 'Public Display Panel', null, 'c', 'generalServices', 'org.sola.clients.swing.desktop.cadastre.MapPublicDisplayPanel', 
-'cliprgs108', 'MAP_PUBLIC_DISPLAY_PANEL'
-WHERE NOT EXISTS (SELECT code FROM system.config_panel_launcher WHERE code = 'publicDisplay'); 
+SELECT 'publicDisplayMap', 'Public Display Map Panel', null, 'c', 'generalServices', 'org.sola.clients.swing.desktop.cadastre.MapPublicDisplayPanel', 
+'cliprgs110', 'MAP_PUBLIC_DISPLAY_PANEL'
+WHERE NOT EXISTS (SELECT code FROM system.config_panel_launcher WHERE code = 'publicDisplayMap'); 
 
 INSERT INTO application.request_type(code, request_category_code, display_value, 
             status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
             nr_properties_required, notation_template, rrr_type_code, type_action_code, 
             description, display_group_name, service_panel_code)
-    SELECT 'publicDisplay','stateLandServices','Public Display Map','c',5,0.00,0.00,0.00,0,
-	null,null,null,'Generates a map of the job area for public display purposes','General', 'publicDisplay'
-	WHERE NOT EXISTS (SELECT code FROM application.request_type WHERE code = 'publicDisplay');
+    SELECT 'publicDisplayMap','stateLandServices','Public Display Map','c',5,0.00,0.00,0.00,0,
+	null,null,null,'Generates a map of the job area for public display purposes','General', 'publicDisplayMap'
+	WHERE NOT EXISTS (SELECT code FROM application.request_type WHERE code = 'publicDisplayMap');
 	
 INSERT INTO system.approle (code, display_value, status, description)
-SELECT 'publicDisplay', 'Service - Public Display Map','c', 'State Land Service. Allows the Public Display Map service to be started.'
-WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'publicDisplay');
+SELECT 'publicDisplayMap', 'Service - Public Display Map','c', 'State Land Service. Allows the Public Display Map service to be started.'
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'publicDisplayMap');
 
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) 
-    (SELECT 'publicDisplay', ag.id FROM system.appgroup ag WHERE ag."name" = 'Super group'
+    (SELECT 'publicDisplayMap', ag.id FROM system.appgroup ag WHERE ag."name" = 'Super group'
 	 AND NOT EXISTS (SELECT approle_code FROM system.approle_appgroup 
-	                 WHERE  approle_code = 'publicDisplay'
+	                 WHERE  approle_code = 'publicDisplayMap'
 					 AND    appgroup_id = ag.id));
 					 
 
@@ -133,7 +135,276 @@ UPDATE system.query
        description = 'Used by the Public Display Map task to retrieve state land parcels associated to the job'
 WHERE name = 'public_display.parcels';
 
-					 
+
+
+
+-- Add task for managing public display details
+INSERT INTO system.config_panel_launcher(code, display_value, description, status, launch_group, panel_class, message_code, card_name)
+SELECT 'publicDisplay', 'Public Display Panel', null, 'c', 'generalServices', 'org.sola.clients.swing.desktop.workflow.PublicDisplayPanel', 
+'cliprgs110', 'publicDisplay'
+WHERE NOT EXISTS (SELECT code FROM system.config_panel_launcher WHERE code = 'publicDisplay'); 
+
+INSERT INTO application.request_type(code, request_category_code, display_value, 
+            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
+            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
+            description, display_group_name, service_panel_code)
+    SELECT 'publicDisplayMap','stateLandServices','Public Display Map','c',5,0.00,0.00,0.00,0,
+	null,null,null,'Generates a map of the job area for public display purposes','General', 'publicDisplayMap'
+	WHERE NOT EXISTS (SELECT code FROM application.request_type WHERE code = 'publicDisplayMap');
+	
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'publicDisplayMap', 'Service - Public Display Map','c', 'State Land Service. Allows the Public Display Map service to be started.'
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'publicDisplayMap');
+
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) 
+    (SELECT 'publicDisplayMap', ag.id FROM system.appgroup ag WHERE ag."name" = 'Super group'
+	 AND NOT EXISTS (SELECT approle_code FROM system.approle_appgroup 
+	                 WHERE  approle_code = 'publicDisplayMap'
+					 AND    appgroup_id = ag.id));
+
+
+--- ***  Drop and create the public display tables
+DROP TABLE IF EXISTS application.public_display_item_uses_source;
+DROP TABLE IF EXISTS application.public_display_item_uses_source_historic;
+DROP TABLE IF EXISTS application.public_display_item;
+DROP TABLE IF EXISTS application.public_display_item_historic;
+DROP TABLE IF EXISTS application.public_display_type;
+DROP TABLE IF EXISTS application.public_display_status;
+
+CREATE TABLE application.public_display_type
+(
+  code character varying(20) NOT NULL, 
+  display_value character varying(250) NOT NULL, 
+  description text, 
+  status character(1) NOT NULL, 
+  CONSTRAINT public_display_type_pkey PRIMARY KEY (code),
+  CONSTRAINT public_display_type_display_value_unique UNIQUE (display_value)
+);
+
+COMMENT ON TABLE application.public_display_type
+  IS 'Code list of public display types
+Tags: SOLA State Land Extension, Reference Table';
+COMMENT ON COLUMN application.public_display_type.code IS 'The code for the public display type.';
+COMMENT ON COLUMN application.public_display_type.display_value IS 'Displayed value of the public display type.';
+COMMENT ON COLUMN application.public_display_type.description IS 'Description of the public display type.';
+COMMENT ON COLUMN application.public_display_type.status IS 'Status of the public display type.';
+
+INSERT INTO application.public_display_type (code, display_value, description, status)
+VALUES ('displayMap', 'Display Map', 'Item for display is a Public Display Map illustrating the location of parcels affected', 'c'); 
+INSERT INTO application.public_display_type (code, display_value, description, status)
+VALUES ('newspaper', 'Newspaper', 'Item a newspaper advert or notice', 'c'); 
+INSERT INTO application.public_display_type (code, display_value, description, status)
+VALUES ('website', 'Website', 'The item for display is a website or website page', 'c'); 
+INSERT INTO application.public_display_type (code, display_value, description, status)
+VALUES ('gazette', 'Gazette Notice', 'Item is a gazette notice', 'c'); 
+
+
+CREATE TABLE application.public_display_status
+(
+  code character varying(20) NOT NULL, 
+  display_value character varying(250) NOT NULL, 
+  description text, 
+  status character(1) NOT NULL, 
+  CONSTRAINT public_display_status_pkey PRIMARY KEY (code),
+  CONSTRAINT public_display_status_display_value_unique UNIQUE (display_value)
+);
+
+COMMENT ON TABLE application.public_display_status
+  IS 'Code list of public display statuses
+Tags: SOLA State Land Extension, Reference Table';
+COMMENT ON COLUMN application.public_display_status.code IS 'The code for the public display status.';
+COMMENT ON COLUMN application.public_display_status.display_value IS 'Displayed value of the public display status.';
+COMMENT ON COLUMN application.public_display_status.description IS 'Description of the public display status.';
+COMMENT ON COLUMN application.public_display_status.status IS 'Status of the public display status.';
+
+INSERT INTO application.public_display_status (code, display_value, description, status)
+VALUES ('proposed', 'Proposed', 'Item is proposed for public display', 'c'); 
+INSERT INTO application.public_display_status (code, display_value, description, status)
+VALUES ('beingPreped', 'Being Prepared', 'Item is being prepared for public display', 'c'); 
+INSERT INTO application.public_display_status (code, display_value, description, status)
+VALUES ('ready', 'Ready', 'Item is ready for public display', 'c'); 
+INSERT INTO application.public_display_status (code, display_value, description, status)
+VALUES ('withdrawn', 'Withdrawn', 'Item is being withdrawn from public display', 'c'); 
+
+CREATE TABLE application.public_display_item
+(  
+  id character varying(40) NOT NULL,
+  service_id character varying(40) NOT NULL, 
+  nr character varying(50), 
+  type_code character varying(20) NOT NULL,
+  status_code character varying(20) NOT NULL,
+  display_from timestamp without time zone,
+  display_to timestamp without time zone, 
+  description text,
+  classification_code character varying(20),
+  redact_code character varying(20),
+  rowidentifier character varying(40) NOT NULL DEFAULT uuid_generate_v1(), 
+  rowversion integer NOT NULL DEFAULT 0,
+  change_action character(1) NOT NULL DEFAULT 'i'::bpchar,
+  change_user character varying(50),
+  change_time timestamp without time zone NOT NULL DEFAULT now(),
+  CONSTRAINT public_display_item_pkey PRIMARY KEY (id),
+  CONSTRAINT public_display_item_type_code_fk FOREIGN KEY (type_code)
+      REFERENCES application.public_display_type (code) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT public_display_item_service_id_fk FOREIGN KEY (service_id)
+      REFERENCES application.service (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT public_display_item_status_code_fk FOREIGN KEY (status_code)
+      REFERENCES application.public_display_status (code) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE 
+);
+
+COMMENT ON TABLE application.public_display_item
+  IS 'Indicates if the checklist items applicable to a service are satisified as well as any comments from the user.
+Tags: SOLA State Land Extension, Change History';
+COMMENT ON COLUMN application.public_display_item.id IS 'Identifier for the public display item.';
+COMMENT ON COLUMN application.public_display_item.service_id IS 'Identifier for the service.';
+COMMENT ON COLUMN application.public_display_item.type_code IS 'The type of public display item. One of Public Display Map, Gazette Notice, Newspaper, etc.';
+COMMENT ON COLUMN application.public_display_item.nr IS 'The reference number assigned to the public display item by the user';
+COMMENT ON COLUMN application.public_display_item.description IS 'The description for the public display item. Entered by the user.';
+COMMENT ON COLUMN application.public_display_item.status_code IS 'The status code for the public display item. One of Being Prepared, On Display or Completed, Withdrawn, etc.';
+COMMENT ON COLUMN application.public_display_item.display_from IS 'Optional date indicating when the item is (or was) going to be on display from';
+COMMENT ON COLUMN application.public_display_item.display_to IS 'Optional date indicating when the item is (or was) going to be on display to';
+COMMENT ON COLUMN application.public_display_item.classification_code IS 'SOLA State Land Extension: The security classification for this Application/Job. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+COMMENT ON COLUMN application.public_display_item.redact_code IS 'SOLA State Land Extension: The redact classification for this Application/Job. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+COMMENT ON COLUMN application.public_display_item.rowidentifier IS 'Identifies the all change records for the row in the public_display_item_historic table';
+COMMENT ON COLUMN application.public_display_item.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+COMMENT ON COLUMN application.public_display_item.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+COMMENT ON COLUMN application.public_display_item.change_user IS 'The user id of the last person to modify the row.';
+COMMENT ON COLUMN application.public_display_item.change_time IS 'The date and time the row was last modified.';
+
+CREATE INDEX public_display_item_index_on_rowidentifier
+  ON application.public_display_item
+  USING btree
+  (rowidentifier COLLATE pg_catalog."default");
+  
+CREATE INDEX public_display_item_index_on_service_id
+  ON application.public_display_item
+  USING btree
+  (service_id COLLATE pg_catalog."default");
+
+CREATE TRIGGER __track_changes
+  BEFORE INSERT OR UPDATE
+  ON application.public_display_item
+  FOR EACH ROW
+  EXECUTE PROCEDURE f_for_trg_track_changes();
+
+CREATE TRIGGER __track_history
+  AFTER UPDATE OR DELETE
+  ON application.public_display_item
+  FOR EACH ROW
+  EXECUTE PROCEDURE f_for_trg_track_history();
+
+
+CREATE TABLE application.public_display_item_historic
+(  
+  id character varying(40),
+  service_id character varying(40), 
+  nr character varying(50), 
+  type_code character varying(20),
+  status_code character varying(20),
+  display_from timestamp without time zone,
+  display_to timestamp without time zone, 
+  description text,
+  classification_code character varying(20),
+  redact_code character varying(20),
+  rowidentifier character varying(40), 
+  rowversion integer NOT NULL DEFAULT 0,
+  change_action character(1),
+  change_user character varying(50),
+  change_time timestamp without time zone,
+  change_time_valid_until timestamp without time zone NOT NULL DEFAULT now());
+
+COMMENT ON TABLE application.public_display_item_historic
+  IS 'History table for the application.spublic_display_item table';
+
+CREATE INDEX public_display_item_historic_index_on_rowidentifier
+  ON application.public_display_item_historic
+  USING btree
+  (rowidentifier COLLATE pg_catalog."default");
+  
+  
+CREATE TABLE application.public_display_item_uses_source
+(
+  public_display_item_id character varying(40) NOT NULL,
+  source_id character varying(40) NOT NULL, 
+  rowidentifier character varying(40) NOT NULL DEFAULT uuid_generate_v1(), 
+  rowversion integer NOT NULL DEFAULT 0, 
+  change_action character(1) NOT NULL DEFAULT 'i'::bpchar, 
+  change_user character varying(50),
+  change_time timestamp without time zone NOT NULL DEFAULT now(),
+  CONSTRAINT public_display_item_uses_source_pkey PRIMARY KEY (public_display_item_id, source_id),
+  CONSTRAINT public_display_item_uses_source_public_display_item_id_fk FOREIGN KEY (public_display_item_id)
+      REFERENCES application.public_display_item (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT public_display_item_uses_source_source_id_fk FOREIGN KEY (source_id)
+      REFERENCES source.source (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+
+COMMENT ON TABLE application.public_display_item_uses_source
+  IS 'Links the public display items to the sources (a.k.a. documents) submitted with the application. 
+Tags: FLOSS SOLA Extension, Change History';
+COMMENT ON COLUMN application.public_display_item_uses_source.public_display_item_id IS 'Identifier for the public display item the record is associated to.';
+COMMENT ON COLUMN application.public_display_item_uses_source.source_id IS 'Identifier of the source associated to the application.';
+COMMENT ON COLUMN application.public_display_item_uses_source.rowidentifier IS 'Identifies the all change records for the row in the public_display_item_uses_source_historic table';
+COMMENT ON COLUMN application.public_display_item_uses_source.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+COMMENT ON COLUMN application.public_display_item_uses_source.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+COMMENT ON COLUMN application.public_display_item_uses_source.change_user IS 'The user id of the last person to modify the row.';
+COMMENT ON COLUMN application.public_display_item_uses_source.change_time IS 'The date and time the row was last modified.';
+
+CREATE INDEX public_display_item_uses_source_public_display_item_id_fk_ind
+  ON application.public_display_item_uses_source
+  USING btree
+  (public_display_item_id COLLATE pg_catalog."default");
+
+CREATE INDEX public_display_item_uses_source_index_on_rowidentifier
+  ON application.public_display_item_uses_source
+  USING btree
+  (rowidentifier COLLATE pg_catalog."default");
+
+CREATE INDEX public_display_item_uses_source_source_id_fk_ind
+  ON application.public_display_item_uses_source
+  USING btree
+  (source_id COLLATE pg_catalog."default");
+
+CREATE TRIGGER __track_changes
+  BEFORE INSERT OR UPDATE
+  ON application.public_display_item_uses_source
+  FOR EACH ROW
+  EXECUTE PROCEDURE f_for_trg_track_changes();
+
+CREATE TRIGGER __track_history
+  AFTER UPDATE OR DELETE
+  ON application.public_display_item_uses_source
+  FOR EACH ROW
+  EXECUTE PROCEDURE f_for_trg_track_history();
+  
+ 
+CREATE TABLE application.public_display_item_uses_source_historic
+(
+  public_display_item_id character varying(40),
+  source_id character varying(40),
+  rowidentifier character varying(40),
+  rowversion integer,
+  change_action character(1),
+  change_user character varying(50),
+  change_time timestamp without time zone,
+  change_time_valid_until timestamp without time zone NOT NULL DEFAULT now()
+);
+
+CREATE INDEX public_display_item_uses_source_historic_index_on_rowidentifier
+  ON application.public_display_item_uses_source_historic
+  USING btree
+  (rowidentifier COLLATE pg_catalog."default");
+
+  
+  
+  
+
+-- Update get_concatenated_name function					 
 DROP FUNCTION IF EXISTS application.get_concatenated_name(character varying);
 
 CREATE OR REPLACE FUNCTION application.get_concatenated_name(service_id character varying,

@@ -283,6 +283,34 @@ INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) 
 ALTER TABLE checklist_item_in_group ENABLE TRIGGER ALL;
 
 --
+-- Data for Name: public_display_status; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+ALTER TABLE public_display_status DISABLE TRIGGER ALL;
+
+INSERT INTO public_display_status (code, display_value, description, status) VALUES ('proposed', 'Proposed', 'Item is proposed for public display', 'c');
+INSERT INTO public_display_status (code, display_value, description, status) VALUES ('beingPreped', 'Being Prepared', 'Item is being prepared for public display', 'c');
+INSERT INTO public_display_status (code, display_value, description, status) VALUES ('ready', 'Ready', 'Item is ready for public display', 'c');
+INSERT INTO public_display_status (code, display_value, description, status) VALUES ('withdrawn', 'Withdrawn', 'Item is being withdrawn from public display', 'c');
+
+
+ALTER TABLE public_display_status ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: public_display_type; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+ALTER TABLE public_display_type DISABLE TRIGGER ALL;
+
+INSERT INTO public_display_type (code, display_value, description, status) VALUES ('displayMap', 'Display Map', 'Item for display is a Public Display Map illustrating the location of parcels affected', 'c');
+INSERT INTO public_display_type (code, display_value, description, status) VALUES ('newspaper', 'Newspaper', 'Item a newspaper advert or notice', 'c');
+INSERT INTO public_display_type (code, display_value, description, status) VALUES ('website', 'Website', 'The item for display is a website or website page', 'c');
+INSERT INTO public_display_type (code, display_value, description, status) VALUES ('gazette', 'Gazette Notice', 'Item is a gazette notice', 'c');
+
+
+ALTER TABLE public_display_type ENABLE TRIGGER ALL;
+
+--
 -- Data for Name: request_category_type; Type: TABLE DATA; Schema: application; Owner: postgres
 --
 
@@ -364,7 +392,7 @@ INSERT INTO request_type (code, request_category_code, display_value, descriptio
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('cancelInterest', 'stateLandServices', 'Cancel Interest', 'Cancel one or more interests on an existing State Land Property', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, 'cancel', 'General', 'slProperty');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('checklist', 'stateLandServices', 'Checklist', 'Identifies a checklist of items to be completed for this Job', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'checklist');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('disposeSLProperty', 'stateLandServices', 'Dispose Property', 'Updates a State Land Property to indicate the state has disposed of it', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, 'cancel', 'General', 'slProperty');
-INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('publicDisplay', 'stateLandServices', 'Public Display Map', 'Generates a map of the job area for public display purposes', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'publicDisplay');
+INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('publicDisplayMap', 'stateLandServices', 'Public Display Map', 'Generates a map of the job area for public display purposes', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'publicDisplayMap');
 
 
 ALTER TABLE request_type ENABLE TRIGGER ALL;
@@ -851,7 +879,7 @@ INSERT INTO approle (code, display_value, status, description) VALUES ('document
 INSERT INTO approle (code, display_value, status, description) VALUES ('varyLease', 'Service - Vary Lease::::Service - Vary Lease::::الخدمة- تغيير ايجار::::Service - Varier Bail', 'c', 'Registration Service. Allows the Vary Lease service to be started. ::::Registration Service. Allows the Vary Lease service to be started.::::Registration Service. Allows the Vary Lease service to be started.::::Service Enregistrement. Permet au Service - Varier Bail de commencer.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('RightsExport', 'Reporting - Rights Export::::Reporting - Rights Export::::التقارير- تصدير الحقوق::::Reporting - Export Droits', 'c', 'Allows user to export rights informaiton into CSV format.  ::::Allows user to export rights informaiton into CSV format.::::Allows user to export rights informaiton into CSV format.::::Permet à l''utilisateur d''exporter les informations des droits au format CSV.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('ApplnUnassignSelf', 'Application - Unassign from Self::::Application - Unassign from Self::::طلب-الغاء التعيين الذاتي::::Demande - Auto non assignation', 'c', 'Allows a user to unassign an application from themselves. ::::Allows a user to unassign an application from themselves.::::Allows a user to unassign an application from themselves.::::Permet à l''utilisateur de s''auto-retirer une demande.');
-INSERT INTO approle (code, display_value, status, description) VALUES ('publicDisplay', 'Service - Public Display Map', 'c', 'State Land Service. Allows the Public Display Map service to be started.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('publicDisplayMap', 'Service - Public Display Map', 'c', 'State Land Service. Allows the Public Display Map service to be started.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('SourcePrint', 'Document - Print::::Document - Print::::الوثائق-طباعة::::Document - Imprimer', 'c', 'Allows users to print documents directly from SOLA. ::::Allows users to print documents directly from SOLA.::::Allows users to print documents directly from SOLA.::::Permet à l''utilisateur d''imprimer des documents directement depuis SOLA.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('ExportMap', 'Map - KML Export::::Map - KML Export::::الخارطة-تصدير ل KML::::Plan - Export KML', 'c', 'Allows the user to export selected features from the map as KML.::::Allows the user to export selected features from the map as KML.::::Allows the user to export selected features from the map as KML.::::Permet à l''utilisateur d''exporter les éléments sélectionnés dans le plan au format KML.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('BaunitSearch', 'Property - Search::::Property - Search::::الملكية- البحث::::Propriété - Recherche', 'c', 'Allows users to search for properties. ::::Allows users to search for properties.::::Allows users to search for properties.::::Permet à l''utilisateur de rechercher une propriété.');
