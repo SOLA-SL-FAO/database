@@ -15,6 +15,7 @@ CREATE TABLE administrative.valuation
   amount numeric(29,2) DEFAULT 0,
   valuation_date timestamp without time zone,
   type_code character varying(20),
+  source character varying(250),
   description text,
   transaction_id character varying(40),
   classification_code character varying(20),
@@ -37,18 +38,19 @@ CREATE TABLE administrative.valuation
 );
 
 COMMENT ON TABLE administrative.valuation
-  IS 'Indicates if the checklist items applicable to a service are satisified as well as any comments from the user.
+  IS 'Captures summary valuation details for a property.
 Tags: SOLA State Land Extension, Change History';
 COMMENT ON COLUMN administrative.valuation.id IS 'Identifier for the valuation item.';
-COMMENT ON COLUMN administrative.valuation.nr IS 'reference number for the valuation either supplied by the system or the user';
-COMMENT ON COLUMN administrative.valuation.ba_unit_id IS 'Optional reference to administrative.ba_unit';
+COMMENT ON COLUMN administrative.valuation.nr IS 'Reference number for the valuation either supplied by the system or the user';
+COMMENT ON COLUMN administrative.valuation.ba_unit_id IS 'Mandatory reference to administrative.ba_unit';
 COMMENT ON COLUMN administrative.valuation.amount IS 'The dollar amount resulting from the valuation';
-COMMENT ON COLUMN administrative.valuation.valuation_date IS 'The date the valuation was conducted, null is default';
-COMMENT ON COLUMN administrative.valuation.type_code IS 'the type of valuation (mass, individual, owner supplied, etc)';
+COMMENT ON COLUMN administrative.valuation.valuation_date IS 'The date the valuation applies from';
+COMMENT ON COLUMN administrative.valuation.type_code IS 'The type of valuation (mass, market, investment, insurable, etc)';
+COMMENT ON COLUMN administrative.valuation.source IS 'The source of valuation and/or name of the valuer. Usually will be one of the state, the owner or a third party';
 COMMENT ON COLUMN administrative.valuation.description IS 'The description for the public display item. Entered by the user.';
-COMMENT ON COLUMN administrative.valuation.transaction_id IS 'Optional field linking to the transaction.transaction table';
-COMMENT ON COLUMN administrative.valuation.classification_code IS 'SOLA State Land Extension: The security classification for this Application/Job. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
-COMMENT ON COLUMN administrative.valuation.redact_code IS 'SOLA State Land Extension: The redact classification for this Application/Job. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+COMMENT ON COLUMN administrative.valuation.transaction_id IS 'Links the valuation to a transaction. Optional.';
+COMMENT ON COLUMN administrative.valuation.classification_code IS 'SOLA State Land Extension: The security classification for this valuation. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+COMMENT ON COLUMN administrative.valuation.redact_code IS 'SOLA State Land Extension: The redact classification for this valuation. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
 COMMENT ON COLUMN administrative.valuation.rowidentifier IS 'Identifies all the change records for the row in the valuation_historic table';
 COMMENT ON COLUMN administrative.valuation.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
 COMMENT ON COLUMN administrative.valuation.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
@@ -64,7 +66,11 @@ CREATE INDEX valuation_index_on_ba_unit_id
   ON administrative.valuation
   USING btree
   (ba_unit_id COLLATE pg_catalog."default");
-
+  
+CREATE INDEX valuation_index_on_transaction_id
+  ON administrative.valuation
+  USING btree
+  (transaction_id COLLATE pg_catalog."default");
 
 CREATE TRIGGER __track_changes
   BEFORE INSERT OR UPDATE
@@ -90,6 +96,7 @@ CREATE TRIGGER __track_history
   amount numeric(29,2) ,
   valuation_date timestamp without time zone,
   type_code character varying(20),
+  source character varying(250),
   description text,
   transaction_id character varying(40),
   classification_code character varying(20),
@@ -100,14 +107,16 @@ CREATE TRIGGER __track_history
   change_user character varying(50),
   change_time timestamp without time zone ,
   change_time_valid_until timestamp without time zone NOT NULL DEFAULT now());
-  );
-  COMMENT ON TABLE administrative.valuation_historic
+
+COMMENT ON TABLE administrative.valuation_historic
   IS 'History table for the administrative.valuation_historic';
 
 CREATE INDEX valuation_historic_index_on_rowidentifier
   ON administrative.valuation_historic
   USING btree
   (rowidentifier COLLATE pg_catalog."default");
+
+  
   
 CREATE TABLE administrative.valuation_type
 (
@@ -116,7 +125,7 @@ CREATE TABLE administrative.valuation_type
   description text, 
   status character(1) NOT NULL, 
   CONSTRAINT valuation_type_pkey PRIMARY KEY (code),
-  CONSTRAINT valuation_type_display_value_unique UNIQUE (valuation_value)
+  CONSTRAINT valuation_type_display_value_unique UNIQUE (display_value)
 );
 
 COMMENT ON TABLE administrative.valuation_type
@@ -126,6 +135,19 @@ COMMENT ON COLUMN administrative.valuation_type.code IS 'The code for the valuat
 COMMENT ON COLUMN administrative.valuation_type.display_value IS 'Displayed value of the valuation type.';
 COMMENT ON COLUMN administrative.valuation_type.description IS 'Description of the valuation type.';
 COMMENT ON COLUMN administrative.valuation_type.status IS 'Status of the valuation type.';
+
+INSERT INTO administrative.valuation_type (code, display_value, description, status)
+VALUES ('mass', 'Mass', 'Property value has been determined through a mass valuation process', 'c'); 
+INSERT INTO administrative.valuation_type (code, display_value, description, status)
+VALUES ('market', 'Market', 'The value the property will likely trade for between a willing buyer and willing seller as at the valuation date.', 'c'); 
+INSERT INTO administrative.valuation_type (code, display_value, description, status)
+VALUES ('valueInUse', 'Value In Use', 'Represents the cash flow generated for a specific owner under a specific use.', 'c'); 
+INSERT INTO administrative.valuation_type (code, display_value, description, status)
+VALUES ('investment', 'Investment Value', 'The value of the property to an owner or prospective owner for investment or operational objectives', 'c'); 
+INSERT INTO administrative.valuation_type (code, display_value, description, status)
+VALUES ('insurable', 'Insurable Value', 'Property value for insurance purposes. Excludes site value.', 'c'); 
+INSERT INTO administrative.valuation_type (code, display_value, description, status)
+VALUES ('liquidation', 'Liquidation Value', 'Property value where the owner is compelled to sell due to bankruptcy or forced sale.', 'c');
 
 -------------- table ends ------------------
 
@@ -150,7 +172,7 @@ CREATE TABLE administrative.source_describes_valuation
 );
 
 COMMENT ON TABLE administrative.source_describes_valuation
-  IS 'Links the public display items to the sources (a.k.a. documents) submitted with the application. 
+  IS 'Links the valuation records to the sources (a.k.a. documents) submitted with the job. 
 Tags: FLOSS SOLA Extension, Change History';
 COMMENT ON COLUMN application.source_describes_valuation.valuation_id IS 'Identifier for the valuation item the record is associated to.';
 COMMENT ON COLUMN application.source_describes_valuation.source_id IS 'Identifier of the source associated to the application.';
@@ -164,6 +186,16 @@ CREATE INDEX source_describes_valuation_index_on_rowidentifier
   ON administrative.source_describes_valuation
   USING btree
   (rowidentifier COLLATE pg_catalog."default");
+  
+CREATE INDEX source_describes_valuation_index_on_source_id
+  ON administrative.source_describes_valuation
+  USING btree
+  (source_id COLLATE pg_catalog."default");
+  
+CREATE INDEX source_describes_valuation_index_on_valuation_id
+  ON administrative.source_describes_valuation
+  USING btree
+  (valuation_id COLLATE pg_catalog."default");
 
 CREATE TRIGGER __track_changes
   BEFORE INSERT OR UPDATE
