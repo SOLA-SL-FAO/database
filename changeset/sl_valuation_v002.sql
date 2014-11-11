@@ -1,3 +1,34 @@
+DELETE FROM application.service where request_type_code IN ('slValuation');
+DELETE FROM application.request_type WHERE code IN ('slValuation');
+DELETE FROM system.config_panel_launcher WHERE code IN ('slValuation');
+DELETE FROM system.approle WHERE code IN ('slValuation');
+ 
+INSERT INTO system.config_panel_launcher(code, display_value, description, status, launch_group, panel_class, message_code, card_name)
+SELECT 'slValuation', 'Valuations List Panel', null, 'c', 'generalServices', 'org.sola.clients.swing.desktop.administrative.ValuationListPanel',
+null, 'slValuationPanel'
+WHERE NOT EXISTS (SELECT code FROM system.config_panel_launcher WHERE code = 'slValuation');
+ 
+INSERT INTO application.request_type(code, request_category_code, display_value,
+            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee,
+            nr_properties_required, notation_template, rrr_type_code, type_action_code,
+            description, display_group_name, service_panel_code)
+    SELECT 'slValuation','stateLandServices','Create/Change valuations','c',5,0.00,0.00,0.00,0,
+                null,null,null,'Records details of valuations raised by parties affected by State Land activities','General', 'slValuation'
+                WHERE NOT EXISTS (SELECT code FROM application.request_type WHERE code = 'slValuation');
+ 
+--When a user starts a task, SOLA checks to ensure they have a security role matching the name of the request_type before they can start (or view) the task,
+--so its necessary to create an approle  matching the new task and link that role to the Super group  
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'slValuation', 'Service - Manage Valuations','c', 'State Land Service. Allows the Manage Valuations service to be started.'
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'slValuation');
+ 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)
+    (SELECT 'slValuation', ag.id FROM system.appgroup ag WHERE ag."name" = 'Super group'
+                AND NOT EXISTS (SELECT approle_code FROM system.approle_appgroup
+                                 WHERE  approle_code = 'slValuation' AND appgroup_id = ag.id));
+
+
+
 --- ***  Drop and create the public display tables
 DROP TABLE IF EXISTS administrative.valuation CASCADE;
 DROP TABLE IF EXISTS administrative.valuation_historic;
