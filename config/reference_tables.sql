@@ -231,6 +231,19 @@ INSERT INTO application_action_type (code, display_value, status_to_set, status,
 ALTER TABLE application_action_type ENABLE TRIGGER ALL;
 
 --
+-- Data for Name: authority; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+ALTER TABLE authority DISABLE TRIGGER ALL;
+
+INSERT INTO authority (code, display_value, description, status) VALUES ('mediator', 'Mediator', 'A mediator is being used to help resolve the dispute or objection.', 'c');
+INSERT INTO authority (code, display_value, description, status) VALUES ('court', 'Court', 'A court is being used to help resolve the dispute or objection.', 'c');
+INSERT INTO authority (code, display_value, description, status) VALUES ('tribunal', 'Tribunal', 'A tribunal is being used to help resolve the dispute or objection.', 'c');
+
+
+ALTER TABLE authority ENABLE TRIGGER ALL;
+
+--
 -- Data for Name: checklist_group; Type: TABLE DATA; Schema: application; Owner: postgres
 --
 
@@ -281,6 +294,38 @@ INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) 
 
 
 ALTER TABLE checklist_item_in_group ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: notify_relationship_type; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+ALTER TABLE notify_relationship_type DISABLE TRIGGER ALL;
+
+INSERT INTO notify_relationship_type (code, display_value, description, status) VALUES ('owner', 'Owner', 'Party to notify is an owner of land affected by the job.', 'c');
+INSERT INTO notify_relationship_type (code, display_value, description, status) VALUES ('adjoiningOwner', 'Adjoining Owner', 'Party to notify is an owner of land adjoining the land affected by the job', 'c');
+INSERT INTO notify_relationship_type (code, display_value, description, status) VALUES ('occupier', 'Occupier', 'Party to notify is and occupier or tenant of the land affected by the job', 'c');
+INSERT INTO notify_relationship_type (code, display_value, description, status) VALUES ('adjoiningOccupier', 'Adjoining Occupier', 'Party to notify is an occupier or tenant of land adjoining the land affected by the job', 'c');
+INSERT INTO notify_relationship_type (code, display_value, description, status) VALUES ('rightHolder', 'Rightholder', 'Party to notify has a recognized right or interest (e.g. easement) over the land affected by the job', 'c');
+INSERT INTO notify_relationship_type (code, display_value, description, status) VALUES ('other', 'Other', 'Party to notify has a general interest in the land but is not an owner, rightholder, occuiper or tenant of the land affected by the job.', 'c');
+
+
+ALTER TABLE notify_relationship_type ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: objection_status; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+ALTER TABLE objection_status DISABLE TRIGGER ALL;
+
+INSERT INTO objection_status (code, display_value, description, status) VALUES ('lodged', 'Lodged', 'The objection hs been lodged but has yet to be assessed.', 'c');
+INSERT INTO objection_status (code, display_value, description, status) VALUES ('open', 'Open', 'The objection is being assessed and relevant actions to resolve the objection are in progress.', 'c');
+INSERT INTO objection_status (code, display_value, description, status) VALUES ('resolved', 'Resolved', 'A suitable resolution has been reached with all parties invovled. No further actions are requried.', 'c');
+INSERT INTO objection_status (code, display_value, description, status) VALUES ('closed', 'Closed', 'A resolution for the objection has been perscribed by the relavant authority.', 'c');
+INSERT INTO objection_status (code, display_value, description, status) VALUES ('appeal', 'Appeal', 'The resolution proposed for the objection is being appealled by one or more parties.', 'c');
+INSERT INTO objection_status (code, display_value, description, status) VALUES ('withdrawn', 'Withdrawn', 'The parties lodging the objection have withdrawn it.', 'c');
+
+
+ALTER TABLE objection_status ENABLE TRIGGER ALL;
 
 --
 -- Data for Name: public_display_status; Type: TABLE DATA; Schema: application; Owner: postgres
@@ -394,6 +439,8 @@ INSERT INTO request_type (code, request_category_code, display_value, descriptio
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('disposeSLProperty', 'stateLandServices', 'Dispose Property', 'Updates a State Land Property to indicate the state has disposed of it', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, 'cancel', 'General', 'slProperty');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('publicDisplayMap', 'stateLandServices', 'Public Display Map', 'Generates a map of the job area for public display purposes', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'publicDisplayMap');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('publicDisplay', 'stateLandServices', 'Mangage Public Display', 'Can be used to plan and track public display items', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'publicDisplay');
+INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('slObjection', 'stateLandServices', 'Manage Objections', 'Records details of objections raised by parties affected by State Land activities', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'slObjection');
+INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('slNotify', 'stateLandServices', 'Manage Notifications', 'Used for generating and managing bulk notifications related to the job', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'slNotify');
 
 
 ALTER TABLE request_type ENABLE TRIGGER ALL;
@@ -880,6 +927,7 @@ INSERT INTO approle (code, display_value, status, description) VALUES ('document
 INSERT INTO approle (code, display_value, status, description) VALUES ('varyLease', 'Service - Vary Lease::::Service - Vary Lease::::الخدمة- تغيير ايجار::::Service - Varier Bail', 'c', 'Registration Service. Allows the Vary Lease service to be started. ::::Registration Service. Allows the Vary Lease service to be started.::::Registration Service. Allows the Vary Lease service to be started.::::Service Enregistrement. Permet au Service - Varier Bail de commencer.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('RightsExport', 'Reporting - Rights Export::::Reporting - Rights Export::::التقارير- تصدير الحقوق::::Reporting - Export Droits', 'c', 'Allows user to export rights informaiton into CSV format.  ::::Allows user to export rights informaiton into CSV format.::::Allows user to export rights informaiton into CSV format.::::Permet à l''utilisateur d''exporter les informations des droits au format CSV.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('ApplnUnassignSelf', 'Application - Unassign from Self::::Application - Unassign from Self::::طلب-الغاء التعيين الذاتي::::Demande - Auto non assignation', 'c', 'Allows a user to unassign an application from themselves. ::::Allows a user to unassign an application from themselves.::::Allows a user to unassign an application from themselves.::::Permet à l''utilisateur de s''auto-retirer une demande.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('slObjection', 'Service - Manage Objections', 'c', 'State Land Service. Allows the Manage Objections service to be started.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('SourcePrint', 'Document - Print::::Document - Print::::الوثائق-طباعة::::Document - Imprimer', 'c', 'Allows users to print documents directly from SOLA. ::::Allows users to print documents directly from SOLA.::::Allows users to print documents directly from SOLA.::::Permet à l''utilisateur d''imprimer des documents directement depuis SOLA.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('ExportMap', 'Map - KML Export::::Map - KML Export::::الخارطة-تصدير ل KML::::Plan - Export KML', 'c', 'Allows the user to export selected features from the map as KML.::::Allows the user to export selected features from the map as KML.::::Allows the user to export selected features from the map as KML.::::Permet à l''utilisateur d''exporter les éléments sélectionnés dans le plan au format KML.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('BaunitSearch', 'Property - Search::::Property - Search::::الملكية- البحث::::Propriété - Recherche', 'c', 'Allows users to search for properties. ::::Allows users to search for properties.::::Allows users to search for properties.::::Permet à l''utilisateur de rechercher une propriété.');
@@ -938,6 +986,8 @@ INSERT INTO approle (code, display_value, status, description) VALUES ('ChangePa
 INSERT INTO approle (code, display_value, status, description) VALUES ('ManageRefdata', 'Admin - Reference Data::::Admin - Reference Data::::ادارة-البيانات المرجعية::::Admin - Données de Référence', 'c', 'Allows system administrators to manage (edit and save) reference data details.  Users with this role will be able to login to the SOLA Admin application. ::::Allows system administrators to manage (edit and save) reference data details.  Users with this role will be able to login to the SOLA Admin application.::::Allows system administrators to manage (edit and save) reference data details.  Users with this role will be able to login to the SOLA Admin application.::::Permet à l''administrateur système de gérer (éditer et sauvegarder) les détails des données de référence. Les utilisateurs avec ce rôle peuvent se connecter à l''application SOLA Admin.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('StartService', 'Service Action - Start::::Service Action - Start::::حركة خدمة-ابدأ::::Action Service - Commencer', 'c', 'Allows any user to click the Start action. Note that the user must also have the appropraite Service role as well before they can successfully start the service. ::::Allows any user to click the Start action. Note that the user must also have the appropraite Service role as well before they can successfully start the service.::::Allows any user to click the Start action. Note that the user must also have the appropraite Service role as well before they can successfully start the service.::::Permet n''importe quel utilisateur de cliquer pour commencer l''action. Notez que l''utilisateur doit aussi avoir le rôle du service approprié avant de pouvoir commencer le service.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('mapExistingParcel', 'Map Existing Parcel::::Map Existing Parcel::::الخارطة- القطع الموجودة::::Plan Parcelle Existante', 'c', 'Allows to map existing parcel as described on existing title. ::::Allows to map existing parcel as described on existing title.::::Allows to map existing parcel as described on existing title.::::Permet de tracer le plan de la parcelle existante comme décrit sur le titre existant.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('ObjectionCommentEdit', 'Workflow - Edit Objection Comment', 'c', 'Allows the user to edit or remove all Timeline comments on an Objection task.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('slNotify', 'Service - Manage Notifications', 'c', 'State Land Service. Allows the Manage Notifications service to be started.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('DashbrdViewAssign', 'Dashboard - View Assigned::::Dashboard - View Assigned::::لوحة المراقبة-مشاهدة الطلبات المعينة::::Accueil - Visulaiser Assignée', 'c', 'Allows the user to view applications assigned to them in the Dashboard. To hide the Dashboard from the user, remove both this role and the Dashboard - View Unassigned role. ::::Allows the user to view applications assigned to them in the Dashboard. To hide the Dashboard from the user, remove both this role and the Dashboard - View Unassigned role.::::Allows the user to view applications assigned to them in the Dashboard. To hide the Dashboard from the user, remove both this role and the Dashboard - View Unassigned role.::::Permet à l''utilisateur de visualiser routes les demandes assignées dans l''accueil. Pour cacher l''Accueil de l''utilisateur, supprimer ce rôle et le rôle Accueil - Visualiser non Assigné.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('cancelProperty', 'Service - Cancel Title::::Service - Cancel Title::::الخدمة-الغاء سند ملكية::::Service - Annuler Titre', 'c', 'Lease Service. Allows the Cancel Title to be started. ::::Lease Service. Allows the Cancel Title to be started.::::Lease Service. Allows the Cancel Title to be started.::::Service Enregistrement. Permet au Service - Annuler Titre de commencer.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('buildingRestriction', 'Service - Register Building Restriction::::Service - Register Building Restriction::::الخدمة-تسجيل قيد بناء::::Service - Enregistrement Restriction de Construction', 'c', 'Registration Service. Allows the Register Building Restriction service to be started. ::::Registration Service. Allows the Register Building Restriction service to be started.::::Registration Service. Allows the Register Building Restriction service to be started.::::Service Enregistrement. Permet au Service - Enregistrement Restriction de Construction de commencer.');

@@ -8324,6 +8324,56 @@ CREATE TABLE application_uses_source_historic (
 ALTER TABLE application.application_uses_source_historic OWNER TO postgres;
 
 --
+-- Name: authority; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE authority (
+    code character varying(20) NOT NULL,
+    display_value character varying(250) NOT NULL,
+    description text,
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE application.authority OWNER TO postgres;
+
+--
+-- Name: TABLE authority; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE authority IS 'Code list of authorities that can assist in the resolution of a dispute or objection. 
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN authority.code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN authority.code IS 'The code for the authority.';
+
+
+--
+-- Name: COLUMN authority.display_value; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN authority.display_value IS 'Displayed value of the authority.';
+
+
+--
+-- Name: COLUMN authority.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN authority.description IS 'Description of the authority.';
+
+
+--
+-- Name: COLUMN authority.status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN authority.status IS 'Status of the authority (c - current, x - no longer valid).';
+
+
+--
 -- Name: checklist_group; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -8464,6 +8514,1009 @@ COMMENT ON COLUMN checklist_item_in_group.checklist_group_code IS 'The code for 
 
 COMMENT ON COLUMN checklist_item_in_group.checklist_item_code IS 'Code of the checklist item related to the checklist group.';
 
+
+--
+-- Name: notify; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify (
+    id character varying(40) NOT NULL,
+    service_id character varying(40) NOT NULL,
+    party_id character varying(40) NOT NULL,
+    relationship_type_code character varying(20) DEFAULT 'owner'::character varying NOT NULL,
+    description text,
+    classification_code character varying(20),
+    redact_code character varying(20),
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.notify OWNER TO postgres;
+
+--
+-- Name: TABLE notify; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE notify IS 'Identifies parties to be notified in bulk as well as the relationship the party has with the land affected by the job.
+Tags: SOLA State Land Extension, Change History';
+
+
+--
+-- Name: COLUMN notify.id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.id IS 'Identifier for the notification.';
+
+
+--
+-- Name: COLUMN notify.service_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.service_id IS 'Identifier for the service.';
+
+
+--
+-- Name: COLUMN notify.party_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.party_id IS 'Identifier for the party.';
+
+
+--
+-- Name: COLUMN notify.relationship_type_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.relationship_type_code IS 'The type of relationship between the party and the land affected by the job. One of Owner, Adjoining Owner, Occupier, Adjoining Occupier, Rightholder, Other, etc.';
+
+
+--
+-- Name: COLUMN notify.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.description IS 'The description of the party to notify.';
+
+
+--
+-- Name: COLUMN notify.classification_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.classification_code IS 'SOLA State Land Extension: The security classification for this Notification Party. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN notify.redact_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.redact_code IS 'SOLA State Land Extension: The redact classification for this Notification Party. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
+-- Name: COLUMN notify.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.rowidentifier IS 'Identifies the all change records for the row in the notify_historic table';
+
+
+--
+-- Name: COLUMN notify.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN notify.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN notify.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN notify.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: notify_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_historic (
+    id character varying(40),
+    service_id character varying(40),
+    party_id character varying(40),
+    relationship_type_code character varying(20),
+    description text,
+    classification_code character varying(20),
+    redact_code character varying(20),
+    rowidentifier character varying(40),
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.notify_historic OWNER TO postgres;
+
+--
+-- Name: TABLE notify_historic; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE notify_historic IS 'History table for the application.notify table';
+
+
+--
+-- Name: notify_property; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_property (
+    notify_id character varying(40) NOT NULL,
+    ba_unit_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.notify_property OWNER TO postgres;
+
+--
+-- Name: TABLE notify_property; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE notify_property IS 'Identifies the properties (a.k.a. Ba Units) this notification party is related to. 
+Tags: FLOSS SOLA Extension, Change History';
+
+
+--
+-- Name: COLUMN notify_property.notify_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.notify_id IS 'Identifier for the notification party the record is associated to.';
+
+
+--
+-- Name: COLUMN notify_property.ba_unit_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.ba_unit_id IS 'Identifier of the property associated to the objection.';
+
+
+--
+-- Name: COLUMN notify_property.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.rowidentifier IS 'Identifies the all change records for the row in the notify_property_historic table';
+
+
+--
+-- Name: COLUMN notify_property.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN notify_property.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN notify_property.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN notify_property.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: notify_property_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_property_historic (
+    notify_id character varying(40),
+    ba_unit_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.notify_property_historic OWNER TO postgres;
+
+--
+-- Name: notify_relationship_type; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_relationship_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(250) NOT NULL,
+    description text,
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE application.notify_relationship_type OWNER TO postgres;
+
+--
+-- Name: TABLE notify_relationship_type; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE notify_relationship_type IS 'Code list identifying the type of relationship a party has with land affected by a job. Used for bulk notification purposes. 
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN notify_relationship_type.code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_relationship_type.code IS 'The code for the relationship type.';
+
+
+--
+-- Name: COLUMN notify_relationship_type.display_value; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_relationship_type.display_value IS 'Displayed value of the relationship type.';
+
+
+--
+-- Name: COLUMN notify_relationship_type.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_relationship_type.description IS 'Description of the relationship type.';
+
+
+--
+-- Name: COLUMN notify_relationship_type.status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_relationship_type.status IS 'Status of the relationship type (c - current, x - no longer valid).';
+
+
+--
+-- Name: notify_uses_source; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_uses_source (
+    notify_id character varying(40) NOT NULL,
+    source_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.notify_uses_source OWNER TO postgres;
+
+--
+-- Name: TABLE notify_uses_source; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE notify_uses_source IS 'Links the notification parties to the sources (a.k.a. documents) genreated for the bulk notification. 
+Tags: FLOSS SOLA Extension, Change History';
+
+
+--
+-- Name: COLUMN notify_uses_source.notify_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_uses_source.notify_id IS 'Identifier for the notification party the record is associated to.';
+
+
+--
+-- Name: COLUMN notify_uses_source.source_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_uses_source.source_id IS 'Identifier of the source associated to the application.';
+
+
+--
+-- Name: COLUMN notify_uses_source.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_uses_source.rowidentifier IS 'Identifies the all change records for the row in the objection_uses_source_historic table';
+
+
+--
+-- Name: COLUMN notify_uses_source.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_uses_source.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN notify_uses_source.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_uses_source.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN notify_uses_source.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_uses_source.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN notify_uses_source.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_uses_source.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: notify_uses_source_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_uses_source_historic (
+    notify_id character varying(40),
+    source_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.notify_uses_source_historic OWNER TO postgres;
+
+--
+-- Name: objection; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE objection (
+    id character varying(40) NOT NULL,
+    service_id character varying(40) NOT NULL,
+    nr character varying(50),
+    status_code character varying(20) DEFAULT 'lodged'::character varying NOT NULL,
+    lodged_date timestamp without time zone DEFAULT now() NOT NULL,
+    resolution_date timestamp without time zone,
+    description text,
+    resolution text,
+    authority_code character varying(20),
+    classification_code character varying(20),
+    redact_code character varying(20),
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.objection OWNER TO postgres;
+
+--
+-- Name: TABLE objection; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE objection IS 'Identifies details of an objection raised by parties affected by the activities of the state in relation to land.
+Tags: SOLA State Land Extension, Change History';
+
+
+--
+-- Name: COLUMN objection.id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.id IS 'Identifier for the objection.';
+
+
+--
+-- Name: COLUMN objection.service_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.service_id IS 'Identifier for the service.';
+
+
+--
+-- Name: COLUMN objection.nr; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.nr IS 'The reference number assigned to the objection by the user';
+
+
+--
+-- Name: COLUMN objection.status_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.status_code IS 'The status code for the objection. One of Lodged, Open, Resolved, Closed, Appeal or Withdrawn, etc.';
+
+
+--
+-- Name: COLUMN objection.lodged_date; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.lodged_date IS 'Date indicating when the objection was first lodged with the state.';
+
+
+--
+-- Name: COLUMN objection.resolution_date; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.resolution_date IS 'Date indicating when the objection was resolved.';
+
+
+--
+-- Name: COLUMN objection.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.description IS 'The description for the objection. Entered by the user.';
+
+
+--
+-- Name: COLUMN objection.resolution; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.resolution IS 'Description of the resolution for the objection along with any notes on how the resolution will be enforced.';
+
+
+--
+-- Name: COLUMN objection.authority_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.authority_code IS 'The authority that is assisting to resolve the dispute. Can be Mediator, Court, Tribunal, etc.';
+
+
+--
+-- Name: COLUMN objection.classification_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.classification_code IS 'SOLA State Land Extension: The security classification for this Objection. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN objection.redact_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.redact_code IS 'SOLA State Land Extension: The redact classification for this Objection. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
+-- Name: COLUMN objection.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.rowidentifier IS 'Identifies the all change records for the row in the objection_historic table';
+
+
+--
+-- Name: COLUMN objection.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN objection.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN objection.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN objection.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: objection_comment; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE objection_comment (
+    id character varying(40) NOT NULL,
+    objection_id character varying(40) NOT NULL,
+    username character varying(40) NOT NULL,
+    comment_date timestamp without time zone DEFAULT now() NOT NULL,
+    comment text,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.objection_comment OWNER TO postgres;
+
+--
+-- Name: TABLE objection_comment; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE objection_comment IS 'Describes actions that have occurred in relation to this objection such as court filings, court appearance dates, etc. Intended to provide a history of actions related to dealing with this objection.  
+Tags: FLOSS SOLA Extension, Change History';
+
+
+--
+-- Name: COLUMN objection_comment.id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_comment.id IS 'Identifier for the objection comment.';
+
+
+--
+-- Name: COLUMN objection_comment.objection_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_comment.objection_id IS 'Identifier of the objection the comment relates to.';
+
+
+--
+-- Name: COLUMN objection_comment.username; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_comment.username IS 'The username of the user that entered the comment.';
+
+
+--
+-- Name: COLUMN objection_comment.comment_date; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_comment.comment_date IS 'The date applicable for the comment such as the date entered or the date the comment applies from.';
+
+
+--
+-- Name: COLUMN objection_comment.comment; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_comment.comment IS 'The comment relating to the objection.';
+
+
+--
+-- Name: COLUMN objection_comment.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_comment.rowidentifier IS 'Identifies the all change records for the row in the objection_comment_historic table';
+
+
+--
+-- Name: COLUMN objection_comment.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_comment.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN objection_comment.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_comment.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN objection_comment.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_comment.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN objection_comment.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_comment.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: objection_comment_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE objection_comment_historic (
+    id character varying(40),
+    objection_id character varying(40),
+    username character varying(40),
+    comment_date timestamp without time zone,
+    comment text,
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.objection_comment_historic OWNER TO postgres;
+
+--
+-- Name: objection_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE objection_historic (
+    id character varying(40),
+    service_id character varying(40),
+    nr character varying(50),
+    status_code character varying(20),
+    lodged_date timestamp without time zone,
+    resolution_date timestamp without time zone,
+    description text,
+    resolution text,
+    authority_code character varying(20),
+    classification_code character varying(20),
+    redact_code character varying(20),
+    rowidentifier character varying(40),
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.objection_historic OWNER TO postgres;
+
+--
+-- Name: TABLE objection_historic; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE objection_historic IS 'History table for the application.objection table';
+
+
+--
+-- Name: objection_party; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE objection_party (
+    objection_id character varying(40) NOT NULL,
+    party_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.objection_party OWNER TO postgres;
+
+--
+-- Name: TABLE objection_party; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE objection_party IS 'Identifies the parties that are invovled with this objection. 
+Tags: FLOSS SOLA Extension, Change History';
+
+
+--
+-- Name: COLUMN objection_party.objection_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_party.objection_id IS 'Identifier for the objection the record is associated to.';
+
+
+--
+-- Name: COLUMN objection_party.party_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_party.party_id IS 'Identifier of the party associated to the objection.';
+
+
+--
+-- Name: COLUMN objection_party.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_party.rowidentifier IS 'Identifies the all change records for the row in the objection_party_historic table';
+
+
+--
+-- Name: COLUMN objection_party.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_party.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN objection_party.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_party.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN objection_party.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_party.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN objection_party.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_party.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: objection_party_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE objection_party_historic (
+    objection_id character varying(40),
+    party_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.objection_party_historic OWNER TO postgres;
+
+--
+-- Name: objection_property; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE objection_property (
+    objection_id character varying(40) NOT NULL,
+    ba_unit_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.objection_property OWNER TO postgres;
+
+--
+-- Name: TABLE objection_property; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE objection_property IS 'Identifies the properties (a.k.a. Ba Units) this objection is in relation to. 
+Tags: FLOSS SOLA Extension, Change History';
+
+
+--
+-- Name: COLUMN objection_property.objection_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_property.objection_id IS 'Identifier for the objection the record is associated to.';
+
+
+--
+-- Name: COLUMN objection_property.ba_unit_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_property.ba_unit_id IS 'Identifier of the property associated to the objection.';
+
+
+--
+-- Name: COLUMN objection_property.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_property.rowidentifier IS 'Identifies the all change records for the row in the objection_property_historic table';
+
+
+--
+-- Name: COLUMN objection_property.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_property.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN objection_property.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_property.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN objection_property.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_property.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN objection_property.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_property.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: objection_property_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE objection_property_historic (
+    objection_id character varying(40),
+    ba_unit_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.objection_property_historic OWNER TO postgres;
+
+--
+-- Name: objection_status; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE objection_status (
+    code character varying(20) NOT NULL,
+    display_value character varying(250) NOT NULL,
+    description text,
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE application.objection_status OWNER TO postgres;
+
+--
+-- Name: TABLE objection_status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE objection_status IS 'Code list of objection status
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN objection_status.code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_status.code IS 'The code for the objection status.';
+
+
+--
+-- Name: COLUMN objection_status.display_value; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_status.display_value IS 'Displayed value of the objection status.';
+
+
+--
+-- Name: COLUMN objection_status.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_status.description IS 'Description of the objection status.';
+
+
+--
+-- Name: COLUMN objection_status.status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_status.status IS 'Status of the objection status (c - current, x - no longer valid).';
+
+
+--
+-- Name: objection_uses_source; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE objection_uses_source (
+    objection_id character varying(40) NOT NULL,
+    source_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.objection_uses_source OWNER TO postgres;
+
+--
+-- Name: TABLE objection_uses_source; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE objection_uses_source IS 'Links the objections to the sources (a.k.a. documents) submitted with the objection. 
+Tags: FLOSS SOLA Extension, Change History';
+
+
+--
+-- Name: COLUMN objection_uses_source.objection_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_uses_source.objection_id IS 'Identifier for the objection the record is associated to.';
+
+
+--
+-- Name: COLUMN objection_uses_source.source_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_uses_source.source_id IS 'Identifier of the source associated to the application.';
+
+
+--
+-- Name: COLUMN objection_uses_source.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_uses_source.rowidentifier IS 'Identifies the all change records for the row in the objection_uses_source_historic table';
+
+
+--
+-- Name: COLUMN objection_uses_source.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_uses_source.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN objection_uses_source.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_uses_source.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN objection_uses_source.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_uses_source.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN objection_uses_source.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN objection_uses_source.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: objection_uses_source_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE objection_uses_source_historic (
+    objection_id character varying(40),
+    source_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.objection_uses_source_historic OWNER TO postgres;
 
 --
 -- Name: public_display_item; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
@@ -16543,6 +17596,22 @@ ALTER TABLE ONLY application_uses_source
 
 
 --
+-- Name: authority_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY authority
+    ADD CONSTRAINT authority_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: authority_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY authority
+    ADD CONSTRAINT authority_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: checklist_group_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -16580,6 +17649,102 @@ ALTER TABLE ONLY checklist_item_in_group
 
 ALTER TABLE ONLY checklist_item
     ADD CONSTRAINT checklist_item_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: notifiy_property_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notify_property
+    ADD CONSTRAINT notifiy_property_pkey PRIMARY KEY (notify_id, ba_unit_id);
+
+
+--
+-- Name: notify_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notify
+    ADD CONSTRAINT notify_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: notify_relationship_type_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notify_relationship_type
+    ADD CONSTRAINT notify_relationship_type_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: notify_relationship_type_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notify_relationship_type
+    ADD CONSTRAINT notify_relationship_type_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: notify_uses_source_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notify_uses_source
+    ADD CONSTRAINT notify_uses_source_pkey PRIMARY KEY (notify_id, source_id);
+
+
+--
+-- Name: objection_comment_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY objection_comment
+    ADD CONSTRAINT objection_comment_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: objection_party_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY objection_party
+    ADD CONSTRAINT objection_party_pkey PRIMARY KEY (objection_id, party_id);
+
+
+--
+-- Name: objection_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY objection
+    ADD CONSTRAINT objection_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: objection_property_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY objection_property
+    ADD CONSTRAINT objection_property_pkey PRIMARY KEY (objection_id, ba_unit_id);
+
+
+--
+-- Name: objection_status_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY objection_status
+    ADD CONSTRAINT objection_status_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: objection_status_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY objection_status
+    ADD CONSTRAINT objection_status_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: objection_uses_source_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY objection_uses_source
+    ADD CONSTRAINT objection_uses_source_pkey PRIMARY KEY (objection_id, source_id);
 
 
 --
@@ -18480,6 +19645,216 @@ CREATE INDEX application_uses_source_source_id_fk127_ind ON application_uses_sou
 
 
 --
+-- Name: notify_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_historic_index_on_rowidentifier ON notify_historic USING btree (rowidentifier);
+
+
+--
+-- Name: notify_index_on_party_id; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_index_on_party_id ON notify USING btree (party_id);
+
+
+--
+-- Name: notify_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_index_on_rowidentifier ON notify USING btree (rowidentifier);
+
+
+--
+-- Name: notify_index_on_service_id; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_index_on_service_id ON notify USING btree (service_id);
+
+
+--
+-- Name: notify_property_ba_unit_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_property_ba_unit_id_fk_ind ON notify_property USING btree (ba_unit_id);
+
+
+--
+-- Name: notify_property_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_property_historic_index_on_rowidentifier ON notify_property_historic USING btree (rowidentifier);
+
+
+--
+-- Name: notify_property_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_property_index_on_rowidentifier ON notify_property USING btree (rowidentifier);
+
+
+--
+-- Name: notify_property_notify_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_property_notify_id_fk_ind ON notify_property USING btree (notify_id);
+
+
+--
+-- Name: notify_uses_source_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_uses_source_historic_index_on_rowidentifier ON notify_uses_source_historic USING btree (rowidentifier);
+
+
+--
+-- Name: notify_uses_source_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_uses_source_index_on_rowidentifier ON notify_uses_source USING btree (rowidentifier);
+
+
+--
+-- Name: notify_uses_source_notify_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_uses_source_notify_id_fk_ind ON notify_uses_source USING btree (notify_id);
+
+
+--
+-- Name: notify_uses_source_source_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_uses_source_source_id_fk_ind ON notify_uses_source USING btree (source_id);
+
+
+--
+-- Name: objection_comment_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_comment_historic_index_on_rowidentifier ON objection_comment_historic USING btree (rowidentifier);
+
+
+--
+-- Name: objection_comment_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_comment_index_on_rowidentifier ON objection_comment USING btree (rowidentifier);
+
+
+--
+-- Name: objection_comment_objection_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_comment_objection_id_fk_ind ON objection_comment USING btree (objection_id);
+
+
+--
+-- Name: objection_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_historic_index_on_rowidentifier ON objection_historic USING btree (rowidentifier);
+
+
+--
+-- Name: objection_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_index_on_rowidentifier ON objection USING btree (rowidentifier);
+
+
+--
+-- Name: objection_index_on_service_id; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_index_on_service_id ON objection USING btree (service_id);
+
+
+--
+-- Name: objection_party_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_party_historic_index_on_rowidentifier ON objection_party_historic USING btree (rowidentifier);
+
+
+--
+-- Name: objection_party_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_party_index_on_rowidentifier ON objection_party USING btree (rowidentifier);
+
+
+--
+-- Name: objection_party_objection_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_party_objection_id_fk_ind ON objection_party USING btree (objection_id);
+
+
+--
+-- Name: objection_party_party_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_party_party_id_fk_ind ON objection_party USING btree (party_id);
+
+
+--
+-- Name: objection_property_ba_unit_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_property_ba_unit_id_fk_ind ON objection_property USING btree (ba_unit_id);
+
+
+--
+-- Name: objection_property_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_property_historic_index_on_rowidentifier ON objection_property_historic USING btree (rowidentifier);
+
+
+--
+-- Name: objection_property_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_property_index_on_rowidentifier ON objection_property USING btree (rowidentifier);
+
+
+--
+-- Name: objection_property_objection_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_property_objection_id_fk_ind ON objection_property USING btree (objection_id);
+
+
+--
+-- Name: objection_uses_source_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_uses_source_historic_index_on_rowidentifier ON objection_uses_source_historic USING btree (rowidentifier);
+
+
+--
+-- Name: objection_uses_source_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_uses_source_index_on_rowidentifier ON objection_uses_source USING btree (rowidentifier);
+
+
+--
+-- Name: objection_uses_source_objection_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_uses_source_objection_id_fk_ind ON objection_uses_source USING btree (objection_id);
+
+
+--
+-- Name: objection_uses_source_source_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX objection_uses_source_source_id_fk_ind ON objection_uses_source USING btree (source_id);
+
+
+--
 -- Name: public_display_item_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -19998,6 +21373,62 @@ CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON public_display_item_us
 
 
 --
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON objection FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON objection_comment FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON objection_uses_source FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON objection_party FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON objection_property FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON notify FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON notify_uses_source FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON notify_property FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
 -- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
 --
 
@@ -20051,6 +21482,62 @@ CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON public_display_item FOR
 --
 
 CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON public_display_item_uses_source FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON objection FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON objection_comment FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON objection_uses_source FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON objection_party FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON objection_property FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON notify FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON notify_uses_source FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON notify_property FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
 SET search_path = bulk_operation, pg_catalog;
@@ -21024,6 +22511,142 @@ ALTER TABLE ONLY checklist_item_in_group
 
 ALTER TABLE ONLY checklist_item_in_group
     ADD CONSTRAINT checklist_item_in_group_item_code_fk FOREIGN KEY (checklist_item_code) REFERENCES checklist_item(code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notify_party_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify
+    ADD CONSTRAINT notify_party_id_fk FOREIGN KEY (party_id) REFERENCES party.party(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notify_property_ba_unit_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify_property
+    ADD CONSTRAINT notify_property_ba_unit_id_fk FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notify_property_notify_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify_property
+    ADD CONSTRAINT notify_property_notify_id_fk FOREIGN KEY (notify_id) REFERENCES notify(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notify_service_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify
+    ADD CONSTRAINT notify_service_id_fk FOREIGN KEY (service_id) REFERENCES service(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notify_type_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify
+    ADD CONSTRAINT notify_type_code_fk FOREIGN KEY (relationship_type_code) REFERENCES notify_relationship_type(code);
+
+
+--
+-- Name: notify_uses_source_notify_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify_uses_source
+    ADD CONSTRAINT notify_uses_source_notify_id_fk FOREIGN KEY (notify_id) REFERENCES notify(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notify_uses_source_source_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify_uses_source
+    ADD CONSTRAINT notify_uses_source_source_id_fk FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: objection_authority_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY objection
+    ADD CONSTRAINT objection_authority_code_fk FOREIGN KEY (authority_code) REFERENCES authority(code);
+
+
+--
+-- Name: objection_comment_objection_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY objection_comment
+    ADD CONSTRAINT objection_comment_objection_id_fk FOREIGN KEY (objection_id) REFERENCES objection(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: objection_party_objection_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY objection_party
+    ADD CONSTRAINT objection_party_objection_id_fk FOREIGN KEY (objection_id) REFERENCES objection(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: objection_party_party_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY objection_party
+    ADD CONSTRAINT objection_party_party_id_fk FOREIGN KEY (party_id) REFERENCES party.party(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: objection_property_ba_unit_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY objection_property
+    ADD CONSTRAINT objection_property_ba_unit_id_fk FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: objection_property_objection_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY objection_property
+    ADD CONSTRAINT objection_property_objection_id_fk FOREIGN KEY (objection_id) REFERENCES objection(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: objection_service_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY objection
+    ADD CONSTRAINT objection_service_id_fk FOREIGN KEY (service_id) REFERENCES service(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: objection_status_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY objection
+    ADD CONSTRAINT objection_status_code_fk FOREIGN KEY (status_code) REFERENCES objection_status(code);
+
+
+--
+-- Name: objection_uses_source_objection_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY objection_uses_source
+    ADD CONSTRAINT objection_uses_source_objection_id_fk FOREIGN KEY (objection_id) REFERENCES objection(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: objection_uses_source_source_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY objection_uses_source
+    ADD CONSTRAINT objection_uses_source_source_id_fk FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

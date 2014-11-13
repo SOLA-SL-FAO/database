@@ -532,4 +532,4 @@ $BODY$
 ALTER FUNCTION application.get_concatenated_name(character varying, character varying)
   OWNER TO postgres;
 COMMENT ON FUNCTION application.get_concatenated_name(character varying, character varying) IS 'Returns the list properties that have been changed due to the service and/or summary details about the service.';
-					 
+  

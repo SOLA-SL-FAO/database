@@ -438,6 +438,8 @@ INSERT INTO config_panel_launcher (code, display_value, description, status, lau
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('checklist', 'Checklist Panel', NULL, 'c', 'generalServices', 'org.sola.clients.swing.desktop.workflow.ChecklistPanel', 'cliprgs108', 'checklistPanel');
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('publicDisplayMap', 'Public Display Map Panel', NULL, 'c', 'generalServices', 'org.sola.clients.swing.desktop.cadastre.MapPublicDisplayPanel', 'cliprgs110', 'MAP_PUBLIC_DISPLAY_PANEL');
 INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('publicDisplay', 'Public Display Panel', NULL, 'c', 'generalServices', 'org.sola.clients.swing.desktop.workflow.PublicDisplayPanel', 'cliprgs110', 'publicDisplay');
+INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('slObjection', 'Objections List Panel', NULL, 'c', 'generalServices', 'org.sola.clients.swing.desktop.workflow.ObjectionListPanel', NULL, 'slObjectionListPanel');
+INSERT INTO config_panel_launcher (code, display_value, description, status, launch_group, panel_class, message_code, card_name) VALUES ('slNotify', 'Notify List Panel', NULL, 'c', 'generalServices', 'org.sola.clients.swing.desktop.workflow.NotifyListPanel', NULL, 'slNotifyListPanel');
 
 
 ALTER TABLE config_panel_launcher ENABLE TRIGGER ALL;
