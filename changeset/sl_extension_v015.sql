@@ -148,18 +148,18 @@ INSERT INTO application.request_type(code, request_category_code, display_value,
             status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
             nr_properties_required, notation_template, rrr_type_code, type_action_code, 
             description, display_group_name, service_panel_code)
-    SELECT 'publicDisplayMap','stateLandServices','Public Display Map','c',5,0.00,0.00,0.00,0,
-	null,null,null,'Generates a map of the job area for public display purposes','General', 'publicDisplayMap'
-	WHERE NOT EXISTS (SELECT code FROM application.request_type WHERE code = 'publicDisplayMap');
+    SELECT 'publicDisplay','stateLandServices','Mangage Public Display','c',5,0.00,0.00,0.00,0,
+	null,null,null,'Can be used to plan and track public display items','General', 'publicDisplay'
+	WHERE NOT EXISTS (SELECT code FROM application.request_type WHERE code = 'publicDisplay');
 	
 INSERT INTO system.approle (code, display_value, status, description)
-SELECT 'publicDisplayMap', 'Service - Public Display Map','c', 'State Land Service. Allows the Public Display Map service to be started.'
-WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'publicDisplayMap');
+SELECT 'publicDisplay', 'Service - Manage Public Display','c', 'State Land Service. Allows the Manage Public Display service to be started.'
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'publicDisplay');
 
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) 
-    (SELECT 'publicDisplayMap', ag.id FROM system.appgroup ag WHERE ag."name" = 'Super group'
+    (SELECT 'publicDisplay', ag.id FROM system.appgroup ag WHERE ag."name" = 'Super group'
 	 AND NOT EXISTS (SELECT approle_code FROM system.approle_appgroup 
-	                 WHERE  approle_code = 'publicDisplayMap'
+	                 WHERE  approle_code = 'publicDisplay'
 					 AND    appgroup_id = ag.id));
 
 
@@ -532,4 +532,4 @@ $BODY$
 ALTER FUNCTION application.get_concatenated_name(character varying, character varying)
   OWNER TO postgres;
 COMMENT ON FUNCTION application.get_concatenated_name(character varying, character varying) IS 'Returns the list properties that have been changed due to the service and/or summary details about the service.';
-					 
+  
