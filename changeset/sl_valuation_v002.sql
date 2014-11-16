@@ -35,6 +35,8 @@ DROP TABLE IF EXISTS administrative.valuation_historic;
 DROP TABLE IF EXISTS administrative.source_describes_valuation;
 DROP TABLE IF EXISTS administrative.source_describes_valuation_historic;
 DROP TABLE IF EXISTS administrative.valuation_type;
+DROP TABLE IF EXISTS administrative.valuation_property;
+DROP TABLE IF EXISTS administrative.valuation_property_historic;
 
 
  -------------- table starts ------------------
@@ -268,3 +270,82 @@ CREATE INDEX source_describes_valuation_historic_index_on_rowidentifier
   ON administrative.source_describes_valuation_historic
   USING btree
   (rowidentifier COLLATE pg_catalog."default");
+  
+  -------------- table ends ------------------
+  
+ -----------------  valuation_property starts ---------------------
+CREATE TABLE administrative.valuation_property
+(
+  valuation_id character varying(40) NOT NULL,
+  ba_unit_id character varying(40) NOT NULL, 
+  rowidentifier character varying(40) NOT NULL DEFAULT uuid_generate_v1(), 
+  rowversion integer NOT NULL DEFAULT 0, 
+  change_action character(1) NOT NULL DEFAULT 'i'::bpchar, 
+  change_user character varying(50),
+  change_time timestamp without time zone NOT NULL DEFAULT now(),
+  CONSTRAINT valuation_property_pkey PRIMARY KEY (valuation_id, ba_unit_id),
+  CONSTRAINT valuation_property_valuation_id_fk FOREIGN KEY (valuation_id)
+      REFERENCES administrative.valuation (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT valuation_property_ba_unit_id_fk FOREIGN KEY (ba_unit_id)
+      REFERENCES administrative.ba_unit (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+
+COMMENT ON TABLE administrative.valuation_property
+  IS 'Identifies the properties (a.k.a. Ba Units) this valuation table is related to. 
+Tags: FLOSS SOLA Extension, Change History';
+COMMENT ON COLUMN administrative.valuation_property.valuation_id IS 'Identifier for the valuation record is associated to.';
+COMMENT ON COLUMN administrative.valuation_property.ba_unit_id IS 'Identifier of the property associated to the valuation.';
+COMMENT ON COLUMN administrative.valuation_property.rowidentifier IS 'Identifies the all change records for the row in the valuation_property_historic table';
+COMMENT ON COLUMN administrative.valuation_property.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+COMMENT ON COLUMN administrative.valuation_property.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+COMMENT ON COLUMN administrative.valuation_property.change_user IS 'The user id of the last person to modify the row.';
+COMMENT ON COLUMN administrative.valuation_property.change_time IS 'The date and time the row was last modified.';
+
+CREATE INDEX valuation_property_valuation_id_fk_ind
+  ON administrative.valuation_property
+  USING btree
+  (valuation_id COLLATE pg_catalog."default");
+
+CREATE INDEX valuation_property_index_on_rowidentifier
+  ON administrative.valuation_property
+  USING btree
+  (rowidentifier COLLATE pg_catalog."default");
+
+CREATE INDEX valuation_property_ba_unit_id_fk_ind
+  ON administrative.valuation_property
+  USING btree
+  (ba_unit_id COLLATE pg_catalog."default");
+
+CREATE TRIGGER __track_changes
+  BEFORE INSERT OR UPDATE
+  ON administrative.valuation_property
+  FOR EACH ROW
+  EXECUTE PROCEDURE f_for_trg_track_changes();
+
+-----------------  valuation_property end ---------------------
+   
+-----------------  valuation_property_historic Starts ---------------------
+ 
+CREATE TABLE administrative.valuation_property_historic
+(
+  valuation_id character varying(40),
+  ba_unit_id character varying(40),
+  rowidentifier character varying(40),
+  rowversion integer,
+  change_action character(1),
+  change_user character varying(50),
+  change_time timestamp without time zone,
+  change_time_valid_until timestamp without time zone NOT NULL DEFAULT now()
+);
+
+CREATE INDEX valuation_property_historic_index_on_rowidentifier
+  ON administrative.valuation_property_historic
+  USING btree
+  (rowidentifier COLLATE pg_catalog."default");
+  
+  -------------- table ends ------------------
+  
+  
