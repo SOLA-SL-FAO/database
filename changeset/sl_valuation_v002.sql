@@ -5,7 +5,7 @@ DELETE FROM system.approle WHERE code IN ('slValuation');
  
 INSERT INTO system.config_panel_launcher(code, display_value, description, status, launch_group, panel_class, message_code, card_name)
 SELECT 'slValuation', 'Valuations List Panel', null, 'c', 'generalServices', 'org.sola.clients.swing.desktop.administrative.ValuationListPanel',
-null, 'slValuationPanel'
+null, 'slValuationListPanel'
 WHERE NOT EXISTS (SELECT code FROM system.config_panel_launcher WHERE code = 'slValuation');
  
 INSERT INTO application.request_type(code, request_category_code, display_value,
