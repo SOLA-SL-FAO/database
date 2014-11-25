@@ -1,3 +1,5 @@
+DELETE FROM transaction.transaction WHERE from_service_id IN 
+(SELECT id from application.service WHERE  request_type_code IN ('slValuation'));
 DELETE FROM application.service where request_type_code IN ('slValuation');
 DELETE FROM application.request_type WHERE code IN ('slValuation');
 DELETE FROM system.config_panel_launcher WHERE code IN ('slValuation');
@@ -12,7 +14,7 @@ INSERT INTO application.request_type(code, request_category_code, display_value,
             status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee,
             nr_properties_required, notation_template, rrr_type_code, type_action_code,
             description, display_group_name, service_panel_code)
-    SELECT 'slValuation','stateLandServices','Create/Change valuations','c',5,0.00,0.00,0.00,0,
+    SELECT 'slValuation','stateLandServices','Manage Valuations','c',5,0.00,0.00,0.00,0,
                 null,null,null,'Records details of valuations raised by parties affected by State Land activities','General', 'slValuation'
                 WHERE NOT EXISTS (SELECT code FROM application.request_type WHERE code = 'slValuation');
  
