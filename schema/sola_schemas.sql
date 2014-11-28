@@ -6729,6 +6729,105 @@ CREATE TABLE source_describes_rrr_historic (
 ALTER TABLE administrative.source_describes_rrr_historic OWNER TO postgres;
 
 --
+-- Name: source_describes_valuation; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE source_describes_valuation (
+    valuation_id character varying(40) NOT NULL,
+    source_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE administrative.source_describes_valuation OWNER TO postgres;
+
+--
+-- Name: TABLE source_describes_valuation; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON TABLE source_describes_valuation IS 'Links the valuation records to the sources (a.k.a. documents) submitted with the job. 
+Tags: FLOSS SOLA Extension, Change History';
+
+
+--
+-- Name: COLUMN source_describes_valuation.valuation_id; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_valuation.valuation_id IS 'Identifier for the valuation item the record is associated to.';
+
+
+--
+-- Name: COLUMN source_describes_valuation.source_id; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_valuation.source_id IS 'Identifier of the source associated to the application.';
+
+
+--
+-- Name: COLUMN source_describes_valuation.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_valuation.rowidentifier IS 'Identifies the all change records for the row in the source_describes_valuation_historic table';
+
+
+--
+-- Name: COLUMN source_describes_valuation.rowversion; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_valuation.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN source_describes_valuation.change_action; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_valuation.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN source_describes_valuation.change_user; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_valuation.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN source_describes_valuation.change_time; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN source_describes_valuation.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: source_describes_valuation_historic; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE source_describes_valuation_historic (
+    valuation_id character varying(40),
+    source_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE administrative.source_describes_valuation_historic OWNER TO postgres;
+
+--
+-- Name: TABLE source_describes_valuation_historic; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON TABLE source_describes_valuation_historic IS 'History table for the administrative.source_describes_valuation_historic';
+
+
+--
 -- Name: state_land_num_seq; Type: SEQUENCE; Schema: administrative; Owner: postgres
 --
 
@@ -7807,6 +7906,328 @@ ALTER TABLE administrative.systematic_registration_listing OWNER TO postgres;
 --
 
 COMMENT ON VIEW systematic_registration_listing IS 'Used by systematic registration to list parcels subject to SR.';
+
+
+--
+-- Name: valuation; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE valuation (
+    id character varying(40) NOT NULL,
+    nr character varying(40) NOT NULL,
+    ba_unit_id character varying(40) NOT NULL,
+    amount numeric(29,2) DEFAULT 0,
+    valuation_date timestamp without time zone,
+    type_code character varying(20),
+    source character varying(250),
+    description text,
+    transaction_id character varying(40),
+    classification_code character varying(20),
+    redact_code character varying(20),
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE administrative.valuation OWNER TO postgres;
+
+--
+-- Name: TABLE valuation; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON TABLE valuation IS 'Captures summary valuation details for a property.
+Tags: SOLA State Land Extension, Change History';
+
+
+--
+-- Name: COLUMN valuation.id; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.id IS 'Identifier for the valuation item.';
+
+
+--
+-- Name: COLUMN valuation.nr; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.nr IS 'Reference number for the valuation either supplied by the system or the user';
+
+
+--
+-- Name: COLUMN valuation.ba_unit_id; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.ba_unit_id IS 'Mandatory reference to administrative.ba_unit';
+
+
+--
+-- Name: COLUMN valuation.amount; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.amount IS 'The dollar amount resulting from the valuation';
+
+
+--
+-- Name: COLUMN valuation.valuation_date; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.valuation_date IS 'The date the valuation applies from';
+
+
+--
+-- Name: COLUMN valuation.type_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.type_code IS 'The type of valuation (mass, market, investment, insurable, etc)';
+
+
+--
+-- Name: COLUMN valuation.source; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.source IS 'The source of valuation and/or name of the valuer. Usually will be one of the state, the owner or a third party';
+
+
+--
+-- Name: COLUMN valuation.description; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.description IS 'The description for the public display item. Entered by the user.';
+
+
+--
+-- Name: COLUMN valuation.transaction_id; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.transaction_id IS 'Links the valuation to a transaction. Optional.';
+
+
+--
+-- Name: COLUMN valuation.classification_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.classification_code IS 'SOLA State Land Extension: The security classification for this valuation. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN valuation.redact_code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.redact_code IS 'SOLA State Land Extension: The redact classification for this valuation. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
+-- Name: COLUMN valuation.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.rowidentifier IS 'Identifies all the change records for the row in the valuation_historic table';
+
+
+--
+-- Name: COLUMN valuation.rowversion; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN valuation.change_action; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN valuation.change_user; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN valuation.change_time; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: valuation_historic; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE valuation_historic (
+    id character varying(40),
+    nr character varying(40),
+    ba_unit_id character varying(40),
+    amount numeric(29,2),
+    valuation_date timestamp without time zone,
+    type_code character varying(20),
+    source character varying(250),
+    description text,
+    transaction_id character varying(40),
+    classification_code character varying(20),
+    redact_code character varying(20),
+    rowidentifier character varying(40),
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE administrative.valuation_historic OWNER TO postgres;
+
+--
+-- Name: TABLE valuation_historic; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON TABLE valuation_historic IS 'History table for the administrative.valuation_historic';
+
+
+--
+-- Name: valuation_property; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE valuation_property (
+    valuation_id character varying(40) NOT NULL,
+    ba_unit_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE administrative.valuation_property OWNER TO postgres;
+
+--
+-- Name: TABLE valuation_property; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON TABLE valuation_property IS 'Identifies the properties (a.k.a. Ba Units) this valuation table is related to. 
+Tags: FLOSS SOLA Extension, Change History';
+
+
+--
+-- Name: COLUMN valuation_property.valuation_id; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation_property.valuation_id IS 'Identifier for the valuation record is associated to.';
+
+
+--
+-- Name: COLUMN valuation_property.ba_unit_id; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation_property.ba_unit_id IS 'Identifier of the property associated to the valuation.';
+
+
+--
+-- Name: COLUMN valuation_property.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation_property.rowidentifier IS 'Identifies the all change records for the row in the valuation_property_historic table';
+
+
+--
+-- Name: COLUMN valuation_property.rowversion; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation_property.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN valuation_property.change_action; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation_property.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN valuation_property.change_user; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation_property.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN valuation_property.change_time; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation_property.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: valuation_property_historic; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE valuation_property_historic (
+    valuation_id character varying(40),
+    ba_unit_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE administrative.valuation_property_historic OWNER TO postgres;
+
+--
+-- Name: valuation_type; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE valuation_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(500) NOT NULL,
+    description text,
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE administrative.valuation_type OWNER TO postgres;
+
+--
+-- Name: TABLE valuation_type; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON TABLE valuation_type IS 'Code list of valuation types
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN valuation_type.code; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation_type.code IS 'The code for the valuation type.';
+
+
+--
+-- Name: COLUMN valuation_type.display_value; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation_type.display_value IS 'Displayed value of the valuation type.';
+
+
+--
+-- Name: COLUMN valuation_type.description; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation_type.description IS 'Description of the valuation type.';
+
+
+--
+-- Name: COLUMN valuation_type.status; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN valuation_type.status IS 'Status of the valuation type.';
 
 
 SET search_path = application, pg_catalog;
@@ -17521,6 +17942,46 @@ ALTER TABLE ONLY source_describes_rrr
     ADD CONSTRAINT source_describes_rrr_pkey PRIMARY KEY (rrr_id, source_id);
 
 
+--
+-- Name: source_describes_valuation_pkey; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY source_describes_valuation
+    ADD CONSTRAINT source_describes_valuation_pkey PRIMARY KEY (valuation_id, source_id);
+
+
+--
+-- Name: valuation_pkey; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY valuation
+    ADD CONSTRAINT valuation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: valuation_property_pkey; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY valuation_property
+    ADD CONSTRAINT valuation_property_pkey PRIMARY KEY (valuation_id, ba_unit_id);
+
+
+--
+-- Name: valuation_type_display_value_unique; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY valuation_type
+    ADD CONSTRAINT valuation_type_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: valuation_type_pkey; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY valuation_type
+    ADD CONSTRAINT valuation_type_pkey PRIMARY KEY (code);
+
+
 SET search_path = application, pg_catalog;
 
 --
@@ -19467,6 +19928,90 @@ CREATE INDEX source_describes_rrr_rrr_id_fk48_ind ON source_describes_rrr USING 
 CREATE INDEX source_describes_rrr_source_id_fk49_ind ON source_describes_rrr USING btree (source_id);
 
 
+--
+-- Name: source_describes_valuation_historic_index_on_rowidentifier; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX source_describes_valuation_historic_index_on_rowidentifier ON source_describes_valuation_historic USING btree (rowidentifier);
+
+
+--
+-- Name: source_describes_valuation_index_on_rowidentifier; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX source_describes_valuation_index_on_rowidentifier ON source_describes_valuation USING btree (rowidentifier);
+
+
+--
+-- Name: source_describes_valuation_index_on_source_id; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX source_describes_valuation_index_on_source_id ON source_describes_valuation USING btree (source_id);
+
+
+--
+-- Name: source_describes_valuation_index_on_valuation_id; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX source_describes_valuation_index_on_valuation_id ON source_describes_valuation USING btree (valuation_id);
+
+
+--
+-- Name: valuation_historic_index_on_rowidentifier; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX valuation_historic_index_on_rowidentifier ON valuation_historic USING btree (rowidentifier);
+
+
+--
+-- Name: valuation_index_on_ba_unit_id; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX valuation_index_on_ba_unit_id ON valuation USING btree (ba_unit_id);
+
+
+--
+-- Name: valuation_index_on_rowidentifier; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX valuation_index_on_rowidentifier ON valuation USING btree (rowidentifier);
+
+
+--
+-- Name: valuation_index_on_transaction_id; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX valuation_index_on_transaction_id ON valuation USING btree (transaction_id);
+
+
+--
+-- Name: valuation_property_ba_unit_id_fk_ind; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX valuation_property_ba_unit_id_fk_ind ON valuation_property USING btree (ba_unit_id);
+
+
+--
+-- Name: valuation_property_historic_index_on_rowidentifier; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX valuation_property_historic_index_on_rowidentifier ON valuation_property_historic USING btree (rowidentifier);
+
+
+--
+-- Name: valuation_property_index_on_rowidentifier; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX valuation_property_index_on_rowidentifier ON valuation_property USING btree (rowidentifier);
+
+
+--
+-- Name: valuation_property_valuation_id_fk_ind; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX valuation_property_valuation_id_fk_ind ON valuation_property USING btree (valuation_id);
+
+
 SET search_path = application, pg_catalog;
 
 --
@@ -21210,6 +21755,27 @@ CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON ba_unit_as_party FOR E
 
 
 --
+-- Name: __track_changes; Type: TRIGGER; Schema: administrative; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON valuation FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: administrative; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON source_describes_valuation FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: administrative; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON valuation_property FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
 -- Name: __track_history; Type: TRIGGER; Schema: administrative; Owner: postgres
 --
 
@@ -21305,6 +21871,20 @@ CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON source_describes_rrr FO
 --
 
 CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON ba_unit_as_party FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: administrative; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON valuation FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: administrative; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON source_describes_valuation FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
 --
@@ -22389,6 +22969,62 @@ ALTER TABLE ONLY source_describes_rrr
 
 ALTER TABLE ONLY source_describes_rrr
     ADD CONSTRAINT source_describes_rrr_source_id_fk49 FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: source_describes_valuation_source_id_fk; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE ONLY source_describes_valuation
+    ADD CONSTRAINT source_describes_valuation_source_id_fk FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: source_describes_valuation_valuation_id_fk; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE ONLY source_describes_valuation
+    ADD CONSTRAINT source_describes_valuation_valuation_id_fk FOREIGN KEY (valuation_id) REFERENCES valuation(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: valuation_ba_unit_id_fk; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE ONLY valuation
+    ADD CONSTRAINT valuation_ba_unit_id_fk FOREIGN KEY (ba_unit_id) REFERENCES ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: valuation_property_ba_unit_id_fk; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE ONLY valuation_property
+    ADD CONSTRAINT valuation_property_ba_unit_id_fk FOREIGN KEY (ba_unit_id) REFERENCES ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: valuation_property_valuation_id_fk; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE ONLY valuation_property
+    ADD CONSTRAINT valuation_property_valuation_id_fk FOREIGN KEY (valuation_id) REFERENCES valuation(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: valuation_transaction_id_fk; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE ONLY valuation
+    ADD CONSTRAINT valuation_transaction_id_fk FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: valuation_type_code_fk; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE ONLY valuation
+    ADD CONSTRAINT valuation_type_code_fk FOREIGN KEY (type_code) REFERENCES valuation_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 SET search_path = application, pg_catalog;

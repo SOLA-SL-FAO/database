@@ -89,7 +89,7 @@ echo ### Dumping source tables... >> %EXTRACT_LOG% 2>&1
 	-t source.archive -t source.source -t application.application_uses_source ^
 	-t administrative.source_describes_rrr -t source.power_of_attorney ^
     -t administrative.source_describes_ba_unit -t source.spatial_source ^
-    -t source.spatial_source_measurement ^
+    -t source.spatial_source_measurement -t administrative.source_describes_valuation ^
     -f "%data_path%05_source.sql" %db_name% >> %EXTRACT_LOG% 2>&1
 	
 echo Dumping cadastre tables...
@@ -112,7 +112,8 @@ echo ### Dumping administrative tables... >> %EXTRACT_LOG% 2>&1
     -t administrative.party_for_rrr -t administrative.notation ^
     -t administrative.ba_unit_contains_spatial_unit -t administrative.ba_unit_as_party ^
     -t administrative.ba_unit_target -t administrative.condition_for_rrr ^
-    -t administrative.mortgage_isbased_in_rrr ^
+    -t administrative.mortgage_isbased_in_rrr -t administrative.valuation ^
+	-t administrative.valuation_property ^
 	-f "%data_path%07_administrative.sql" %db_name% >> %EXTRACT_LOG% 2>&1
 	
 echo Dumping application tables...

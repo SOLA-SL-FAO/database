@@ -43,6 +43,7 @@ echo ### Dumping reference tables... >> %EXTRACT_LOG% 2>&1
 	-t administrative.condition_type -t administrative.mortgage_type ^
 	-t administrative.rrr_group_type -t administrative.rrr_type ^
 	-t administrative.notation_status_type -t administrative.rrr_sub_type ^
+	-t administrative.valuation_type ^
 	-t application.application_status_type -t application.service_status_type ^
 	-t application.service_action_type -t application.type_action ^
 	-t application.application_action_type -t application.request_category_type ^

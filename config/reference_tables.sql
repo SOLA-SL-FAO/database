@@ -187,6 +187,22 @@ INSERT INTO rrr_sub_type (code, display_value, description, status, rrr_type_cod
 
 ALTER TABLE rrr_sub_type ENABLE TRIGGER ALL;
 
+--
+-- Data for Name: valuation_type; Type: TABLE DATA; Schema: administrative; Owner: postgres
+--
+
+ALTER TABLE valuation_type DISABLE TRIGGER ALL;
+
+INSERT INTO valuation_type (code, display_value, description, status) VALUES ('mass', 'Mass', 'Property value has been determined through a mass valuation process', 'c');
+INSERT INTO valuation_type (code, display_value, description, status) VALUES ('market', 'Market', 'The value the property will likely trade for between a willing buyer and willing seller as at the valuation date.', 'c');
+INSERT INTO valuation_type (code, display_value, description, status) VALUES ('valueInUse', 'Value In Use', 'Represents the cash flow generated for a specific owner under a specific use.', 'c');
+INSERT INTO valuation_type (code, display_value, description, status) VALUES ('investment', 'Investment Value', 'The value of the property to an owner or prospective owner for investment or operational objectives', 'c');
+INSERT INTO valuation_type (code, display_value, description, status) VALUES ('insurable', 'Insurable Value', 'Property value for insurance purposes. Excludes site value.', 'c');
+INSERT INTO valuation_type (code, display_value, description, status) VALUES ('liquidation', 'Liquidation Value', 'Property value where the owner is compelled to sell due to bankruptcy or forced sale.', 'c');
+
+
+ALTER TABLE valuation_type ENABLE TRIGGER ALL;
+
 SET search_path = application, pg_catalog;
 
 --
@@ -441,6 +457,7 @@ INSERT INTO request_type (code, request_category_code, display_value, descriptio
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('publicDisplay', 'stateLandServices', 'Mangage Public Display', 'Can be used to plan and track public display items', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'publicDisplay');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('slObjection', 'stateLandServices', 'Manage Objections', 'Records details of objections raised by parties affected by State Land activities', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'slObjection');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('slNotify', 'stateLandServices', 'Manage Notifications', 'Used for generating and managing bulk notifications related to the job', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'slNotify');
+INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('slValuation', 'stateLandServices', 'Manage Valuations', 'Records details of valuations raised by parties affected by State Land activities', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'slValuation');
 
 
 ALTER TABLE request_type ENABLE TRIGGER ALL;
@@ -988,6 +1005,7 @@ INSERT INTO approle (code, display_value, status, description) VALUES ('StartSer
 INSERT INTO approle (code, display_value, status, description) VALUES ('mapExistingParcel', 'Map Existing Parcel::::Map Existing Parcel::::الخارطة- القطع الموجودة::::Plan Parcelle Existante', 'c', 'Allows to map existing parcel as described on existing title. ::::Allows to map existing parcel as described on existing title.::::Allows to map existing parcel as described on existing title.::::Permet de tracer le plan de la parcelle existante comme décrit sur le titre existant.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('ObjectionCommentEdit', 'Workflow - Edit Objection Comment', 'c', 'Allows the user to edit or remove all Timeline comments on an Objection task.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('slNotify', 'Service - Manage Notifications', 'c', 'State Land Service. Allows the Manage Notifications service to be started.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('slValuation', 'Service - Manage Valuations', 'c', 'State Land Service. Allows the Manage Valuations service to be started.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('DashbrdViewAssign', 'Dashboard - View Assigned::::Dashboard - View Assigned::::لوحة المراقبة-مشاهدة الطلبات المعينة::::Accueil - Visulaiser Assignée', 'c', 'Allows the user to view applications assigned to them in the Dashboard. To hide the Dashboard from the user, remove both this role and the Dashboard - View Unassigned role. ::::Allows the user to view applications assigned to them in the Dashboard. To hide the Dashboard from the user, remove both this role and the Dashboard - View Unassigned role.::::Allows the user to view applications assigned to them in the Dashboard. To hide the Dashboard from the user, remove both this role and the Dashboard - View Unassigned role.::::Permet à l''utilisateur de visualiser routes les demandes assignées dans l''accueil. Pour cacher l''Accueil de l''utilisateur, supprimer ce rôle et le rôle Accueil - Visualiser non Assigné.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('cancelProperty', 'Service - Cancel Title::::Service - Cancel Title::::الخدمة-الغاء سند ملكية::::Service - Annuler Titre', 'c', 'Lease Service. Allows the Cancel Title to be started. ::::Lease Service. Allows the Cancel Title to be started.::::Lease Service. Allows the Cancel Title to be started.::::Service Enregistrement. Permet au Service - Annuler Titre de commencer.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('buildingRestriction', 'Service - Register Building Restriction::::Service - Register Building Restriction::::الخدمة-تسجيل قيد بناء::::Service - Enregistrement Restriction de Construction', 'c', 'Registration Service. Allows the Register Building Restriction service to be started. ::::Registration Service. Allows the Register Building Restriction service to be started.::::Registration Service. Allows the Register Building Restriction service to be started.::::Service Enregistrement. Permet au Service - Enregistrement Restriction de Construction de commencer.');
