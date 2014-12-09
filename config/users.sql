@@ -250,7 +250,8 @@ INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversi
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('slObjection', 'super-group-id', '404ff6b0-6b68-11e4-a7ed-a3bb808b39fc', 1, 'i', 'db:postgres', '2014-11-14 08:07:02.632');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('ObjectionCommentEdit', 'super-group-id', '4053a044-6b68-11e4-abb1-af14773f35b1', 1, 'i', 'db:postgres', '2014-11-14 08:07:02.632');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('slNotify', 'super-group-id', '40b21552-6b68-11e4-827d-73416905ee00', 1, 'i', 'db:postgres', '2014-11-14 08:07:02.632');
-INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('slValuation', 'super-group-id', '948ffc8c-76a0-11e4-8291-e71f59fd4d09', 1, 'i', 'db:postgres', '2014-11-28 14:47:58.65');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('slValuation', 'super-group-id', '7158b518-7f67-11e4-b593-6f353932b322', 1, 'i', 'db:postgres', '2014-12-09 18:51:38.636');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('slNegotiate', 'super-group-id', '71819a6e-7f67-11e4-8afc-9f1ae3a63ee0', 1, 'i', 'db:postgres', '2014-12-09 18:51:38.636');
 
 
 ALTER TABLE approle_appgroup ENABLE TRIGGER ALL;

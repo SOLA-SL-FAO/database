@@ -8937,6 +8937,378 @@ COMMENT ON COLUMN checklist_item_in_group.checklist_item_code IS 'Code of the ch
 
 
 --
+-- Name: negotiate; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE negotiate (
+    id character varying(40) NOT NULL,
+    service_id character varying(40) NOT NULL,
+    ba_unit_id character varying(40) NOT NULL,
+    valuation_amount numeric(29,2) DEFAULT 0,
+    offer_amount numeric(29,2) DEFAULT 0,
+    agreed_amount numeric(29,2) DEFAULT 0,
+    type_code character varying(20),
+    status_code character varying(20),
+    description text,
+    classification_code character varying(20),
+    redact_code character varying(20),
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.negotiate OWNER TO postgres;
+
+--
+-- Name: TABLE negotiate; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE negotiate IS 'Summarizes details of the negotiation between the state and the landholder in relation to a property being acquired or disposed by the state.
+Tags: SOLA State Land Extension, Change History';
+
+
+--
+-- Name: COLUMN negotiate.id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.id IS 'Identifier for the notification.';
+
+
+--
+-- Name: COLUMN negotiate.service_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.service_id IS 'Identifier for the service.';
+
+
+--
+-- Name: COLUMN negotiate.ba_unit_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.ba_unit_id IS 'Identifier for the ba_unit (a.k.a. property).';
+
+
+--
+-- Name: COLUMN negotiate.valuation_amount; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.valuation_amount IS 'The amount indicated by the property valuation or the averaged or selected valuation amount if more than one valuation is available.';
+
+
+--
+-- Name: COLUMN negotiate.offer_amount; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.offer_amount IS 'The amount of the initial offer.';
+
+
+--
+-- Name: COLUMN negotiate.agreed_amount; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.agreed_amount IS 'The amount agreed by all parties in the negotiation.';
+
+
+--
+-- Name: COLUMN negotiate.type_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.type_code IS 'The type of negotiation. One of Open or Compulsory, etc.';
+
+
+--
+-- Name: COLUMN negotiate.status_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.status_code IS 'The status of the negotiation. Indicates the stage of the negotiation process. One of Pending, Presented, Negotiating, Rejected, Withdrawn, Agreed, Completed, etc.';
+
+
+--
+-- Name: COLUMN negotiate.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.description IS 'General details related to the negotiation such as a summary of any specific conditions, etc.';
+
+
+--
+-- Name: COLUMN negotiate.classification_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.classification_code IS 'SOLA State Land Extension: The security classification for this Negotiation. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN negotiate.redact_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.redact_code IS 'SOLA State Land Extension: The redact classification for this Negotiation. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
+-- Name: COLUMN negotiate.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.rowidentifier IS 'Identifies the all change records for the row in the negotiate_historic table';
+
+
+--
+-- Name: COLUMN negotiate.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN negotiate.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN negotiate.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN negotiate.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: negotiate_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE negotiate_historic (
+    id character varying(40),
+    service_id character varying(40),
+    ba_unit_id character varying(40),
+    valuation_amount numeric(29,2),
+    offer_amount numeric(29,2),
+    agreed_amount numeric(29,2),
+    type_code character varying(20),
+    status_code character varying(20),
+    description text,
+    classification_code character varying(20),
+    redact_code character varying(20),
+    rowidentifier character varying(40),
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.negotiate_historic OWNER TO postgres;
+
+--
+-- Name: TABLE negotiate_historic; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE negotiate_historic IS 'History table for the application.negotiate table';
+
+
+--
+-- Name: negotiate_status; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE negotiate_status (
+    code character varying(20) NOT NULL,
+    display_value character varying(250) NOT NULL,
+    description text,
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE application.negotiate_status OWNER TO postgres;
+
+--
+-- Name: TABLE negotiate_status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE negotiate_status IS 'Code list identifying the status of the negotiation between the parties involved. e.g. Pending, Presented, Negotiating, Rejected, Withdrawn, Agreed, Completed
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN negotiate_status.code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_status.code IS 'The code for the negotiation status.';
+
+
+--
+-- Name: COLUMN negotiate_status.display_value; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_status.display_value IS 'Displayed value of the negotiation status.';
+
+
+--
+-- Name: COLUMN negotiate_status.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_status.description IS 'Description of the negotiation status.';
+
+
+--
+-- Name: COLUMN negotiate_status.status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_status.status IS 'Status of the negotiation status (c - current, x - no longer valid).';
+
+
+--
+-- Name: negotiate_type; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE negotiate_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(250) NOT NULL,
+    description text,
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE application.negotiate_type OWNER TO postgres;
+
+--
+-- Name: TABLE negotiate_type; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE negotiate_type IS 'Code list identifying the possible types of negotiation that may occur between landholders and the state. e.g. Compulsory, Open
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN negotiate_type.code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_type.code IS 'The code for the negotiation type.';
+
+
+--
+-- Name: COLUMN negotiate_type.display_value; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_type.display_value IS 'Displayed value of the negotiation type.';
+
+
+--
+-- Name: COLUMN negotiate_type.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_type.description IS 'Description of the negotiation type.';
+
+
+--
+-- Name: COLUMN negotiate_type.status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_type.status IS 'Status of the negotiation type (c - current, x - no longer valid).';
+
+
+--
+-- Name: negotiate_uses_source; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE negotiate_uses_source (
+    negotiate_id character varying(40) NOT NULL,
+    source_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.negotiate_uses_source OWNER TO postgres;
+
+--
+-- Name: TABLE negotiate_uses_source; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE negotiate_uses_source IS 'Links sources (a.k.a. documents) to the applicable negotiation records. 
+Tags: FLOSS SOLA Extension, Change History';
+
+
+--
+-- Name: COLUMN negotiate_uses_source.negotiate_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_uses_source.negotiate_id IS 'Identifier for the negotiation the record is associated to.';
+
+
+--
+-- Name: COLUMN negotiate_uses_source.source_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_uses_source.source_id IS 'Identifier of the source associated to the negotiation.';
+
+
+--
+-- Name: COLUMN negotiate_uses_source.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_uses_source.rowidentifier IS 'Identifies the all change records for the row in the negotiate_uses_source table';
+
+
+--
+-- Name: COLUMN negotiate_uses_source.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_uses_source.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN negotiate_uses_source.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_uses_source.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN negotiate_uses_source.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_uses_source.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN negotiate_uses_source.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate_uses_source.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: negotiate_uses_source_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE negotiate_uses_source_historic (
+    negotiate_id character varying(40),
+    source_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.negotiate_uses_source_historic OWNER TO postgres;
+
+--
 -- Name: notify; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -18113,6 +18485,54 @@ ALTER TABLE ONLY checklist_item
 
 
 --
+-- Name: negotiate_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY negotiate
+    ADD CONSTRAINT negotiate_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: negotiate_status_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY negotiate_status
+    ADD CONSTRAINT negotiate_status_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: negotiate_status_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY negotiate_status
+    ADD CONSTRAINT negotiate_status_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: negotiate_type_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY negotiate_type
+    ADD CONSTRAINT negotiate_type_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: negotiate_type_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY negotiate_type
+    ADD CONSTRAINT negotiate_type_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: negotiate_uses_source_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY negotiate_uses_source
+    ADD CONSTRAINT negotiate_uses_source_pkey PRIMARY KEY (negotiate_id, source_id);
+
+
+--
 -- Name: notifiy_property_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -20190,6 +20610,62 @@ CREATE INDEX application_uses_source_source_id_fk127_ind ON application_uses_sou
 
 
 --
+-- Name: negotiate_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX negotiate_historic_index_on_rowidentifier ON negotiate_historic USING btree (rowidentifier);
+
+
+--
+-- Name: negotiate_index_on_ba_unit_id; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX negotiate_index_on_ba_unit_id ON negotiate USING btree (ba_unit_id);
+
+
+--
+-- Name: negotiate_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX negotiate_index_on_rowidentifier ON negotiate USING btree (rowidentifier);
+
+
+--
+-- Name: negotiate_index_on_service_id; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX negotiate_index_on_service_id ON negotiate USING btree (service_id);
+
+
+--
+-- Name: negotiate_uses_source_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX negotiate_uses_source_historic_index_on_rowidentifier ON negotiate_uses_source_historic USING btree (rowidentifier);
+
+
+--
+-- Name: negotiate_uses_source_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX negotiate_uses_source_index_on_rowidentifier ON negotiate_uses_source USING btree (rowidentifier);
+
+
+--
+-- Name: negotiate_uses_source_negotiate_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX negotiate_uses_source_negotiate_id_fk_ind ON negotiate_uses_source USING btree (negotiate_id);
+
+
+--
+-- Name: negotiate_uses_source_source_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX negotiate_uses_source_source_id_fk_ind ON negotiate_uses_source USING btree (source_id);
+
+
+--
 -- Name: notify_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -22009,6 +22485,20 @@ CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON notify_property FOR EA
 
 
 --
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON negotiate FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON negotiate_uses_source FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
 -- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
 --
 
@@ -22118,6 +22608,20 @@ CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON notify_uses_source FOR 
 --
 
 CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON notify_property FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON negotiate FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON negotiate_uses_source FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
 SET search_path = bulk_operation, pg_catalog;
@@ -23147,6 +23651,54 @@ ALTER TABLE ONLY checklist_item_in_group
 
 ALTER TABLE ONLY checklist_item_in_group
     ADD CONSTRAINT checklist_item_in_group_item_code_fk FOREIGN KEY (checklist_item_code) REFERENCES checklist_item(code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: negotiate_ba_unit_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY negotiate
+    ADD CONSTRAINT negotiate_ba_unit_id_fk FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: negotiate_service_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY negotiate
+    ADD CONSTRAINT negotiate_service_id_fk FOREIGN KEY (service_id) REFERENCES service(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: negotiate_status_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY negotiate
+    ADD CONSTRAINT negotiate_status_code_fk FOREIGN KEY (status_code) REFERENCES negotiate_status(code);
+
+
+--
+-- Name: negotiate_type_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY negotiate
+    ADD CONSTRAINT negotiate_type_code_fk FOREIGN KEY (type_code) REFERENCES negotiate_type(code);
+
+
+--
+-- Name: negotiate_uses_source_negotiate_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY negotiate_uses_source
+    ADD CONSTRAINT negotiate_uses_source_negotiate_id_fk FOREIGN KEY (negotiate_id) REFERENCES negotiate(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: negotiate_uses_source_source_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY negotiate_uses_source
+    ADD CONSTRAINT negotiate_uses_source_source_id_fk FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

@@ -312,6 +312,35 @@ INSERT INTO checklist_item_in_group (checklist_group_code, checklist_item_code) 
 ALTER TABLE checklist_item_in_group ENABLE TRIGGER ALL;
 
 --
+-- Data for Name: negotiate_status; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+ALTER TABLE negotiate_status DISABLE TRIGGER ALL;
+
+INSERT INTO negotiate_status (code, display_value, description, status) VALUES ('pending', 'Pending', 'The offer is being prepared and has not been presented to the other party yet.', 'c');
+INSERT INTO negotiate_status (code, display_value, description, status) VALUES ('presented', 'Presented', 'An offer has been presented by the initiating party and is being considered.', 'c');
+INSERT INTO negotiate_status (code, display_value, description, status) VALUES ('negotiating', 'Negotiating', 'The parties are negotiating the price and/or conditions.', 'c');
+INSERT INTO negotiate_status (code, display_value, description, status) VALUES ('rejected', 'Rejected', 'The party that received the original offer has rejected it and stopped further negotiation.', 'c');
+INSERT INTO negotiate_status (code, display_value, description, status) VALUES ('withdrawn', 'Withdrawn', 'The initiating party has withdrawn their offer and stopped further negotiation.', 'c');
+INSERT INTO negotiate_status (code, display_value, description, status) VALUES ('agreed', 'Agreed', 'The parties have agreed the terms of sale.', 'c');
+INSERT INTO negotiate_status (code, display_value, description, status) VALUES ('completed', 'Completed', 'The negotiation is complete and all necessary paperwork has been finalized.', 'c');
+
+
+ALTER TABLE negotiate_status ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: negotiate_type; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+
+ALTER TABLE negotiate_type DISABLE TRIGGER ALL;
+
+INSERT INTO negotiate_type (code, display_value, description, status) VALUES ('compulsory', 'Compulsory', 'The parties are compelled to negotiation by statute or other legal requirement.', 'c');
+INSERT INTO negotiate_type (code, display_value, description, status) VALUES ('open', 'Open', 'The negotiation is free and open and neither party is required to participate.', 'c');
+
+
+ALTER TABLE negotiate_type ENABLE TRIGGER ALL;
+
+--
 -- Data for Name: notify_relationship_type; Type: TABLE DATA; Schema: application; Owner: postgres
 --
 
@@ -431,6 +460,7 @@ INSERT INTO request_type (code, request_category_code, display_value, descriptio
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('caveat', 'registrationServices', 'Register Caveat::::Регистрация ареста::::تسجيل  قيد::::Enregistrer Caveat', '...::::...::::...::::...', 'x', 5, 50.00, 0.00, 0.00, 1, 'Caveat in the name of <name>', 'caveat', 'new', 'Caveat', 'property');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('newOwnership', 'registrationServices', 'Change of Ownership::::Смена владельца::::تغيير الملكية::::Changement de propriétaire', '...::::...::::...::::...', 'x', 5, 5.00, 0.00, 0.02, 1, 'Transfer to <name>', 'ownership', 'vary', 'Ownership', 'property');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('recordStateLand', 'stateLandServices', 'Record New Property', 'Create a new State Land Property', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'newSLProperty');
+INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('slNegotiate', 'stateLandServices', 'Manage Negotiations', 'Used for managing negotiations for property acquisition or disposal', 'c', 5, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL, 'General', 'slNegotiate');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('noteOccupation', 'registrationServices', 'Occupation Noted::::Уведомление о самозахвате::::ملاحظة استخدام::::Mention Occupation', '...::::...::::...::::...', 'x', 5, 5.00, 0.00, 0.01, 1, 'Occupation by <name> recorded', NULL, NULL, 'Ownership', 'property');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('cancelProperty', 'registrationServices', 'Cancel title::::Прекращение права собственности::::الغاء سند ملكية::::Annuler Titre', '...::::...::::...::::...', 'x', 5, 5.00, 0.00, 0.00, 1, '', NULL, 'cancel', 'General Registration', 'property');
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, display_group_name, service_panel_code) VALUES ('newDigitalTitle', 'registrationServices', 'Convert to Digital Title::::Новое право собственности (конвертация)::::تحويل الى سند ملكية الكتروني::::Convertir en Titre Numérique', '...::::...::::...::::...', 'x', 5, 0.00, 0.00, 0.00, 1, 'Title converted to digital format', NULL, NULL, 'General Registration', 'property');
@@ -1035,6 +1065,7 @@ INSERT INTO approle (code, display_value, status, description) VALUES ('maintain
 INSERT INTO approle (code, display_value, status, description) VALUES ('cancelInterest', 'Service - Cancel State Land Interest', 'c', 'State Land Service. Allows the Cancel State Land Interest service to be started.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('checklist', 'Service - Checklist', 'c', 'State Land Service. Allows the Checklist service to be started.');
 INSERT INTO approle (code, display_value, status, description) VALUES ('disposeSLProperty', 'Service - Dispose Property', 'c', 'State Land Service. Allows the Dispose Property service to be started.');
+INSERT INTO approle (code, display_value, status, description) VALUES ('slNegotiate', 'Service - Manage Negotiations', 'c', 'State Land Service. Allows the Manage Negotiations service to be started.');
 
 
 ALTER TABLE approle ENABLE TRIGGER ALL;
