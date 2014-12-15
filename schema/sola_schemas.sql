@@ -8944,9 +8944,9 @@ CREATE TABLE negotiate (
     id character varying(40) NOT NULL,
     service_id character varying(40) NOT NULL,
     ba_unit_id character varying(40) NOT NULL,
-    valuation_amount numeric(29,2) DEFAULT 0,
-    offer_amount numeric(29,2) DEFAULT 0,
-    agreed_amount numeric(29,2) DEFAULT 0,
+    initial_amount numeric(29,2) DEFAULT 0,
+    final_amount numeric(29,2) DEFAULT 0,
+    notification_date timestamp without time zone,
     type_code character varying(20),
     status_code character varying(20),
     description text,
@@ -8992,24 +8992,24 @@ COMMENT ON COLUMN negotiate.ba_unit_id IS 'Identifier for the ba_unit (a.k.a. pr
 
 
 --
--- Name: COLUMN negotiate.valuation_amount; Type: COMMENT; Schema: application; Owner: postgres
+-- Name: COLUMN negotiate.initial_amount; Type: COMMENT; Schema: application; Owner: postgres
 --
 
-COMMENT ON COLUMN negotiate.valuation_amount IS 'The amount indicated by the property valuation or the averaged or selected valuation amount if more than one valuation is available.';
-
-
---
--- Name: COLUMN negotiate.offer_amount; Type: COMMENT; Schema: application; Owner: postgres
---
-
-COMMENT ON COLUMN negotiate.offer_amount IS 'The amount of the initial offer.';
+COMMENT ON COLUMN negotiate.initial_amount IS 'The initial amount offered for the property to start the negotiation. Usually set based on valuations that have been undertaken.';
 
 
 --
--- Name: COLUMN negotiate.agreed_amount; Type: COMMENT; Schema: application; Owner: postgres
+-- Name: COLUMN negotiate.final_amount; Type: COMMENT; Schema: application; Owner: postgres
 --
 
-COMMENT ON COLUMN negotiate.agreed_amount IS 'The amount agreed by all parties in the negotiation.';
+COMMENT ON COLUMN negotiate.final_amount IS 'The final amount resulting from the negotiation.';
+
+
+--
+-- Name: COLUMN negotiate.notification_date; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN negotiate.notification_date IS 'The date the land holder is notified of the initial offer and negotiation begins. This date can be used to calculate when the offer expires or when responses are required, etc.';
 
 
 --
@@ -9090,9 +9090,9 @@ CREATE TABLE negotiate_historic (
     id character varying(40),
     service_id character varying(40),
     ba_unit_id character varying(40),
-    valuation_amount numeric(29,2),
-    offer_amount numeric(29,2),
-    agreed_amount numeric(29,2),
+    initial_amount numeric(29,2) DEFAULT 0,
+    final_amount numeric(29,2) DEFAULT 0,
+    notification_date timestamp without time zone,
     type_code character varying(20),
     status_code character varying(20),
     description text,
@@ -10725,6 +10725,56 @@ COMMENT ON COLUMN request_category_type.status IS 'Status of the request categor
 
 
 --
+-- Name: request_display_group; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE request_display_group (
+    code character varying(20) NOT NULL,
+    display_value character varying(250) NOT NULL,
+    description text,
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE application.request_display_group OWNER TO postgres;
+
+--
+-- Name: TABLE request_display_group; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE request_display_group IS 'Code list identifying the display groups that can be used for request types
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN request_display_group.code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN request_display_group.code IS 'The code for the request display group.';
+
+
+--
+-- Name: COLUMN request_display_group.display_value; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN request_display_group.display_value IS 'Displayed value of the request display group.';
+
+
+--
+-- Name: COLUMN request_display_group.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN request_display_group.description IS 'Description of the request display group.';
+
+
+--
+-- Name: COLUMN request_display_group.status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN request_display_group.status IS 'Status of the negotiation type (c - current, x - no longer valid).';
+
+
+--
 -- Name: request_type; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -10742,8 +10792,9 @@ CREATE TABLE request_type (
     notation_template character varying(1000),
     rrr_type_code character varying(20),
     type_action_code character varying(20),
-    display_group_name character varying(500),
-    service_panel_code character varying(20)
+    service_panel_code character varying(20),
+    display_group_code character varying(20),
+    display_order integer
 );
 
 
@@ -10846,13 +10897,6 @@ COMMENT ON COLUMN request_type.rrr_type_code IS 'Used by the Property Details sc
 --
 
 COMMENT ON COLUMN request_type.type_action_code IS 'Used by teh Property Details screen to identify what action applies to the RRR affected by the service. One of new, vary or cancel. If null, the Property Details screen will allow the user to create or vary RRRs matching the rrr_type_code.';
-
-
---
--- Name: COLUMN request_type.display_group_name; Type: COMMENT; Schema: application; Owner: postgres
---
-
-COMMENT ON COLUMN request_type.display_group_name IS 'SOLA Extension. Used to group request types that have a similar purpose (e.g. Mortgage types or Systematic Registration types). Used by the Add Service dialog to group the request types for display.';
 
 
 --
@@ -18693,6 +18737,22 @@ ALTER TABLE ONLY request_category_type
 
 
 --
+-- Name: request_display_group_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY request_display_group
+    ADD CONSTRAINT request_display_group_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: request_display_group_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY request_display_group
+    ADD CONSTRAINT request_display_group_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: request_type_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -23883,6 +23943,14 @@ ALTER TABLE ONLY public_display_item_uses_source
 
 ALTER TABLE ONLY request_type
     ADD CONSTRAINT request_type_config_panel_launcher_fkey FOREIGN KEY (service_panel_code) REFERENCES system.config_panel_launcher(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: request_type_display_group_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY request_type
+    ADD CONSTRAINT request_type_display_group_code_fk FOREIGN KEY (display_group_code) REFERENCES request_display_group(code) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

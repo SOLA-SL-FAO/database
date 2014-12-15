@@ -127,13 +127,25 @@ digraph "compactRelationshipsDiagram" {
     URL="tables/../../system/tables/appuser.html"
     tooltip="system.appuser"
   ];
+  "authority" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">authority</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/authority.html"
+    tooltip="authority"
+  ];
   "administrative.ba_unit" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">administrative.ba_unit</TD></TR>
       <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="tables/../../administrative/tables/ba_unit.html"
     tooltip="administrative.ba_unit"
@@ -163,6 +175,52 @@ digraph "compactRelationshipsDiagram" {
     URL="tables/../../cadastre/tables/cadastre_object.html"
     tooltip="cadastre.cadastre_object"
   ];
+  "checklist_group" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">checklist_group</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/checklist_group.html"
+    tooltip="checklist_group"
+  ];
+  "checklist_item" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">checklist_item</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/checklist_item.html"
+    tooltip="checklist_item"
+  ];
+  "checklist_item_in_group" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">checklist_item_in_group</TD></TR>
+      <TR><TD PORT="checklist_group_code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">checklist_group_code</TD></TR>
+      <TR><TD PORT="checklist_item_code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">checklist_item_code</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/checklist_item_in_group.html"
+    tooltip="checklist_item_in_group"
+  ];
+  "system.config_panel_launcher" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">system.config_panel_launcher</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/../../system/tables/config_panel_launcher.html"
+    tooltip="system.config_panel_launcher"
+  ];
   "cadastre.land_use_type" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -174,16 +232,253 @@ digraph "compactRelationshipsDiagram" {
     URL="tables/../../cadastre/tables/land_use_type.html"
     tooltip="cadastre.land_use_type"
   ];
+  "negotiate" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">negotiate</TD></TR>
+      <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
+      <TR><TD PORT="service_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">service_id</TD></TR>
+      <TR><TD PORT="ba_unit_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">ba_unit_id</TD></TR>
+      <TR><TD PORT="type_code" COLSPAN="3" ALIGN="LEFT">type_code</TD></TR>
+      <TR><TD PORT="status_code" COLSPAN="3" ALIGN="LEFT">status_code</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/negotiate.html"
+    tooltip="negotiate"
+  ];
+  "negotiate_status" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">negotiate_status</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/negotiate_status.html"
+    tooltip="negotiate_status"
+  ];
+  "negotiate_type" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">negotiate_type</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/negotiate_type.html"
+    tooltip="negotiate_type"
+  ];
+  "negotiate_uses_source" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">negotiate_uses_source</TD></TR>
+      <TR><TD PORT="negotiate_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">negotiate_id</TD></TR>
+      <TR><TD PORT="source_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/negotiate_uses_source.html"
+    tooltip="negotiate_uses_source"
+  ];
+  "notify" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">notify</TD></TR>
+      <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
+      <TR><TD PORT="service_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">service_id</TD></TR>
+      <TR><TD PORT="party_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">party_id</TD></TR>
+      <TR><TD PORT="relationship_type_code" COLSPAN="3" ALIGN="LEFT">relationship_type_code</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/notify.html"
+    tooltip="notify"
+  ];
+  "notify_property" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">notify_property</TD></TR>
+      <TR><TD PORT="notify_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">notify_id</TD></TR>
+      <TR><TD PORT="ba_unit_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">ba_unit_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/notify_property.html"
+    tooltip="notify_property"
+  ];
+  "notify_relationship_type" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">notify_relationship_type</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/notify_relationship_type.html"
+    tooltip="notify_relationship_type"
+  ];
+  "notify_uses_source" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">notify_uses_source</TD></TR>
+      <TR><TD PORT="notify_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">notify_id</TD></TR>
+      <TR><TD PORT="source_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/notify_uses_source.html"
+    tooltip="notify_uses_source"
+  ];
+  "objection" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">objection</TD></TR>
+      <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
+      <TR><TD PORT="service_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">service_id</TD></TR>
+      <TR><TD PORT="status_code" COLSPAN="3" ALIGN="LEFT">status_code</TD></TR>
+      <TR><TD PORT="authority_code" COLSPAN="3" ALIGN="LEFT">authority_code</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/objection.html"
+    tooltip="objection"
+  ];
+  "objection_comment" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">objection_comment</TD></TR>
+      <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
+      <TR><TD PORT="objection_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">objection_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/objection_comment.html"
+    tooltip="objection_comment"
+  ];
+  "objection_party" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">objection_party</TD></TR>
+      <TR><TD PORT="objection_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">objection_id</TD></TR>
+      <TR><TD PORT="party_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">party_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/objection_party.html"
+    tooltip="objection_party"
+  ];
+  "objection_property" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">objection_property</TD></TR>
+      <TR><TD PORT="objection_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">objection_id</TD></TR>
+      <TR><TD PORT="ba_unit_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">ba_unit_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/objection_property.html"
+    tooltip="objection_property"
+  ];
+  "objection_status" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">objection_status</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/objection_status.html"
+    tooltip="objection_status"
+  ];
+  "objection_uses_source" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">objection_uses_source</TD></TR>
+      <TR><TD PORT="objection_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">objection_id</TD></TR>
+      <TR><TD PORT="source_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/objection_uses_source.html"
+    tooltip="objection_uses_source"
+  ];
   "party.party" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">party.party</TD></TR>
       <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="tables/../../party/tables/party.html"
     tooltip="party.party"
+  ];
+  "public_display_item" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">public_display_item</TD></TR>
+      <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
+      <TR><TD PORT="service_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">service_id</TD></TR>
+      <TR><TD PORT="type_code" COLSPAN="3" ALIGN="LEFT">type_code</TD></TR>
+      <TR><TD PORT="status_code" COLSPAN="3" ALIGN="LEFT">status_code</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/public_display_item.html"
+    tooltip="public_display_item"
+  ];
+  "public_display_item_uses_source" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">public_display_item_uses_source</TD></TR>
+      <TR><TD PORT="public_display_item_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">public_display_item_id</TD></TR>
+      <TR><TD PORT="source_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/public_display_item_uses_source.html"
+    tooltip="public_display_item_uses_source"
+  ];
+  "public_display_status" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">public_display_status</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/public_display_status.html"
+    tooltip="public_display_status"
+  ];
+  "public_display_type" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">public_display_type</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/public_display_type.html"
+    tooltip="public_display_type"
   ];
   "request_category_type" [
     label=<
@@ -197,6 +492,18 @@ digraph "compactRelationshipsDiagram" {
     URL="tables/request_category_type.html"
     tooltip="request_category_type"
   ];
+  "request_display_group" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">request_display_group</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/request_display_group.html"
+    tooltip="request_display_group"
+  ];
   "request_type" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -206,8 +513,10 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
       <TR><TD PORT="rrr_type_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">rrr_type_code</TD></TR>
       <TR><TD PORT="type_action_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">type_action_code</TD></TR>
+      <TR><TD PORT="service_panel_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">service_panel_code</TD></TR>
+      <TR><TD PORT="display_group_code" COLSPAN="3" ALIGN="LEFT">display_group_code</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
     </TABLE>>
     URL="tables/request_type.html"
     tooltip="request_type"
@@ -245,7 +554,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="action_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">action_code</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="tables/service.html"
     tooltip="service"
@@ -262,6 +571,20 @@ digraph "compactRelationshipsDiagram" {
     </TABLE>>
     URL="tables/service_action_type.html"
     tooltip="service_action_type"
+  ];
+  "service_checklist_item" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">service_checklist_item</TD></TR>
+      <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
+      <TR><TD PORT="service_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">service_id</TD></TR>
+      <TR><TD PORT="checklist_item_code" COLSPAN="3" ALIGN="LEFT">checklist_item_code</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/service_checklist_item.html"
+    tooltip="service_checklist_item"
   ];
   "service_status_type" [
     label=<
@@ -281,7 +604,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">source.source</TD></TR>
       <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="tables/../../source/tables/source.html"
     tooltip="source.source"
@@ -326,8 +649,40 @@ digraph "compactRelationshipsDiagram" {
   "system.br_validation":"target_application_moment":w -> "application_action_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "system.br_validation":"target_request_type_code":w -> "request_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "system.br_validation":"target_service_moment":w -> "service_action_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "checklist_item_in_group":"checklist_group_code":w -> "checklist_group":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "checklist_item_in_group":"checklist_item_code":w -> "checklist_item":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "negotiate":"ba_unit_id":w -> "administrative.ba_unit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "negotiate":"service_id":w -> "service":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "negotiate":"status_code":w -> "negotiate_status":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "negotiate":"type_code":w -> "negotiate_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "negotiate_uses_source":"negotiate_id":w -> "negotiate":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "negotiate_uses_source":"source_id":w -> "source.source":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "notify":"party_id":w -> "party.party":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "notify":"relationship_type_code":w -> "notify_relationship_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "notify":"service_id":w -> "service":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "notify_property":"ba_unit_id":w -> "administrative.ba_unit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "notify_property":"notify_id":w -> "notify":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "notify_uses_source":"notify_id":w -> "notify":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "notify_uses_source":"source_id":w -> "source.source":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "objection":"authority_code":w -> "authority":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "objection":"service_id":w -> "service":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "objection":"status_code":w -> "objection_status":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "objection_comment":"objection_id":w -> "objection":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "objection_party":"objection_id":w -> "objection":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "objection_party":"party_id":w -> "party.party":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "objection_property":"ba_unit_id":w -> "administrative.ba_unit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "objection_property":"objection_id":w -> "objection":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "objection_uses_source":"objection_id":w -> "objection":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "objection_uses_source":"source_id":w -> "source.source":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "public_display_item":"service_id":w -> "service":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "public_display_item":"status_code":w -> "public_display_status":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "public_display_item":"type_code":w -> "public_display_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "public_display_item_uses_source":"public_display_item_id":w -> "public_display_item":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "public_display_item_uses_source":"source_id":w -> "source.source":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "request_type":"display_group_code":w -> "request_display_group":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "request_type":"request_category_code":w -> "request_category_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "request_type":"rrr_type_code":w -> "administrative.rrr_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "request_type":"service_panel_code":w -> "system.config_panel_launcher":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "request_type":"type_action_code":w -> "type_action":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "request_type_requires_source_type":"request_type_code":w -> "request_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "request_type_requires_source_type":"source_type_code":w -> "source.administrative_source_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
@@ -336,5 +691,7 @@ digraph "compactRelationshipsDiagram" {
   "service":"request_type_code":w -> "request_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "service":"status_code":w -> "service_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "service_action_type":"status_to_set":w -> "service_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "service_checklist_item":"checklist_item_code":w -> "checklist_item":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "service_checklist_item":"service_id":w -> "service":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "transaction.transaction":"from_service_id":w -> "service":"id":e [arrowhead=none dir=back arrowtail=crowodot];
 }

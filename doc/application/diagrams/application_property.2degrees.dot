@@ -30,6 +30,10 @@ digraph "twoDegreesRelationshipsDiagram" {
   "application_property":"land_use_code":w -> "cadastre.land_use_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "application_spatial_unit":"elipses":w -> "application":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "application_uses_source":"elipses":w -> "application":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "negotiate":"elipses":w -> "administrative.ba_unit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "negotiate":"elipses":w -> "service":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "notify_property":"elipses":w -> "administrative.ba_unit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "objection_property":"elipses":w -> "administrative.ba_unit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "service":"elipses":w -> "application":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "application" [
     label=<
@@ -53,6 +57,9 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="action_notes" COLSPAN="3" ALIGN="LEFT">action_notes</TD></TR>
       <TR><TD PORT="status_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">status_code</TD></TR>
       <TR><TD PORT="receipt_reference" COLSPAN="3" ALIGN="LEFT">receipt_reference</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
       <TR><TD PORT="rowversion" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowversion</TD></TR>
       <TR><TD PORT="change_action" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_action</TD></TR>
@@ -150,12 +157,15 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="expiration_date" COLSPAN="3" ALIGN="LEFT">expiration_date</TD></TR>
       <TR><TD PORT="status_code" COLSPAN="3" ALIGN="LEFT">status_code</TD></TR>
       <TR><TD PORT="transaction_id" COLSPAN="3" ALIGN="LEFT">transaction_id</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
       <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
       <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
       <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
       <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="../../administrative/tables/ba_unit.html"
     tooltip="administrative.ba_unit"
@@ -173,12 +183,42 @@ digraph "twoDegreesRelationshipsDiagram" {
     URL="../../cadastre/tables/land_use_type.html"
     tooltip="cadastre.land_use_type"
   ];
+  "negotiate" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">negotiate</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="negotiate.html"
+    tooltip="negotiate"
+  ];
+  "notify_property" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">notify_property</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="notify_property.html"
+    tooltip="notify_property"
+  ];
+  "objection_property" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">objection_property</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="objection_property.html"
+    tooltip="objection_property"
+  ];
   "party.party" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">party.party</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="../../party/tables/party.html"
     tooltip="party.party"
@@ -188,7 +228,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">service</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="service.html"
     tooltip="service"

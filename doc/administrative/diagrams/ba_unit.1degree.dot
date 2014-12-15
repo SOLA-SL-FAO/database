@@ -28,16 +28,22 @@ digraph "oneDegreeRelationshipsDiagram" {
   "ba_unit_contains_spatial_unit":"ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "ba_unit_target":"ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "ba_unit_target":"transaction_id":w -> "transaction.transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "application.negotiate":"ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "notation":"ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "notation":"rrr_id":w -> "rrr":"id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "notation":"status_code":w -> "transaction.reg_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "notation":"transaction_id":w -> "transaction.transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "application.notify_property":"ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "application.objection_property":"ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "required_relationship_baunit":"from_ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "required_relationship_baunit":"to_ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "rrr":"ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "rrr":"status_code":w -> "transaction.reg_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "rrr":"transaction_id":w -> "transaction.transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "source_describes_ba_unit":"ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "valuation":"ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "valuation":"transaction_id":w -> "transaction.transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "valuation_property":"ba_unit_id":w -> "ba_unit":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "valuation_property":"valuation_id":w -> "valuation":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "application.application_property" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -75,12 +81,15 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="expiration_date" COLSPAN="2" ALIGN="LEFT">expiration_date</TD><TD PORT="expiration_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
       <TR><TD PORT="status_code" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">status_code</TD><TD PORT="status_code.type" ALIGN="LEFT">varchar[20]</TD></TR>
       <TR><TD PORT="transaction_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">transaction_id</TD><TD PORT="transaction_id.type" ALIGN="LEFT">varchar[40]</TD></TR>
+      <TR><TD PORT="description" COLSPAN="2" ALIGN="LEFT">description</TD><TD PORT="description.type" ALIGN="LEFT">text[2147483647]</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="2" ALIGN="LEFT">classification_code</TD><TD PORT="classification_code.type" ALIGN="LEFT">varchar[20]</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="2" ALIGN="LEFT">redact_code</TD><TD PORT="redact_code.type" ALIGN="LEFT">varchar[20]</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">rowidentifier</TD><TD PORT="rowidentifier.type" ALIGN="LEFT">varchar[40]</TD></TR>
       <TR><TD PORT="rowversion" COLSPAN="2" ALIGN="LEFT">rowversion</TD><TD PORT="rowversion.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD PORT="change_action" COLSPAN="2" ALIGN="LEFT">change_action</TD><TD PORT="change_action.type" ALIGN="LEFT">bpchar[1]</TD></TR>
       <TR><TD PORT="change_user" COLSPAN="2" ALIGN="LEFT">change_user</TD><TD PORT="change_user.type" ALIGN="LEFT">varchar[50]</TD></TR>
       <TR><TD PORT="change_time" COLSPAN="2" ALIGN="LEFT">change_time</TD><TD PORT="change_time.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">10 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">15 &gt;</TD></TR>
     </TABLE>>
     URL="ba_unit.html"
     tooltip="ba_unit"
@@ -109,6 +118,11 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">ba_unit_as_party</TD></TR>
       <TR><TD PORT="ba_unit_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">ba_unit_id</TD></TR>
       <TR><TD PORT="party_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">party_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_time</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="ba_unit_as_party.html"
@@ -159,6 +173,31 @@ digraph "oneDegreeRelationshipsDiagram" {
     URL="ba_unit_type.html"
     tooltip="ba_unit_type"
   ];
+  "application.negotiate" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">application.negotiate</TD></TR>
+      <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
+      <TR><TD PORT="service_id" COLSPAN="3" ALIGN="LEFT">service_id</TD></TR>
+      <TR><TD PORT="ba_unit_id" COLSPAN="3" ALIGN="LEFT">ba_unit_id</TD></TR>
+      <TR><TD PORT="initial_amount" COLSPAN="3" ALIGN="LEFT">initial_amount</TD></TR>
+      <TR><TD PORT="final_amount" COLSPAN="3" ALIGN="LEFT">final_amount</TD></TR>
+      <TR><TD PORT="notification_date" COLSPAN="3" ALIGN="LEFT">notification_date</TD></TR>
+      <TR><TD PORT="type_code" COLSPAN="3" ALIGN="LEFT">type_code</TD></TR>
+      <TR><TD PORT="status_code" COLSPAN="3" ALIGN="LEFT">status_code</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="../../application/tables/negotiate.html"
+    tooltip="application.negotiate"
+  ];
   "notation" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -171,15 +210,49 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="notation_text" COLSPAN="3" ALIGN="LEFT">notation_text</TD></TR>
       <TR><TD PORT="notation_date" COLSPAN="3" ALIGN="LEFT">notation_date</TD></TR>
       <TR><TD PORT="status_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">status_code</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
       <TR><TD PORT="rowversion" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowversion</TD></TR>
       <TR><TD PORT="change_action" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_action</TD></TR>
       <TR><TD PORT="change_user" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_user</TD></TR>
       <TR><TD PORT="change_time" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_time</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="notation.html"
     tooltip="notation"
+  ];
+  "application.notify_property" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">application.notify_property</TD></TR>
+      <TR><TD PORT="notify_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">notify_id</TD></TR>
+      <TR><TD PORT="ba_unit_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">ba_unit_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="../../application/tables/notify_property.html"
+    tooltip="application.notify_property"
+  ];
+  "application.objection_property" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">application.objection_property</TD></TR>
+      <TR><TD PORT="objection_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">objection_id</TD></TR>
+      <TR><TD PORT="ba_unit_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">ba_unit_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="../../application/tables/objection_property.html"
+    tooltip="application.objection_property"
   ];
   "transaction.reg_status_type" [
     label=<
@@ -189,7 +262,7 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="display_value" COLSPAN="3" ALIGN="LEFT">display_value</TD></TR>
       <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
       <TR><TD PORT="status" COLSPAN="3" ALIGN="LEFT">status</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
     URL="../../transaction/tables/reg_status_type.html"
     tooltip="transaction.reg_status_type"
@@ -230,12 +303,15 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="mortgage_interest_rate" COLSPAN="3" ALIGN="LEFT">mortgage_interest_rate</TD></TR>
       <TR><TD PORT="mortgage_ranking" COLSPAN="3" ALIGN="LEFT">mortgage_ranking</TD></TR>
       <TR><TD PORT="mortgage_type_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">mortgage_type_code</TD></TR>
+      <TR><TD PORT="sub_type_code" COLSPAN="3" ALIGN="LEFT">sub_type_code</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
       <TR><TD PORT="rowversion" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowversion</TD></TR>
       <TR><TD PORT="change_action" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_action</TD></TR>
       <TR><TD PORT="change_user" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_user</TD></TR>
       <TR><TD PORT="change_time" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_time</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 6</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
     URL="rrr.html"
     tooltip="rrr"
@@ -271,9 +347,50 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
       <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
       <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="../../transaction/tables/transaction.html"
     tooltip="transaction.transaction"
+  ];
+  "valuation" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">valuation</TD></TR>
+      <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
+      <TR><TD PORT="nr" COLSPAN="3" ALIGN="LEFT">nr</TD></TR>
+      <TR><TD PORT="ba_unit_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">ba_unit_id</TD></TR>
+      <TR><TD PORT="amount" COLSPAN="3" ALIGN="LEFT">amount</TD></TR>
+      <TR><TD PORT="valuation_date" COLSPAN="3" ALIGN="LEFT">valuation_date</TD></TR>
+      <TR><TD PORT="type_code" COLSPAN="3" ALIGN="LEFT">type_code</TD></TR>
+      <TR><TD PORT="source" COLSPAN="3" ALIGN="LEFT">source</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
+      <TR><TD PORT="transaction_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">transaction_id</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+    </TABLE>>
+    URL="valuation.html"
+    tooltip="valuation"
+  ];
+  "valuation_property" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">valuation_property</TD></TR>
+      <TR><TD PORT="valuation_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">valuation_id</TD></TR>
+      <TR><TD PORT="ba_unit_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">ba_unit_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="valuation_property.html"
+    tooltip="valuation_property"
   ];
 }

@@ -26,7 +26,6 @@ digraph "twoDegreesRelationshipsDiagram" {
   "mortgage_isbased_in_rrr":"elipses":w -> "rrr":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "notation":"elipses":w -> "ba_unit":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "notation":"elipses":w -> "rrr":"id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "notation":"elipses":w -> "transaction.reg_status_type":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "notation":"elipses":w -> "transaction.transaction":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "party_for_rrr":"elipses":w -> "rrr":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "party_for_rrr":"elipses":w -> "rrr_share":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
@@ -34,16 +33,18 @@ digraph "twoDegreesRelationshipsDiagram" {
   "rrr":"ba_unit_id":w -> "ba_unit":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "rrr":"mortgage_type_code":w -> "mortgage_type":"code.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "rrr":"status_code":w -> "transaction.reg_status_type":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "rrr":"sub_type_code":w -> "rrr_sub_type":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "rrr":"transaction_id":w -> "transaction.transaction":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "rrr":"type_code":w -> "rrr_type":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "rrr_share":"elipses":w -> "rrr":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "rrr_sub_type":"elipses":w -> "rrr_type":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
   "source_describes_rrr":"elipses":w -> "rrr":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "ba_unit" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">ba_unit</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">10 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">15 &gt;</TD></TR>
     </TABLE>>
     URL="ba_unit.html"
     tooltip="ba_unit"
@@ -86,7 +87,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">notation</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="notation.html"
     tooltip="notation"
@@ -106,7 +107,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">transaction.reg_status_type</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
     URL="../../transaction/tables/reg_status_type.html"
     tooltip="transaction.reg_status_type"
@@ -130,12 +131,15 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="mortgage_interest_rate" COLSPAN="3" ALIGN="LEFT">mortgage_interest_rate</TD></TR>
       <TR><TD PORT="mortgage_ranking" COLSPAN="3" ALIGN="LEFT">mortgage_ranking</TD></TR>
       <TR><TD PORT="mortgage_type_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">mortgage_type_code</TD></TR>
+      <TR><TD PORT="sub_type_code" COLSPAN="3" ALIGN="LEFT">sub_type_code</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
       <TR><TD PORT="rowversion" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowversion</TD></TR>
       <TR><TD PORT="change_action" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_action</TD></TR>
       <TR><TD PORT="change_user" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_user</TD></TR>
       <TR><TD PORT="change_time" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_time</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 6</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
     URL="rrr.html"
     tooltip="rrr"
@@ -150,12 +154,22 @@ digraph "twoDegreesRelationshipsDiagram" {
     URL="rrr_share.html"
     tooltip="rrr_share"
   ];
+  "rrr_sub_type" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">rrr_sub_type</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="rrr_sub_type.html"
+    tooltip="rrr_sub_type"
+  ];
   "rrr_type" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">rrr_type</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="rrr_type.html"
     tooltip="rrr_type"
@@ -175,7 +189,7 @@ digraph "twoDegreesRelationshipsDiagram" {
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">transaction.transaction</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="../../transaction/tables/transaction.html"
     tooltip="transaction.transaction"

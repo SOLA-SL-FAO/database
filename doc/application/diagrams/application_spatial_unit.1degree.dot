@@ -43,6 +43,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="action_notes" COLSPAN="3" ALIGN="LEFT">action_notes</TD></TR>
       <TR><TD PORT="status_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">status_code</TD></TR>
       <TR><TD PORT="receipt_reference" COLSPAN="3" ALIGN="LEFT">receipt_reference</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
       <TR><TD PORT="rowversion" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowversion</TD></TR>
       <TR><TD PORT="change_action" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_action</TD></TR>
@@ -85,6 +88,10 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="geom_polygon" COLSPAN="3" ALIGN="LEFT">geom_polygon</TD></TR>
       <TR><TD PORT="transaction_id" COLSPAN="3" ALIGN="LEFT">transaction_id</TD></TR>
       <TR><TD PORT="land_use_code" COLSPAN="3" ALIGN="LEFT">land_use_code</TD></TR>
+      <TR><TD PORT="state_land_status_code" COLSPAN="3" ALIGN="LEFT">state_land_status_code</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
       <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
       <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>

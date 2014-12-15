@@ -109,14 +109,13 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
       <TR><TD PORT="type_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">type_code</TD></TR>
       <TR><TD PORT="building_unit_type_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">building_unit_type_code</TD></TR>
-      <TR><TD PORT="name_firstpart" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">name_firstpart</TD></TR>
-      <TR><TD PORT="name_lastpart" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">name_lastpart</TD></TR>
       <TR><TD PORT="status_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">status_code</TD></TR>
       <TR><TD PORT="geom_polygon" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">geom_polygon</TD></TR>
       <TR><TD PORT="transaction_id" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">transaction_id</TD></TR>
+      <TR><TD PORT="state_land_status_code" COLSPAN="3" ALIGN="LEFT">state_land_status_code</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 6</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="tables/cadastre_object.html"
     tooltip="cadastre_object"
@@ -357,6 +356,18 @@ digraph "compactRelationshipsDiagram" {
     URL="tables/spatial_value_area.html"
     tooltip="spatial_value_area"
   ];
+  "state_land_status_type" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">state_land_status_type</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="tables/state_land_status_type.html"
+    tooltip="state_land_status_type"
+  ];
   "structure_type" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -438,6 +449,7 @@ digraph "compactRelationshipsDiagram" {
   "administrative.ba_unit_contains_spatial_unit":"spatial_unit_id":w -> "spatial_unit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "cadastre_object":"building_unit_type_code":w -> "building_unit_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "cadastre_object":"id":w -> "spatial_unit":"id":e [arrowhead=none dir=back arrowtail=teeodot];
+  "cadastre_object":"state_land_status_code":w -> "state_land_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "cadastre_object":"status_code":w -> "transaction.reg_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "cadastre_object":"transaction_id":w -> "transaction.transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "cadastre_object":"type_code":w -> "cadastre_object_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];

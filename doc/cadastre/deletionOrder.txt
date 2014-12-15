@@ -25,6 +25,7 @@ utility_network_type
 utility_network_status_type
 surface_relation_type
 structure_type
+state_land_status_type
 register_type
 level_content_type
 dimension_type

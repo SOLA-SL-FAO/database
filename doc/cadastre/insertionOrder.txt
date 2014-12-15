@@ -5,6 +5,7 @@ building_unit_type
 dimension_type
 level_content_type
 register_type
+state_land_status_type
 structure_type
 surface_relation_type
 utility_network_status_type

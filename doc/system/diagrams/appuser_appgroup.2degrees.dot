@@ -24,6 +24,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "appuser_appgroup":"appgroup_id":w -> "appgroup":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "appuser_appgroup":"appuser_id":w -> "appuser":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "appuser_setting":"elipses":w -> "appuser":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "appuser_team":"elipses":w -> "appuser":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "appgroup" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -76,7 +77,7 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="change_user" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_user</TD></TR>
       <TR><TD PORT="change_time" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_time</TD></TR>
       <TR><TD PORT="activation_expiration" COLSPAN="3" ALIGN="LEFT">activation_expiration</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="appuser.html"
     tooltip="appuser"
@@ -106,5 +107,15 @@ digraph "twoDegreesRelationshipsDiagram" {
     </TABLE>>
     URL="appuser_setting.html"
     tooltip="appuser_setting"
+  ];
+  "appuser_team" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">appuser_team</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="appuser_team.html"
+    tooltip="appuser_team"
   ];
 }

@@ -99,9 +99,8 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">administrative.notation</TD></TR>
       <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
       <TR><TD PORT="transaction_id" COLSPAN="3" ALIGN="LEFT">transaction_id</TD></TR>
-      <TR><TD PORT="status_code" COLSPAN="3" ALIGN="LEFT">status_code</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="tables/../../administrative/tables/notation.html"
     tooltip="administrative.notation"
@@ -113,7 +112,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
       <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="tables/reg_status_type.html"
     tooltip="reg_status_type"
@@ -200,7 +199,7 @@ digraph "compactRelationshipsDiagram" {
       <TR><TD PORT="status_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">status_code</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">12 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">13 &gt;</TD></TR>
     </TABLE>>
     URL="tables/transaction.html"
     tooltip="transaction"
@@ -230,6 +229,18 @@ digraph "compactRelationshipsDiagram" {
     URL="tables/transaction_status_type.html"
     tooltip="transaction_status_type"
   ];
+  "administrative.valuation" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">administrative.valuation</TD></TR>
+      <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
+      <TR><TD PORT="transaction_id" COLSPAN="3" ALIGN="LEFT">transaction_id</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/../../administrative/tables/valuation.html"
+    tooltip="administrative.valuation"
+  ];
   "administrative.ba_unit":"status_code":w -> "reg_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "administrative.ba_unit":"transaction_id":w -> "transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "administrative.ba_unit_target":"transaction_id":w -> "transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
@@ -238,7 +249,6 @@ digraph "compactRelationshipsDiagram" {
   "cadastre.cadastre_object":"transaction_id":w -> "transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "cadastre.cadastre_object_node_target":"transaction_id":w -> "transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "cadastre.cadastre_object_target":"transaction_id":w -> "transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
-  "administrative.notation":"status_code":w -> "reg_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "administrative.notation":"transaction_id":w -> "transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "administrative.rrr":"status_code":w -> "reg_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "administrative.rrr":"transaction_id":w -> "transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
@@ -251,4 +261,5 @@ digraph "compactRelationshipsDiagram" {
   "transaction":"status_code":w -> "transaction_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "transaction_source":"source_id":w -> "source.source":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "transaction_source":"transaction_id":w -> "transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "administrative.valuation":"transaction_id":w -> "transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
 }

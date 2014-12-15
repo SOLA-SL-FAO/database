@@ -20,7 +20,11 @@ digraph "oneDegreeRelationshipsDiagram" {
     arrowsize="0.8"
   ];
   "application.application_uses_source":"source_id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "application.negotiate_uses_source":"source_id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "application.notify_uses_source":"source_id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "application.objection_uses_source":"source_id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "power_of_attorney":"id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=teeodot];
+  "application.public_display_item_uses_source":"source_id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "source":"archive_id":w -> "archive":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "source":"availability_status_code":w -> "availability_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "source":"maintype":w -> "presentation_form_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
@@ -28,7 +32,9 @@ digraph "oneDegreeRelationshipsDiagram" {
   "source":"transaction_id":w -> "transaction.transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "source":"type_code":w -> "administrative_source_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "administrative.source_describes_ba_unit":"source_id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "administrative.source_describes_notation":"source_id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "administrative.source_describes_rrr":"source_id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "administrative.source_describes_valuation":"source_id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "spatial_source":"id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=teeodot];
   "transaction.transaction_source":"source_id":w -> "source":"id.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "administrative_source_type" [
@@ -90,6 +96,54 @@ digraph "oneDegreeRelationshipsDiagram" {
     URL="availability_status_type.html"
     tooltip="availability_status_type"
   ];
+  "application.negotiate_uses_source" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">application.negotiate_uses_source</TD></TR>
+      <TR><TD PORT="negotiate_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">negotiate_id</TD></TR>
+      <TR><TD PORT="source_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="../../application/tables/negotiate_uses_source.html"
+    tooltip="application.negotiate_uses_source"
+  ];
+  "application.notify_uses_source" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">application.notify_uses_source</TD></TR>
+      <TR><TD PORT="notify_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">notify_id</TD></TR>
+      <TR><TD PORT="source_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="../../application/tables/notify_uses_source.html"
+    tooltip="application.notify_uses_source"
+  ];
+  "application.objection_uses_source" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">application.objection_uses_source</TD></TR>
+      <TR><TD PORT="objection_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">objection_id</TD></TR>
+      <TR><TD PORT="source_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="../../application/tables/objection_uses_source.html"
+    tooltip="application.objection_uses_source"
+  ];
   "power_of_attorney" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -119,6 +173,22 @@ digraph "oneDegreeRelationshipsDiagram" {
     </TABLE>>
     URL="presentation_form_type.html"
     tooltip="presentation_form_type"
+  ];
+  "application.public_display_item_uses_source" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">application.public_display_item_uses_source</TD></TR>
+      <TR><TD PORT="public_display_item_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">public_display_item_id</TD></TR>
+      <TR><TD PORT="source_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="../../application/tables/public_display_item_uses_source.html"
+    tooltip="application.public_display_item_uses_source"
   ];
   "transaction.reg_status_type" [
     label=<
@@ -154,14 +224,16 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="transaction_id" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">transaction_id</TD><TD PORT="transaction_id.type" ALIGN="LEFT">varchar[40]</TD></TR>
       <TR><TD PORT="owner_name" COLSPAN="2" ALIGN="LEFT">owner_name</TD><TD PORT="owner_name.type" ALIGN="LEFT">varchar[255]</TD></TR>
       <TR><TD PORT="version" COLSPAN="2" ALIGN="LEFT">version</TD><TD PORT="version.type" ALIGN="LEFT">varchar[10]</TD></TR>
-      <TR><TD PORT="description" COLSPAN="2" ALIGN="LEFT">description</TD><TD PORT="description.type" ALIGN="LEFT">varchar[255]</TD></TR>
+      <TR><TD PORT="description" COLSPAN="2" ALIGN="LEFT">description</TD><TD PORT="description.type" ALIGN="LEFT">text[2147483647]</TD></TR>
       <TR><TD PORT="signing_date" COLSPAN="2" ALIGN="LEFT">signing_date</TD><TD PORT="signing_date.type" ALIGN="LEFT">date[13]</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="2" ALIGN="LEFT">classification_code</TD><TD PORT="classification_code.type" ALIGN="LEFT">varchar[20]</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="2" ALIGN="LEFT">redact_code</TD><TD PORT="redact_code.type" ALIGN="LEFT">varchar[20]</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">rowidentifier</TD><TD PORT="rowidentifier.type" ALIGN="LEFT">varchar[40]</TD></TR>
       <TR><TD PORT="rowversion" COLSPAN="2" ALIGN="LEFT">rowversion</TD><TD PORT="rowversion.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD PORT="change_action" COLSPAN="2" ALIGN="LEFT">change_action</TD><TD PORT="change_action.type" ALIGN="LEFT">bpchar[1]</TD></TR>
       <TR><TD PORT="change_user" COLSPAN="2" ALIGN="LEFT">change_user</TD><TD PORT="change_user.type" ALIGN="LEFT">varchar[50]</TD></TR>
       <TR><TD PORT="change_time" COLSPAN="2" ALIGN="LEFT">change_time</TD><TD PORT="change_time.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 6</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 6</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">12 &gt;</TD></TR>
     </TABLE>>
     URL="source.html"
     tooltip="source"
@@ -182,6 +254,22 @@ digraph "oneDegreeRelationshipsDiagram" {
     URL="../../administrative/tables/source_describes_ba_unit.html"
     tooltip="administrative.source_describes_ba_unit"
   ];
+  "administrative.source_describes_notation" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">administrative.source_describes_notation</TD></TR>
+      <TR><TD PORT="source_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_id</TD></TR>
+      <TR><TD PORT="notation_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">notation_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="../../administrative/tables/source_describes_notation.html"
+    tooltip="administrative.source_describes_notation"
+  ];
   "administrative.source_describes_rrr" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -197,6 +285,22 @@ digraph "oneDegreeRelationshipsDiagram" {
     </TABLE>>
     URL="../../administrative/tables/source_describes_rrr.html"
     tooltip="administrative.source_describes_rrr"
+  ];
+  "administrative.source_describes_valuation" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">administrative.source_describes_valuation</TD></TR>
+      <TR><TD PORT="valuation_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">valuation_id</TD></TR>
+      <TR><TD PORT="source_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="../../administrative/tables/source_describes_valuation.html"
+    tooltip="administrative.source_describes_valuation"
   ];
   "spatial_source" [
     label=<

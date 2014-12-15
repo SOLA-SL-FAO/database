@@ -2,21 +2,28 @@ ba_unit_rel_type
 ba_unit_type
 condition_type
 mortgage_type
+notation_status_type
 rrr_group_type
-rrr_type
+valuation_type
 ba_unit
+rrr_type
+rrr_sub_type
 rrr
 rrr_share
+valuation
+notation
 ba_unit_area
 ba_unit_as_party
 ba_unit_target
 condition_for_rrr
 mortgage_isbased_in_rrr
 source_describes_ba_unit
+source_describes_notation
 source_describes_rrr
+source_describes_valuation
+valuation_property
 ba_unit_contains_spatial_unit
 required_relationship_baunit
-notation
 party_for_rrr
 Function: ba_unit_name_is_valid
 Function: get_ba_unit_pending_action

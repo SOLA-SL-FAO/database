@@ -22,8 +22,11 @@ digraph "oneDegreeRelationshipsDiagram" {
   "system.br_validation":"target_rrr_type_code":w -> "rrr_type":"code.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "opentenure.claim":"type_code":w -> "rrr_type":"code.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "application.request_type":"rrr_type_code":w -> "rrr_type":"code.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "rrr":"sub_type_code":w -> "rrr_sub_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "rrr":"type_code":w -> "rrr_type":"code.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "rrr_sub_type":"rrr_type_code":w -> "rrr_type":"code.type":e [arrowhead=none dir=back arrowtail=crowodot];
   "rrr_type":"rrr_group_type_code":w -> "rrr_group_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
+  "rrr_type":"rrr_panel_code":w -> "system.config_panel_launcher":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "system.br_validation" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -70,6 +73,23 @@ digraph "oneDegreeRelationshipsDiagram" {
     URL="../../opentenure/tables/claim.html"
     tooltip="opentenure.claim"
   ];
+  "system.config_panel_launcher" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">system.config_panel_launcher</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
+      <TR><TD PORT="status" COLSPAN="3" ALIGN="LEFT">status</TD></TR>
+      <TR><TD PORT="launch_group" COLSPAN="3" ALIGN="LEFT">launch_group</TD></TR>
+      <TR><TD PORT="panel_class" COLSPAN="3" ALIGN="LEFT">panel_class</TD></TR>
+      <TR><TD PORT="message_code" COLSPAN="3" ALIGN="LEFT">message_code</TD></TR>
+      <TR><TD PORT="card_name" COLSPAN="3" ALIGN="LEFT">card_name</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="../../system/tables/config_panel_launcher.html"
+    tooltip="system.config_panel_launcher"
+  ];
   "application.request_type" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -87,7 +107,9 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="notation_template" COLSPAN="3" ALIGN="LEFT">notation_template</TD></TR>
       <TR><TD PORT="rrr_type_code" COLSPAN="3" ALIGN="LEFT">rrr_type_code</TD></TR>
       <TR><TD PORT="type_action_code" COLSPAN="3" ALIGN="LEFT">type_action_code</TD></TR>
-      <TR><TD PORT="display_group_name" COLSPAN="3" ALIGN="LEFT">display_group_name</TD></TR>
+      <TR><TD PORT="service_panel_code" COLSPAN="3" ALIGN="LEFT">service_panel_code</TD></TR>
+      <TR><TD PORT="display_group_code" COLSPAN="3" ALIGN="LEFT">display_group_code</TD></TR>
+      <TR><TD PORT="display_order" COLSPAN="3" ALIGN="LEFT">display_order</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="../../application/tables/request_type.html"
@@ -112,12 +134,15 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="mortgage_interest_rate" COLSPAN="3" ALIGN="LEFT">mortgage_interest_rate</TD></TR>
       <TR><TD PORT="mortgage_ranking" COLSPAN="3" ALIGN="LEFT">mortgage_ranking</TD></TR>
       <TR><TD PORT="mortgage_type_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">mortgage_type_code</TD></TR>
+      <TR><TD PORT="sub_type_code" COLSPAN="3" ALIGN="LEFT">sub_type_code</TD></TR>
+      <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
+      <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
       <TR><TD PORT="rowidentifier" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowidentifier</TD></TR>
       <TR><TD PORT="rowversion" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">rowversion</TD></TR>
       <TR><TD PORT="change_action" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_action</TD></TR>
       <TR><TD PORT="change_user" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_user</TD></TR>
       <TR><TD PORT="change_time" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_time</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 6</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
     URL="rrr.html"
     tooltip="rrr"
@@ -135,6 +160,20 @@ digraph "oneDegreeRelationshipsDiagram" {
     URL="rrr_group_type.html"
     tooltip="rrr_group_type"
   ];
+  "rrr_sub_type" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">rrr_sub_type</TD></TR>
+      <TR><TD PORT="code" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">code</TD></TR>
+      <TR><TD PORT="display_value" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">display_value</TD></TR>
+      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
+      <TR><TD PORT="status" COLSPAN="3" ALIGN="LEFT">status</TD></TR>
+      <TR><TD PORT="rrr_type_code" COLSPAN="3" ALIGN="LEFT">rrr_type_code</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="rrr_sub_type.html"
+    tooltip="rrr_sub_type"
+  ];
   "rrr_type" [
     label=<
     <TABLE BORDER="2" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -147,7 +186,8 @@ digraph "oneDegreeRelationshipsDiagram" {
       <TR><TD PORT="party_required" COLSPAN="2" ALIGN="LEFT">party_required</TD><TD PORT="party_required.type" ALIGN="LEFT">bool[1]</TD></TR>
       <TR><TD PORT="description" COLSPAN="2" ALIGN="LEFT">description</TD><TD PORT="description.type" ALIGN="LEFT">varchar[1000]</TD></TR>
       <TR><TD PORT="status" COLSPAN="2" ALIGN="LEFT">status</TD><TD PORT="status.type" ALIGN="LEFT">bpchar[1]</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD PORT="rrr_panel_code" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">rrr_panel_code</TD><TD PORT="rrr_panel_code.type" ALIGN="LEFT">varchar[20]</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="rrr_type.html"
     tooltip="rrr_type"

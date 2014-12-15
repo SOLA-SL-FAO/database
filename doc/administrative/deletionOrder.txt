@@ -13,21 +13,28 @@ Function: get_calculated_area_size_action
 Function: get_ba_unit_pending_action
 Function: ba_unit_name_is_valid
 party_for_rrr
-notation
 required_relationship_baunit
 ba_unit_contains_spatial_unit
+valuation_property
+source_describes_valuation
 source_describes_rrr
+source_describes_notation
 source_describes_ba_unit
 mortgage_isbased_in_rrr
 condition_for_rrr
 ba_unit_target
 ba_unit_as_party
 ba_unit_area
+notation
+valuation
 rrr_share
 rrr
-ba_unit
+rrr_sub_type
 rrr_type
+ba_unit
+valuation_type
 rrr_group_type
+notation_status_type
 mortgage_type
 condition_type
 ba_unit_type
