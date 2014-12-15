@@ -200,3 +200,77 @@ CREATE INDEX negotiate_uses_source_historic_index_on_rowidentifier
   ON application.negotiate_uses_source_historic
   USING btree
   (rowidentifier COLLATE pg_catalog."default");
+
+  
+-- *** Add request_display_group table and display order to
+  --     request_types  
+ ALTER TABLE application.request_type 
+  DROP COLUMN IF EXISTS  display_group_name,
+  DROP COLUMN IF EXISTS  display_group_code,
+  DROP COLUMN IF EXISTS  display_order,
+  DROP CONSTRAINT IF EXISTS  request_type_display_group_code_fk;
+  
+DROP TABLE IF EXISTS application.request_display_group; 
+  
+CREATE TABLE application.request_display_group
+(
+  code character varying(20) NOT NULL, 
+  display_value character varying(250) NOT NULL, 
+  description text, 
+  status character(1) NOT NULL, 
+  CONSTRAINT request_display_group_pkey PRIMARY KEY (code),
+  CONSTRAINT request_display_group_display_value_unique UNIQUE (display_value)
+);
+
+COMMENT ON TABLE application.request_display_group
+  IS 'Code list identifying the display groups that can be used for request types
+Tags: SOLA State Land Extension, Reference Table';
+COMMENT ON COLUMN application.request_display_group.code IS 'The code for the request display group.';
+COMMENT ON COLUMN application.request_display_group.display_value IS 'Displayed value of the request display group.';
+COMMENT ON COLUMN application.request_display_group.description IS 'Description of the request display group.';
+COMMENT ON COLUMN application.request_display_group.status IS 'Status of the negotiation type (c - current, x - no longer valid).';
+
+INSERT INTO application.request_display_group (code, display_value, description, status)
+VALUES ('parcels', 'Parcels', 'Parcels display group.', 'c'); 
+INSERT INTO application.request_display_group (code, display_value, description, status)
+VALUES ('property', 'Property', 'Property display group.', 'c'); 
+INSERT INTO application.request_display_group (code, display_value, description, status)
+VALUES ('job', 'Job', 'Job display group.', 'c');
+
+ALTER TABLE application.request_type 
+  ADD COLUMN display_group_code character varying(20),
+  ADD COLUMN display_order int,
+  ADD CONSTRAINT request_type_display_group_code_fk FOREIGN KEY (display_group_code)
+      REFERENCES application.request_display_group (code) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE; 
+	  
+UPDATE application.request_type 
+SET    display_group_code = 'parcels'
+WHERE  code IN ('changeSLParcels');
+
+UPDATE application.request_type 
+SET    display_group_code = 'property'
+WHERE  code IN ('cancelInterest', 'disposeSLProperty', 'recordStateLand', 
+                'maintainStateLand', 'slValuation' );
+				
+UPDATE application.request_type 
+SET    display_group_code = 'job'
+WHERE  code IN ('checklist', 'slNegotiate', 'slObjection', 
+                'slNotify', 'publicDisplayMap', 'publicDisplay' );
+				
+UPDATE application.request_type SET display_order = 10 WHERE code IN ('changeSLParcels');
+UPDATE application.request_type SET display_order = 20 WHERE code IN ('recordStateLand');
+UPDATE application.request_type SET display_order = 30 WHERE code IN ('maintainStateLand');
+UPDATE application.request_type SET display_order = 40 WHERE code IN ('slValuation');
+UPDATE application.request_type SET display_order = 50 WHERE code IN ('cancelInterest');
+UPDATE application.request_type SET display_order = 60 WHERE code IN ('disposeSLProperty');
+UPDATE application.request_type SET display_order = 70 WHERE code IN ('checklist');
+UPDATE application.request_type SET display_order = 80 WHERE code IN ('publicDisplayMap');
+UPDATE application.request_type SET display_order = 90 WHERE code IN ('publicDisplay');
+UPDATE application.request_type SET display_order = 100 WHERE code IN ('slNotify');
+UPDATE application.request_type SET display_order = 110 WHERE code IN ('slNegotiate');
+UPDATE application.request_type SET display_order = 120 WHERE code IN ('slObjection');
+
+
+
+
