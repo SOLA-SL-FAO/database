@@ -657,6 +657,32 @@ COMMENT ON FUNCTION get_parcel_ownernames(baunit_id character varying) IS 'Retur
 
 
 --
+-- Name: get_property_name(character varying); Type: FUNCTION; Schema: administrative; Owner: postgres
+--
+
+CREATE FUNCTION get_property_name(prop_id character varying) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+    RETURN 
+	  (SELECT CASE WHEN type_code = 'stateLand' THEN name_firstpart || name_lastpart
+	              ELSE name_firstpart || '/' || name_lastpart END
+	  FROM  administrative.ba_unit
+      WHERE id = prop_id);
+END;
+$$;
+
+
+ALTER FUNCTION administrative.get_property_name(prop_id character varying) OWNER TO postgres;
+
+--
+-- Name: FUNCTION get_property_name(prop_id character varying); Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON FUNCTION get_property_name(prop_id character varying) IS 'Returns the formatted name for the property';
+
+
+--
 -- Name: get_state_land_status(character varying); Type: FUNCTION; Schema: administrative; Owner: postgres
 --
 
@@ -2474,6 +2500,111 @@ COMMENT ON FUNCTION is_linked_document(prop_id character varying, doc_ref charac
 
 
 SET search_path = application, pg_catalog;
+
+--
+-- Name: get_application_documents(character varying); Type: FUNCTION; Schema: application; Owner: postgres
+--
+
+CREATE FUNCTION get_application_documents(app_id character varying) RETURNS TABLE(doc_id character varying)
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN 
+  RETURN QUERY
+	SELECT doc.source_id AS doc_id
+	FROM   application.application_uses_source doc
+	WHERE  application_id = app_id
+	UNION  
+	SELECT doc.source_id AS doc_id
+	FROM   application.negotiate_uses_source doc,
+		   application.negotiate n,
+		   application.service ser
+	WHERE  ser.application_id = app_id
+	AND    n.service_id = ser.id
+	AND    doc.negotiate_id = n.id
+	UNION  
+	SELECT doc.source_id AS doc_id
+	FROM   application.notify_uses_source doc,
+		   application.notify n,
+		   application.service ser
+	WHERE  ser.application_id = app_id
+	AND    n.service_id = ser.id
+	AND    doc.notify_id = n.id
+	UNION  
+	SELECT doc.source_id AS doc_id
+	FROM   application.objection_uses_source doc,
+		   application.objection o,
+		   application.service ser
+	WHERE  ser.application_id = app_id
+	AND    o.service_id = ser.id
+	AND    doc.objection_id = o.id
+	UNION  
+	SELECT doc.source_id AS doc_id
+	FROM   application.public_display_item_uses_source doc,
+		   application.public_display_item p,
+		   application.service ser
+	WHERE  ser.application_id = app_id
+	AND    p.service_id = ser.id
+	AND    doc.public_display_item_id = p.id
+	UNION  
+	SELECT doc.source_id AS doc_id
+	FROM   application.public_display_item_uses_source doc,
+		   application.public_display_item p,
+		   application.service ser
+	WHERE  ser.application_id = app_id
+	AND    p.service_id = ser.id
+	AND    doc.public_display_item_id = p.id
+	UNION  
+	SELECT doc.source_id AS doc_id
+	FROM   administrative.source_describes_ba_unit doc,
+		   administrative.ba_unit ba,
+		   transaction.transaction t,
+		   application.service ser
+	WHERE  ser.application_id = app_id
+	AND    t.from_service_id = ser.id
+	AND    ba.transaction_id = t.id
+	AND    doc.ba_unit_id = ba.id	
+	UNION  
+	SELECT doc.source_id AS doc_id
+	FROM   administrative.source_describes_notation doc,
+		   administrative.notation n,
+		   transaction.transaction t,
+		   application.service ser
+	WHERE  ser.application_id = app_id
+	AND    t.from_service_id = ser.id
+	AND    n.transaction_id = t.id
+	AND    doc.notation_id = n.id	
+	UNION  
+	SELECT doc.source_id AS doc_id
+	FROM   administrative.source_describes_rrr doc,
+		   administrative.rrr r,
+		   transaction.transaction t,
+		   application.service ser
+	WHERE  ser.application_id = app_id
+	AND    t.from_service_id = ser.id
+	AND    r.transaction_id = t.id
+	AND    doc.rrr_id = r.id
+	UNION  
+	SELECT doc.source_id AS doc_id
+	FROM   administrative.source_describes_valuation doc,
+		   administrative.valuation v,
+		   transaction.transaction t,
+		   application.service ser
+	WHERE  ser.application_id = app_id
+	AND    t.from_service_id = ser.id
+	AND    v.transaction_id = t.id
+	AND    doc.valuation_id = v.id;	
+	END;
+$$;
+
+
+ALTER FUNCTION application.get_application_documents(app_id character varying) OWNER TO postgres;
+
+--
+-- Name: FUNCTION get_application_documents(app_id character varying); Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON FUNCTION get_application_documents(app_id character varying) IS 'Returns the id for all documents (a.k.a. sources) that are associated with an application/job either directly or indirectly';
+
 
 --
 -- Name: get_concatenated_name(character varying, character varying); Type: FUNCTION; Schema: application; Owner: postgres
