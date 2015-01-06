@@ -881,3 +881,20 @@ INSERT INTO system.br_validation(
             target_reg_moment, target_request_type_code, target_rrr_type_code, 
             severity_code, order_of_execution)
 VALUES ('rrr-has-conditions', 'rrr', NULL, NULL, 'current', NULL, NULL, 'warning', 840);
+
+
+-- Updates to application_status_type
+UPDATE application.application_status_type
+SET display_value = 'On Hold'
+WHERE code = 'requisitioned'; 
+
+UPDATE application.application_action_type
+SET display_value = 'Hold'
+WHERE code = 'requisition';
+
+UPDATE application.application_action_type
+SET display_value = 'Resume'
+WHERE code = 'resubmit';
+
+
+
