@@ -897,4 +897,100 @@ SET display_value = 'Resume'
 WHERE code = 'resubmit';
 
 
+-- Revise the list of tasks and task categories
+INSERT INTO application.request_display_group (
+ code, display_value, description, status )
+SELECT 'lease', 'Leases and Licenses', 'Lease and License display group', 'c'
+WHERE NOT EXISTS (SELECT code FROM application.request_display_group WHERE code =  'lease'); 
 
+INSERT INTO application.request_display_group (
+ code, display_value, description, status )
+SELECT 'interest', 'Interests', 'Interests display group', 'c'
+WHERE NOT EXISTS (SELECT code FROM application.request_display_group WHERE code =  'interest');
+
+INSERT INTO application.request_display_group (
+ code, display_value, description, status )
+SELECT 'claim', 'Claims', 'Claims display group', 'c'
+WHERE NOT EXISTS (SELECT code FROM application.request_display_group WHERE code =  'claim');
+
+-- Lease and License
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, nr_properties_required, rrr_type_code, type_action_code, 
+            service_panel_code, display_group_code, display_order)
+    VALUES ('slLease', 'stateLandServices', 'Record Lease', 'Record a new lease for an existing State Land Property',
+	         'c', 5, 1, 'lease', 'new', 'slProperty', 'lease', 70);
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, nr_properties_required, rrr_type_code, type_action_code, 
+            service_panel_code, display_group_code, display_order)
+    VALUES ('slLicense', 'stateLandServices', 'Record License', 'Record a new license for an existing State Land Property',
+	         'c', 5, 1, 'license', 'new', 'slProperty', 'lease', 100);
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, nr_properties_required, rrr_type_code, type_action_code, 
+            service_panel_code, display_group_code, display_order)
+    VALUES ('slLeaseChange', 'stateLandServices', 'Change Lease', 'Update the details of an existing lease',
+	         'c', 5, 1, 'lease', 'vary', 'slProperty', 'lease', 80);
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, nr_properties_required, rrr_type_code, type_action_code, 
+            service_panel_code, display_group_code, display_order)
+    VALUES ('slLicenseChange', 'stateLandServices', 'Change License', 'Update the details of an existing license',
+	         'c', 5, 1, 'license', 'vary', 'slProperty', 'lease', 110);
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, nr_properties_required, rrr_type_code, type_action_code, 
+            service_panel_code, display_group_code, display_order)
+    VALUES ('slLeaseCancel', 'stateLandServices', 'Cancel Lease', 'Cancel an existing lease.',
+	         'c', 5, 1, 'lease', 'cancel', 'slProperty', 'lease', 90);
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, nr_properties_required, rrr_type_code, type_action_code, 
+            service_panel_code, display_group_code, display_order)
+    VALUES ('slLicenseCancel', 'stateLandServices', 'Cancel License', 'Cancel an existing license',
+	         'c', 5, 1, 'license', 'cancel', 'slProperty', 'lease', 120);
+
+-- Interests
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, nr_properties_required, rrr_type_code, type_action_code, 
+            service_panel_code, display_group_code, display_order)
+    VALUES ('slInterest', 'stateLandServices', 'Record Interest', 'Record a new interest over an existing State Land Property',
+	         'c', 5, 1, NULL, 'new', 'slProperty', 'interest', 130);
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, nr_properties_required, rrr_type_code, type_action_code, 
+            service_panel_code, display_group_code, display_order)
+    VALUES ('slInterestChange', 'stateLandServices', 'Change Interest', 'Update the details of an existing interest',
+	         'c', 5, 1, NULL, 'vary', 'slProperty', 'interest', 140);	
+
+UPDATE application.request_type 
+SET display_order = 150,
+    display_group_code = 'interest'
+WHERE code = 'cancelInterest'; 		 
+
+-- Claims
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, nr_properties_required, rrr_type_code, type_action_code, 
+            service_panel_code, display_group_code, display_order)
+    VALUES ('slClaim', 'stateLandServices', 'Record Claim', 'Record a new claim affecting an existing State Land Property',
+	         'c', 5, 1, 'claim', 'new', 'slProperty', 'claim', 160);
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, nr_properties_required, rrr_type_code, type_action_code, 
+            service_panel_code, display_group_code, display_order)
+    VALUES ('slClaimChange', 'stateLandServices', 'Change Claim', 'Update the details of an existing claim',
+	         'c', 5, 1, 'claim', 'vary', 'slProperty', 'claim', 170);	
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, nr_properties_required, rrr_type_code, type_action_code, 
+            service_panel_code, display_group_code, display_order)
+    VALUES ('slClaimCancel', 'stateLandServices', 'Cancel Claim', 'Cancel an existing claim',
+	         'c', 5, 1, 'claim', 'cancel', 'slProperty', 'claim', 180);
+			 
+			 
+UPDATE application.request_type 
+SET display_order = display_order + 120 
+WHERE display_group_code = 'job';
