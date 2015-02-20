@@ -108,7 +108,9 @@ $pg_dump -h $host -p $port -U $username -a -b \
 	-t source.archive -t source.source -t application.application_uses_source \
 	-t administrative.source_describes_rrr -t source.power_of_attorney \
     -t administrative.source_describes_ba_unit -t source.spatial_source \
-    -t source.spatial_source_measurement \
+    -t source.spatial_source_measurement -t administrative.source_describes_valuation \
+	-t application.notify_uses_source -t application.objection_uses_source \
+	-t application.negotiate_uses_source -t application.public_display_item_uses_source \
     -f "$data_path/05_source.sql" $dbname >> $EXTRACT_LOG 2>&1
 	
 echo "Dumping cadastre tables..."
@@ -131,7 +133,8 @@ $pg_dump -h $host -p $port -U $username -a -b \
     -t administrative.party_for_rrr -t administrative.notation \
     -t administrative.ba_unit_contains_spatial_unit -t administrative.ba_unit_as_party \
     -t administrative.ba_unit_target -t administrative.condition_for_rrr \
-    -t administrative.mortgage_isbased_in_rrr \
+    -t administrative.mortgage_isbased_in_rrr -t administrative.valuation \
+	-t administrative.valuation_property \
 	-f "$data_path/07_administrative.sql" $dbname >> $EXTRACT_LOG 2>&1
 	
 echo "Dumping application tables..."
@@ -140,6 +143,10 @@ $pg_dump -h $host -p $port -U $username -a -b \
     --column-inserts --disable-dollar-quoting --disable-triggers \
 	-t application.application -t application.application_property \
 	-t application.service -t application.application_spatial_unit \
+	-t application.public_display_item -t application.service_checklist_item \
+	-t application.objection -t application.objection_comment \
+	-t application.objection_party -t application.objection_property \
+    -t application.notify -t application.notify_property -t application.negotiate \
     -f "$data_path/08_application.sql" $dbname >> $EXTRACT_LOG 2>&1	
 	
 echo "Dumping bulk operation tables..."

@@ -612,7 +612,8 @@ UPDATE system.br_definition SET body =
 				
 	cancelPropApp	AS	(SELECT sv3.id AS fhCheck, sv3.request_type_code FROM application.service sv3
 				WHERE sv3.application_id = #{id}
-				AND sv3.request_type_code IN ( ''cancelProperty'', ''disposeSLProperty'')),
+				AND sv3.request_type_code IN ( ''cancelProperty'', ''disposeSLProperty'')
+				AND sv3.status_code != ''cancelled''),
 					
 	current_rrr AS 		(SELECT DISTINCT ON(rr2.nr) rr2.nr FROM administrative.rrr rr2 
 				WHERE rr2.status_code = ''current''

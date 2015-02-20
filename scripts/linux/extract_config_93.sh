@@ -58,17 +58,24 @@ $pg_dump -h $host -p $port -U $username -d $dbname -a -b -F p \
     -t administrative.ba_unit_rel_type -t administrative.ba_unit_type \
 	-t administrative.condition_type -t administrative.mortgage_type \
 	-t administrative.rrr_group_type -t administrative.rrr_type \
+	-t administrative.notation_status_type -t administrative.rrr_sub_type \
+	-t administrative.valuation_type \
 	-t application.application_status_type -t application.service_status_type \
 	-t application.service_action_type -t application.type_action \
 	-t application.application_action_type -t application.request_category_type \
 	-t application.checklist_group -t application.checklist_item \
-	-t application.checklist_item_in_group \
-	-t application.request_type -t cadastre.area_type \
+	-t application.checklist_item_in_group -t application.public_display_type \
+	-t application.public_display_status -t application.notify_relationship_type \
+	-t application.objection_status -t application.authority \
+	-t application.negotiate_status -t application.negotiate_type \
+	-t application.request_type -t application.request_display_group \
+	-t cadastre.area_type \
 	-t cadastre.building_unit_type -t cadastre.dimension_type \
 	-t cadastre.hierarchy_level -t cadastre.land_use_type \
 	-t cadastre.level_content_type -t cadastre.register_type \
 	-t cadastre.structure_type -t cadastre.surface_relation_type \
 	-t cadastre.utility_network_status_type -t cadastre.utility_network_type \
+	-t cadastre.state_land_status_type \
 	-t cadastre.cadastre_object_type -t party.communication_type \
 	-t opentenure.claim_status \
 	-t party.gender_type -t party.group_party_type \
@@ -89,6 +96,8 @@ $pg_dump -h $host -p $port -U $username -d $dbname -a -b -F p \
     -t system.config_map_layer -t system.consolidation_config \
 	-t system.crs -t system.map_search_option \
     -t system.query_field -t system.setting -t system.version \
+	-t system.config_panel_launcher -t system.panel_launcher_group \
+	-t system.config_map_layer_metadata \ 
 	-f "$config_path/system.sql" >> $EXTRACT_LOG 2>&1
 	
 echo "Dumping user tables..."
@@ -97,7 +106,7 @@ $pg_dump -h $host -p $port -U $username -d $dbname -a -b -F p \
     --column-inserts --disable-dollar-quoting --disable-triggers \
     -t system.appuser -t system.appgroup \
 	-t system.appuser_appgroup -t system.approle_appgroup \
-	-t system.appuser_setting \
+	-t system.appuser_setting -t system.appuser_team \
 	-f "$config_path/users.sql" >> $EXTRACT_LOG 2>&1
 
 echo "Dumping unlocalized reference tables..."

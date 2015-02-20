@@ -6963,7 +6963,7 @@ COMMENT ON TABLE source_describes_valuation_historic IS 'History table for the a
 --
 
 CREATE SEQUENCE state_land_num_seq
-    START WITH 1010
+    START WITH 1030
     INCREMENT BY 1
     NO MINVALUE
     MAXVALUE 999999
@@ -8460,7 +8460,7 @@ ALTER TABLE application.application_historic OWNER TO postgres;
 --
 
 CREATE SEQUENCE application_nr_seq
-    START WITH 10
+    START WITH 50
     INCREMENT BY 1
     NO MINVALUE
     MAXVALUE 9999
@@ -13641,7 +13641,7 @@ ALTER TABLE document.document_historic OWNER TO postgres;
 --
 
 CREATE SEQUENCE document_nr_seq
-    START WITH 1000
+    START WITH 1050
     INCREMENT BY 1
     MINVALUE 1000
     MAXVALUE 99999999
@@ -15924,7 +15924,7 @@ ALTER TABLE source.source_historic OWNER TO postgres;
 --
 
 CREATE SEQUENCE source_la_nr_seq
-    START WITH 1
+    START WITH 1000
     INCREMENT BY 1
     NO MINVALUE
     MAXVALUE 999999999
